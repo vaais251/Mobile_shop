@@ -158,7 +158,31 @@ async def get_me(
 ):
     """
     Get current authenticated user's profile.
-    
-    Requires valid JWT token in Authorization header.
     """
+    return UserResponse.model_validate(current_user)
+
+
+@router.patch(
+    "/me",
+    response_model=UserResponse,
+    summary="Update current user",
+    description="Update account information for the currently authenticated user."
+)
+async def update_me(
+    user_data: UserUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Update profile for the currently authenticated user.
+    """
+    if user_data.name:
+        current_user.name = user_data.name
+    if user_data.phone_number:
+        current_user.phone_number = user_data.phone_number
+    if user_data.address:
+        current_user.address = user_data.address
+        
+    db.commit()
+    db.refresh(current_user)
     return UserResponse.model_validate(current_user)

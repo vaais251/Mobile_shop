@@ -198,6 +198,57 @@ async def delete_phone(
     return None
 
 
+@router.get(
+    "/phones",
+    response_model=PhoneListResponse,
+    summary="Get all phone listings",
+    description="Get all phone listings including shop, community, sold, and pending."
+)
+async def get_all_phones(
+    page: int = Query(1, ge=1),
+    size: int = Query(20, ge=1, le=100),
+    admin: User = Depends(get_current_admin),
+    db: Session = Depends(get_db)
+):
+    """Get all inventory with pagination."""
+    # We can use the service or a direct query
+    query = db.query(PhoneInventory)
+    total = query.count()
+    phones = query.offset((page-1)*size).limit(size).all()
+    
+    return PhoneListResponse(
+        items=[phone_to_response(p) for p in phones],
+        total=total,
+        page=page,
+        size=size,
+        pages=math.ceil(total / size) if total > 0 else 0,
+    )
+
+
+@router.get(
+    "/stats",
+    summary="Get administration stats",
+)
+async def get_admin_stats(
+    admin: User = Depends(get_current_admin),
+    db: Session = Depends(get_db)
+):
+    """
+    Get backend stats for dashboard.
+    """
+    total_users = db.query(User).count()
+    pending_approvals = db.query(PhoneInventory).filter(PhoneInventory.admin_approved == False).count()
+    # Dummy total sales for now as orders might not have items yet or we need sum
+    from app.models.order import Order
+    total_sales = db.query(Order).count() # Simply using order count for 'Total Sales' stat placeholder
+    
+    return {
+        "total_users": total_users,
+        "pending_approvals": pending_approvals,
+        "total_orders": total_sales
+    }
+
+
 # ============== User Management ==============
 
 @router.get(

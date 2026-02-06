@@ -11,11 +11,14 @@ Protected Routes:
 - GET /phones/my-listings - Get user's own listings
 """
 
-from fastapi import APIRouter, Depends, HTTPException, status, Query
+from fastapi import APIRouter, Depends, HTTPException, status, Query, File, UploadFile, Form
 from sqlalchemy.orm import Session
-from typing import Optional
+from typing import Optional, List
 from decimal import Decimal
 import math
+import shutil
+import uuid
+import os
 
 from app.core.database import get_db
 from app.core.dependencies import get_current_user
@@ -74,11 +77,6 @@ async def get_shop_phones(
     
     These are the premium phones owned and sold directly by the shop.
     All filters are optional and can be combined.
-    
-    **Filtering Examples:**
-    - `?brand=Apple` - Only Apple phones
-    - `?min_condition=9` - Phones rated 9/10 or higher
-    - `?min_price=50000&max_price=150000` - Price range filter
     """
     phone_service = PhoneService(db)
     
@@ -121,9 +119,6 @@ async def get_community_phones(
 ):
     """
     Get community-listed phones (seller_id NOT NULL AND admin_approved = TRUE).
-    
-    These are phones listed by community sellers that have been
-    verified and approved by the admin.
     """
     phone_service = PhoneService(db)
     
@@ -161,11 +156,6 @@ async def get_my_listings(
 ):
     """
     Get phones listed by the currently authenticated user.
-    
-    Shows all user's listings including:
-    - Approved listings
-    - Pending approval
-    - Sold phones
     """
     phone_service = PhoneService(db)
     
@@ -196,8 +186,6 @@ async def get_phone(
 ):
     """
     Get detailed information about a specific phone.
-    
-    Returns 404 if phone not found or not available for viewing.
     """
     phone_service = PhoneService(db)
     phone = phone_service.get_by_id(phone_id)
@@ -208,9 +196,6 @@ async def get_phone(
             detail="Phone not found"
         )
     
-    # Only show active phones (or all for testing)
-    # In production, you might want to restrict this
-    
     return phone_to_response(phone)
 
 
@@ -219,30 +204,61 @@ async def get_phone(
     response_model=PhoneResponse,
     status_code=status.HTTP_201_CREATED,
     summary="List a phone for sale",
-    description="List your phone for sale in the community marketplace. Requires admin approval before it becomes visible."
+    description="List your phone for sale with image upload."
 )
 async def sell_phone(
-    phone_data: PhoneCreate,
+    brand: str = Form(...),
+    model: str = Form(...),
+    storage_gb: int = Form(...),
+    color: str = Form(...),
+    condition_grade: float = Form(...),
+    condition_category: PhoneCondition = Form(...),
+    price: Decimal = Form(...),
+    defects: Optional[str] = Form(None),
+    original_price: Optional[Decimal] = Form(None),
+    battery_health: Optional[int] = Form(None),
+    warranty_months: int = Form(0),
+    accessories_included: Optional[str] = Form(None),
+    image: UploadFile = File(...),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """
-    List a phone for sale in the community marketplace.
-    
-    **Important:**
-    - The phone will NOT be visible until approved by an admin
-    - `admin_approved` is automatically set to `False`
-    - You cannot approve your own phone
-    
-    After submission, wait for admin review. You can check status
-    at GET /phones/my-listings
+    List a phone for sale with image upload.
     """
-    phone_service = PhoneService(db)
+    # 1. Save Image
+    os.makedirs("static/images", exist_ok=True)
+    file_ext = os.path.splitext(image.filename)[1]
+    file_name = f"{uuid.uuid4()}{file_ext}"
+    file_path = f"static/images/{file_name}"
     
-    # Create user listing (admin_approved = False is HARDCODED)
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(image.file, buffer)
+    
+    image_url = f"/static/images/{file_name}"
+    
+    # 2. Create Phone Data
+    phone_data = PhoneCreate(
+        brand=brand,
+        model=model,
+        storage_gb=storage_gb,
+        color=color,
+        condition_grade=condition_grade,
+        condition_category=condition_category,
+        price=price,
+        defects=defects,
+        original_price=original_price,
+        battery_health=battery_health,
+        warranty_months=warranty_months,
+        accessories_included=accessories_included,
+        images=image_url # Save as string
+    )
+    
+    phone_service = PhoneService(db)
     phone = phone_service.create_user_phone(
         phone_data=phone_data,
         seller_id=current_user.id
     )
     
     return phone_to_response(phone)
+

@@ -7,6 +7,7 @@ A modern e-commerce platform for selling second-hand phones.
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from app.core.config import settings
 from app.core.database import init_db
@@ -88,6 +89,9 @@ async def health_check():
 # Include API routers
 from app.api.v1 import api_router
 app.include_router(api_router)
+
+# Mount static files
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
 if __name__ == "__main__":
