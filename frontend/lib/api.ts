@@ -6,6 +6,7 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 const API_VERSION = process.env.NEXT_PUBLIC_API_VERSION || 'v1';
 
+export const BACKEND_URL = API_URL;
 export const API_BASE_URL = `${API_URL}/api/${API_VERSION}`;
 
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
@@ -33,9 +34,12 @@ export async function apiRequest<T>(
   const { method = 'GET', body, headers = {}, token } = options;
 
   const requestHeaders: Record<string, string> = {
-    'Content-Type': 'application/json',
     ...headers,
   };
+
+  if (!(body instanceof FormData)) {
+    requestHeaders['Content-Type'] = 'application/json';
+  }
 
   if (token) {
     requestHeaders['Authorization'] = `Bearer ${token}`;
@@ -45,7 +49,7 @@ export async function apiRequest<T>(
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       method,
       headers: requestHeaders,
-      body: body ? JSON.stringify(body) : undefined,
+      body: body instanceof FormData ? body : (body ? JSON.stringify(body) : undefined),
     });
 
     const data = await response.json();

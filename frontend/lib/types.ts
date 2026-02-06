@@ -65,6 +65,13 @@ export interface PhoneInventory {
     created_at: string;
     updated_at: string;
 
+    // Relations
+    seller?: {
+        id: number;
+        name: string;
+        is_verified: boolean;
+    };
+
     // Computed properties
     is_shop_owned?: boolean;
     is_available?: boolean;

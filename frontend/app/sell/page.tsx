@@ -1,0 +1,505 @@
+'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { api } from '@/lib/api';
+import { PHONE_BRANDS, PHONE_CONDITIONS } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
+import {
+    PlusCircle,
+    Smartphone,
+    CheckCircle,
+    AlertCircle,
+    Loader2,
+    LogIn,
+} from 'lucide-react';
+import Link from 'next/link';
+
+export default function SellPage() {
+    const router = useRouter();
+    const { isAuthenticated, token } = useAuth();
+    const { t } = useLanguage();
+
+    const [loading, setLoading] = useState(false);
+    const [showSuccess, setShowSuccess] = useState(false);
+    const [error, setError] = useState('');
+
+    const [formData, setFormData] = useState({
+        brand: '',
+        model: '',
+        storage_gb: '',
+        color: '',
+        condition_grade: '',
+        condition_category: '',
+        defects: '',
+        price: '',
+        original_price: '',
+        battery_health: '',
+        warranty_months: '0',
+        accessories_included: '',
+    });
+    const [image, setImage] = useState<File | null>(null);
+
+    const handleChange = (field: string, value: string) => {
+        setFormData(prev => ({ ...prev, [field]: value }));
+        setError('');
+    };
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            setImage(e.target.files[0]);
+            setError('');
+        }
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        if (!isAuthenticated || !token) {
+            setError(t.login_required);
+            return;
+        }
+
+        // Validation
+        if (!formData.brand || !formData.model || !formData.storage_gb ||
+            !formData.color || !formData.condition_grade || !formData.condition_category ||
+            !formData.price || !image) {
+            setError('Please fill in all required fields and upload an image');
+            return;
+        }
+
+        setLoading(true);
+        setError('');
+
+        try {
+            const data = new FormData();
+            data.append('brand', formData.brand);
+            data.append('model', formData.model);
+            data.append('storage_gb', formData.storage_gb);
+            data.append('color', formData.color);
+            data.append('condition_grade', formData.condition_grade);
+            data.append('condition_category', formData.condition_category);
+            data.append('price', formData.price);
+
+            if (formData.defects) data.append('defects', formData.defects);
+            if (formData.original_price) data.append('original_price', formData.original_price);
+            if (formData.battery_health) data.append('battery_health', formData.battery_health);
+            data.append('warranty_months', formData.warranty_months);
+            if (formData.accessories_included) data.append('accessories_included', formData.accessories_included);
+
+            if (image) {
+                data.append('image', image);
+            }
+
+            const response = await api.post('/phones/sell', data, token);
+
+            if (response.error) {
+                setError(response.error);
+            } else {
+                setShowSuccess(true);
+            }
+        } catch (err) {
+            setError('An error occurred. Please try again.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Not authenticated view
+    if (!isAuthenticated) {
+        return (
+            <div className="min-h-screen bg-slate-950 py-16">
+                <div className="mx-auto max-w-md px-4">
+                    <Card className="bg-slate-900/50 border-slate-800">
+                        <CardContent className="p-8 text-center">
+                            <LogIn className="h-16 w-16 text-slate-600 mx-auto mb-4" />
+                            <h2 className="text-2xl font-bold text-white mb-2">
+                                {t.login_required}
+                            </h2>
+                            <p className="text-slate-400 mb-6">
+                                Please login to list your phone for sale.
+                            </p>
+                            <Link href="/login">
+                                <Button className="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700">
+                                    {t.nav_login}
+                                </Button>
+                            </Link>
+                        </CardContent>
+                    </Card>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="min-h-screen bg-slate-950 py-12">
+            <div className="mx-auto max-w-2xl px-4 sm:px-6">
+                {/* Header */}
+                <div className="text-center mb-8">
+                    <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500 to-indigo-600 shadow-lg shadow-violet-500/25 mb-4">
+                        <PlusCircle className="h-8 w-8 text-white" />
+                    </div>
+                    <h1 className="text-3xl font-bold text-white mb-2">
+                        {t.sell_form_title}
+                    </h1>
+                    <p className="text-slate-400">
+                        {t.sell_form_subtitle}
+                    </p>
+                </div>
+
+                {/* Form */}
+                <Card className="bg-slate-900/50 border-slate-800">
+                    <CardContent className="p-6 sm:p-8">
+                        <form onSubmit={handleSubmit} className="space-y-6">
+                            {/* Brand & Model Row */}
+                            <div className="grid sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-300 mb-2">
+                                        {t.brand} *
+                                    </label>
+                                    <Select
+                                        value={formData.brand}
+                                        onValueChange={(value) => handleChange('brand', value)}
+                                    >
+                                        <SelectTrigger className="bg-slate-800 border-slate-700 text-white">
+                                            <SelectValue placeholder={t.select_brand} />
+                                        </SelectTrigger>
+                                        <SelectContent className="bg-slate-900 border-slate-700">
+                                            {PHONE_BRANDS.map((brand) => (
+                                                <SelectItem key={brand} value={brand}>
+                                                    {brand}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-300 mb-2">
+                                        {t.model} *
+                                    </label>
+                                    <Input
+                                        value={formData.model}
+                                        onChange={(e) => handleChange('model', e.target.value)}
+                                        placeholder={t.enter_model}
+                                        className="bg-slate-800 border-slate-700 text-white"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Storage & Color Row */}
+                            <div className="grid sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-300 mb-2">
+                                        {t.storage} (GB) *
+                                    </label>
+                                    <Select
+                                        value={formData.storage_gb}
+                                        onValueChange={(value) => handleChange('storage_gb', value)}
+                                    >
+                                        <SelectTrigger className="bg-slate-800 border-slate-700 text-white">
+                                            <SelectValue placeholder="Select storage" />
+                                        </SelectTrigger>
+                                        <SelectContent className="bg-slate-900 border-slate-700">
+                                            <SelectItem value="64">64 GB</SelectItem>
+                                            <SelectItem value="128">128 GB</SelectItem>
+                                            <SelectItem value="256">256 GB</SelectItem>
+                                            <SelectItem value="512">512 GB</SelectItem>
+                                            <SelectItem value="1024">1 TB</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-300 mb-2">
+                                        {t.color} *
+                                    </label>
+                                    <Input
+                                        value={formData.color}
+                                        onChange={(e) => handleChange('color', e.target.value)}
+                                        placeholder="e.g., Space Black"
+                                        className="bg-slate-800 border-slate-700 text-white"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Condition Row */}
+                            <div className="grid sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-300 mb-2">
+                                        {t.condition} Grade (1-10) *
+                                    </label>
+                                    <Input
+                                        type="number"
+                                        min="1"
+                                        max="10"
+                                        step="0.5"
+                                        value={formData.condition_grade}
+                                        onChange={(e) => handleChange('condition_grade', e.target.value)}
+                                        placeholder={t.condition_placeholder}
+                                        className="bg-slate-800 border-slate-700 text-white"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-300 mb-2">
+                                        {t.condition} Category *
+                                    </label>
+                                    <Select
+                                        value={formData.condition_category}
+                                        onValueChange={(value) => handleChange('condition_category', value)}
+                                    >
+                                        <SelectTrigger className="bg-slate-800 border-slate-700 text-white">
+                                            <SelectValue placeholder={t.select_condition} />
+                                        </SelectTrigger>
+                                        <SelectContent className="bg-slate-900 border-slate-700">
+                                            {PHONE_CONDITIONS.map((condition) => (
+                                                <SelectItem key={condition.value} value={condition.value}>
+                                                    {condition.label}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            </div>
+
+                            {/* Price Row */}
+                            <div className="grid sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-300 mb-2">
+                                        {t.price} (PKR) *
+                                    </label>
+                                    <Input
+                                        type="number"
+                                        min="0"
+                                        value={formData.price}
+                                        onChange={(e) => handleChange('price', e.target.value)}
+                                        placeholder={t.enter_price}
+                                        className="bg-slate-800 border-slate-700 text-white"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-300 mb-2">
+                                        Original Price (PKR)
+                                    </label>
+                                    <Input
+                                        type="number"
+                                        min="0"
+                                        value={formData.original_price}
+                                        onChange={(e) => handleChange('original_price', e.target.value)}
+                                        placeholder="Optional"
+                                        className="bg-slate-800 border-slate-700 text-white"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Battery & Warranty Row */}
+                            <div className="grid sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-300 mb-2">
+                                        {t.battery_health} (%)
+                                    </label>
+                                    <Input
+                                        type="number"
+                                        min="0"
+                                        max="100"
+                                        value={formData.battery_health}
+                                        onChange={(e) => handleChange('battery_health', e.target.value)}
+                                        placeholder="e.g., 92"
+                                        className="bg-slate-800 border-slate-700 text-white"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-300 mb-2">
+                                        {t.warranty} ({t.months})
+                                    </label>
+                                    <Input
+                                        type="number"
+                                        min="0"
+                                        max="24"
+                                        value={formData.warranty_months}
+                                        onChange={(e) => handleChange('warranty_months', e.target.value)}
+                                        placeholder="0"
+                                        className="bg-slate-800 border-slate-700 text-white"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Image Upload */}
+                            <div className="space-y-2">
+                                <label className="block text-sm font-medium text-slate-300">
+                                    Phone Image *
+                                </label>
+                                <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-700 border-dashed rounded-lg hover:border-violet-500 transition-colors bg-slate-800/50">
+                                    <div className="space-y-1 text-center">
+                                        {image ? (
+                                            <div className="flex flex-col items-center">
+                                                <CheckCircle className="h-10 w-10 text-emerald-400 mb-2" />
+                                                <p className="text-sm text-slate-300">{image.name}</p>
+                                                <Button
+                                                    type="button"
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    className="mt-2 text-slate-400 hover:text-red-400"
+                                                    onClick={() => setImage(null)}
+                                                >
+                                                    Change Image
+                                                </Button>
+                                            </div>
+                                        ) : (
+                                            <>
+                                                <Smartphone className="mx-auto h-12 w-12 text-slate-500" />
+                                                <div className="flex text-sm text-slate-400">
+                                                    <label htmlFor="file-upload" className="relative cursor-pointer bg-transparent rounded-md font-medium text-violet-400 hover:text-violet-300 focus-within:outline-none">
+                                                        <span>Upload a file</span>
+                                                        <input
+                                                            id="file-upload"
+                                                            name="file-upload"
+                                                            type="file"
+                                                            className="sr-only"
+                                                            accept="image/*"
+                                                            onChange={handleFileChange}
+                                                        />
+                                                    </label>
+                                                    <p className="pl-1 text-slate-500">or drag and drop</p>
+                                                </div>
+                                                <p className="text-xs text-slate-500">
+                                                    PNG, JPG, GIF up to 10MB
+                                                </p>
+                                            </>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Defects */}
+                            <div>
+                                <label className="block text-sm font-medium text-slate-300 mb-2">
+                                    {t.defects}
+                                </label>
+                                <textarea
+                                    value={formData.defects}
+                                    onChange={(e) => handleChange('defects', e.target.value)}
+                                    placeholder={t.enter_defects}
+                                    rows={3}
+                                    className="w-full px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500"
+                                />
+                            </div>
+
+                            {/* Accessories */}
+                            <div>
+                                <label className="block text-sm font-medium text-slate-300 mb-2">
+                                    {t.accessories}
+                                </label>
+                                <Input
+                                    value={formData.accessories_included}
+                                    onChange={(e) => handleChange('accessories_included', e.target.value)}
+                                    placeholder="e.g., Original box, charger, cable"
+                                    className="bg-slate-800 border-slate-700 text-white"
+                                />
+                            </div>
+
+                            {/* Error */}
+                            {error && (
+                                <div className="flex items-center gap-2 p-4 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400">
+                                    <AlertCircle className="h-5 w-5" />
+                                    {error}
+                                </div>
+                            )}
+
+                            {/* Submit */}
+                            <Button
+                                type="submit"
+                                size="lg"
+                                disabled={loading}
+                                className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 shadow-lg shadow-violet-500/25"
+                            >
+                                {loading ? (
+                                    <>
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        Submitting...
+                                    </>
+                                ) : (
+                                    <>
+                                        <PlusCircle className="mr-2 h-4 w-4" />
+                                        {t.submit_listing}
+                                    </>
+                                )}
+                            </Button>
+
+                            {/* Notice */}
+                            <p className="text-center text-sm text-slate-500">
+                                ⚠️ Your listing will be reviewed by our admin team before it goes live.
+                            </p>
+                        </form>
+                    </CardContent>
+                </Card>
+            </div>
+
+            {/* Success Dialog */}
+            <Dialog open={showSuccess} onOpenChange={setShowSuccess}>
+                <DialogContent className="bg-slate-900 border-slate-800">
+                    <DialogHeader>
+                        <div className="flex justify-center mb-4">
+                            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/20">
+                                <CheckCircle className="h-8 w-8 text-emerald-400" />
+                            </div>
+                        </div>
+                        <DialogTitle className="text-center text-xl text-white">
+                            {t.listing_success}
+                        </DialogTitle>
+                        <DialogDescription className="text-center text-slate-400">
+                            {t.listing_pending}
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="flex justify-center gap-4 mt-4">
+                        <Button
+                            variant="outline"
+                            onClick={() => {
+                                setShowSuccess(false);
+                                setFormData({
+                                    brand: '',
+                                    model: '',
+                                    storage_gb: '',
+                                    color: '',
+                                    condition_grade: '',
+                                    condition_category: '',
+                                    defects: '',
+                                    price: '',
+                                    original_price: '',
+                                    battery_health: '',
+                                    warranty_months: '0',
+                                    accessories_included: '',
+                                });
+                            }}
+                            className="border-slate-700"
+                        >
+                            List Another
+                        </Button>
+                        <Button
+                            onClick={() => router.push('/my-listings')}
+                            className="bg-gradient-to-r from-violet-600 to-indigo-600"
+                        >
+                            View My Listings
+                        </Button>
+                    </div>
+                </DialogContent>
+            </Dialog>
+        </div>
+    );
+}
