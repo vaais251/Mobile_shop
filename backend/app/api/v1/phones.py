@@ -68,6 +68,8 @@ async def get_shop_phones(
     min_condition: Optional[float] = Query(None, ge=1, le=10, description="Minimum condition grade (e.g., 9 for '9/10' and above)"),
     storage_gb: Optional[int] = Query(None, description="Filter by storage (64, 128, 256, 512, 1024)"),
     condition_category: Optional[PhoneCondition] = Query(None, description="Filter by condition category"),
+    search: Optional[str] = Query(None, description="Search by model or brand (case-insensitive)"),
+    color: Optional[str] = Query(None, description="Filter by exact color"),
     page: int = Query(1, ge=1, description="Page number"),
     size: int = Query(20, ge=1, le=100, description="Items per page"),
     db: Session = Depends(get_db)
@@ -87,6 +89,8 @@ async def get_shop_phones(
         min_condition=min_condition,
         storage_gb=storage_gb,
         condition_category=condition_category,
+        search=search,
+        color=color,
         page=page,
         size=size,
     )
@@ -113,6 +117,8 @@ async def get_community_phones(
     min_condition: Optional[float] = Query(None, ge=1, le=10, description="Minimum condition grade"),
     storage_gb: Optional[int] = Query(None, description="Filter by storage"),
     condition_category: Optional[PhoneCondition] = Query(None, description="Filter by condition category"),
+    search: Optional[str] = Query(None, description="Search by model or brand (case-insensitive)"),
+    color: Optional[str] = Query(None, description="Filter by exact color"),
     page: int = Query(1, ge=1, description="Page number"),
     size: int = Query(20, ge=1, le=100, description="Items per page"),
     db: Session = Depends(get_db)
@@ -129,6 +135,8 @@ async def get_community_phones(
         min_condition=min_condition,
         storage_gb=storage_gb,
         condition_category=condition_category,
+        search=search,
+        color=color,
         page=page,
         size=size,
     )
@@ -204,7 +212,7 @@ async def get_phone(
     response_model=PhoneResponse,
     status_code=status.HTTP_201_CREATED,
     summary="List a phone for sale",
-    description="List your phone for sale with image upload."
+    description="List your phone for sale with multiple images upload."
 )
 async def sell_phone(
     brand: str = Form(...),
@@ -219,25 +227,41 @@ async def sell_phone(
     battery_health: Optional[int] = Form(None),
     warranty_months: int = Form(0),
     accessories_included: Optional[str] = Form(None),
-    image: UploadFile = File(...),
+    images: List[UploadFile] = File(..., description="Multiple phone images"),
+    thumbnail_index: int = Form(0, description="Index of the image to use as thumbnail (0-based)"),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """
-    List a phone for sale with image upload.
+    List a phone for sale with multiple images upload.
     """
-    # 1. Save Image
+    import json
+    
+    # 1. Save all images
     os.makedirs("static/images", exist_ok=True)
-    file_ext = os.path.splitext(image.filename)[1]
-    file_name = f"{uuid.uuid4()}{file_ext}"
-    file_path = f"static/images/{file_name}"
+    saved_image_paths = []
     
-    with open(file_path, "wb") as buffer:
-        shutil.copyfileobj(image.file, buffer)
+    for image in images:
+        file_ext = os.path.splitext(image.filename)[1]
+        file_name = f"{uuid.uuid4()}{file_ext}"
+        file_path = f"static/images/{file_name}"
+        
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(image.file, buffer)
+        
+        saved_image_paths.append(f"/static/images/{file_name}")
     
-    image_url = f"/static/images/{file_name}"
+    # 2. Set thumbnail from specified index
+    if 0 <= thumbnail_index < len(saved_image_paths):
+        thumbnail_path = saved_image_paths[thumbnail_index]
+    else:
+        # Default to first image if index is invalid
+        thumbnail_path = saved_image_paths[0] if saved_image_paths else None
     
-    # 2. Create Phone Data
+    # 3. Store images as JSON array
+    images_json = json.dumps(saved_image_paths)
+    
+    # 4. Create Phone Data
     phone_data = PhoneCreate(
         brand=brand,
         model=model,
@@ -251,7 +275,8 @@ async def sell_phone(
         battery_health=battery_health,
         warranty_months=warranty_months,
         accessories_included=accessories_included,
-        images=image_url # Save as string
+        images=images_json,
+        thumbnail=thumbnail_path
     )
     
     phone_service = PhoneService(db)

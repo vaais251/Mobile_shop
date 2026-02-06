@@ -30,6 +30,9 @@ import {
     AlertCircle,
     Loader2,
     LogIn,
+    Upload,
+    X,
+    Image as ImageIcon,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -56,18 +59,67 @@ export default function SellPage() {
         warranty_months: '0',
         accessories_included: '',
     });
-    const [image, setImage] = useState<File | null>(null);
+    const [images, setImages] = useState<File[]>([]);
+    const [imagePreviews, setImagePreviews] = useState<string[]>([]);
 
     const handleChange = (field: string, value: string) => {
         setFormData(prev => ({ ...prev, [field]: value }));
         setError('');
     };
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            setImage(e.target.files[0]);
+    const handleFilesSelect = (files: FileList | null) => {
+        if (!files) return;
+
+        const newFiles = Array.from(files);
+        const remainingSlots = 6 - images.length;
+        const filesToAdd = newFiles.slice(0, remainingSlots);
+
+        // Validate files
+        const validFiles: File[] = [];
+        for (const file of filesToAdd) {
+            if (file.size > 10 * 1024 * 1024) {
+                setError(`File ${file.name} is too large. Maximum size is 10MB.`);
+                continue;
+            }
+            if (!file.type.startsWith('image/')) {
+                setError(`File ${file.name} is not an image.`);
+                continue;
+            }
+            validFiles.push(file);
+        }
+
+        if (validFiles.length > 0) {
+            const newImages = [...images, ...validFiles];
+            setImages(newImages);
+
+            // Create previews
+            validFiles.forEach(file => {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    setImagePreviews(prev => [...prev, reader.result as string]);
+                };
+                reader.readAsDataURL(file);
+            });
             setError('');
         }
+    };
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        handleFilesSelect(e.target.files);
+    };
+
+    const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        handleFilesSelect(e.dataTransfer.files);
+    };
+
+    const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+    };
+
+    const removeImage = (index: number) => {
+        setImages(prev => prev.filter((_, i) => i !== index));
+        setImagePreviews(prev => prev.filter((_, i) => i !== index));
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -81,8 +133,8 @@ export default function SellPage() {
         // Validation
         if (!formData.brand || !formData.model || !formData.storage_gb ||
             !formData.color || !formData.condition_grade || !formData.condition_category ||
-            !formData.price || !image) {
-            setError('Please fill in all required fields and upload an image.');
+            !formData.price || images.length === 0) {
+            setError('Please fill in all required fields and upload at least one image.');
             return;
         }
 
@@ -104,9 +156,14 @@ export default function SellPage() {
             data.append('warranty_months', formData.warranty_months);
             if (formData.accessories_included) data.append('accessories_included', formData.accessories_included);
 
-            if (image) {
-                data.append('image', image);
-            }
+            // Append all images (first one is the thumbnail)
+            images.forEach((img, index) => {
+                if (index === 0) {
+                    data.append('image', img); // Main thumbnail
+                } else {
+                    data.append('additional_images', img); // Additional images
+                }
+            });
 
             const response = await api.post('/phones/sell', data, token);
 
@@ -339,50 +396,136 @@ export default function SellPage() {
                                 </div>
                             </div>
 
-                            {/* Image Upload */}
-                            <div className="space-y-2">
-                                <label className="block text-sm font-medium text-foreground">
-                                    Phone Image *
-                                </label>
-                                <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-border border-dashed rounded-xl hover:border-primary/50 transition-colors bg-muted/30">
-                                    <div className="space-y-1 text-center">
-                                        {image ? (
-                                            <div className="flex flex-col items-center">
-                                                <CheckCircle className="h-10 w-10 text-emerald-500 mb-2" />
-                                                <p className="text-sm text-foreground">{image.name}</p>
-                                                <Button
-                                                    type="button"
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    className="mt-2 text-muted-foreground hover:text-destructive"
-                                                    onClick={() => setImage(null)}
-                                                >
-                                                    Change Image
-                                                </Button>
-                                            </div>
-                                        ) : (
-                                            <>
-                                                <Smartphone className="mx-auto h-12 w-12 text-muted-foreground" />
-                                                <div className="flex text-sm text-muted-foreground">
-                                                    <label htmlFor="file-upload" className="relative cursor-pointer bg-transparent rounded-md font-medium text-primary hover:text-primary/80 focus-within:outline-none">
-                                                        <span>Upload a file</span>
-                                                        <input
-                                                            id="file-upload"
-                                                            name="file-upload"
-                                                            type="file"
-                                                            className="sr-only"
-                                                            accept="image/*"
-                                                            onChange={handleFileChange}
-                                                        />
-                                                    </label>
-                                                    <p className="pl-1">or drag and drop</p>
+                            {/* Image Upload Section */}
+                            <div className="space-y-6">
+                                {/* Thumbnail Image (Required) */}
+                                <div>
+                                    <label className="block text-sm font-bold text-foreground mb-2">
+                                        Thumbnail Image * <span className="text-xs font-normal text-muted-foreground">(Main photo)</span>
+                                    </label>
+                                    <p className="text-xs text-muted-foreground mb-3">
+                                        This will be the main image shown in listings
+                                    </p>
+
+                                    {images.length === 0 ? (
+                                        <label
+                                            htmlFor="thumbnail-upload"
+                                            onDrop={handleDrop}
+                                            onDragOver={handleDragOver}
+                                            className="block border-2 border-dashed border-border hover:border-violet-500 rounded-xl p-8 transition-all cursor-pointer bg-muted/30 hover:bg-muted/50"
+                                        >
+                                            <div className="flex flex-col items-center text-center">
+                                                <div className="h-16 w-16 rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center mb-4 hover:scale-105 transition-transform">
+                                                    <Upload className="h-8 w-8 text-white" />
                                                 </div>
-                                                <p className="text-xs text-muted-foreground">
+                                                <span className="text-violet-600 dark:text-violet-400 font-semibold hover:underline">
+                                                    Click to upload thumbnail
+                                                </span>
+                                                <span className="text-muted-foreground text-sm mt-1">or drag and drop</span>
+                                                <p className="text-xs text-muted-foreground mt-2">
                                                     PNG, JPG, GIF up to 10MB
                                                 </p>
-                                            </>
+                                            </div>
+                                            <input
+                                                id="thumbnail-upload"
+                                                type="file"
+                                                accept="image/*"
+                                                onChange={handleFileChange}
+                                                className="sr-only"
+                                            />
+                                        </label>
+                                    ) : (
+                                        <div className="relative group rounded-xl overflow-hidden border-2 border-violet-500 aspect-square max-w-xs">
+                                            <img
+                                                src={imagePreviews[0]}
+                                                alt="Thumbnail preview"
+                                                className="w-full h-full object-cover"
+                                            />
+                                            <div className="absolute top-2 left-2 bg-gradient-to-r from-violet-600 to-indigo-600 text-white text-xs font-semibold px-3 py-1.5 rounded-md shadow-lg">
+                                                Thumbnail
+                                            </div>
+                                            <button
+                                                type="button"
+                                                onClick={() => removeImage(0)}
+                                                className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-2 opacity-0 group-hover:opacity-100 transition-all shadow-lg"
+                                            >
+                                                <X className="h-4 w-4" />
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Additional Product Images (Optional) */}
+                                <div>
+                                    <label className="block text-sm font-bold text-foreground mb-2">
+                                        Additional Product Images <span className="text-xs font-normal text-muted-foreground">(Optional - up to 5 more)</span>
+                                    </label>
+                                    <p className="text-xs text-muted-foreground mb-3">
+                                        Add more photos to show different angles and details
+                                    </p>
+
+                                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                                        {/* Show existing additional images */}
+                                        {images.slice(1).map((_, index) => {
+                                            const actualIndex = index + 1;
+                                            return (
+                                                <div
+                                                    key={actualIndex}
+                                                    className="relative group rounded-xl overflow-hidden border-2 border-border hover:border-violet-500 transition-all aspect-square"
+                                                >
+                                                    <img
+                                                        src={imagePreviews[actualIndex]}
+                                                        alt={`Product image ${index + 1}`}
+                                                        className="w-full h-full object-cover"
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => removeImage(actualIndex)}
+                                                        className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-all shadow-lg"
+                                                    >
+                                                        <X className="h-4 w-4" />
+                                                    </button>
+                                                    <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-xs py-1 px-2 text-center">
+                                                        Image {index + 1}
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+
+                                        {/* Add More Button - Show when thumbnail exists and less than 6 total images */}
+                                        {images.length > 0 && images.length < 6 && (
+                                            <label
+                                                htmlFor="additional-images-upload"
+                                                className="relative rounded-xl border-2 border-dashed border-border hover:border-violet-500 transition-all cursor-pointer aspect-square flex flex-col items-center justify-center bg-muted/30 hover:bg-muted/50 group"
+                                            >
+                                                <div className="flex flex-col items-center">
+                                                    <div className="h-12 w-12 rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                                                        <PlusCircle className="h-6 w-6 text-white" />
+                                                    </div>
+                                                    <span className="text-xs font-semibold text-violet-600 dark:text-violet-400">
+                                                        Add Photo
+                                                    </span>
+                                                    <span className="text-[10px] text-muted-foreground mt-1">
+                                                        {6 - images.length} left
+                                                    </span>
+                                                </div>
+                                                <input
+                                                    id="additional-images-upload"
+                                                    type="file"
+                                                    multiple
+                                                    accept="image/*"
+                                                    onChange={handleFileChange}
+                                                    className="sr-only"
+                                                />
+                                            </label>
                                         )}
                                     </div>
+
+                                    {images.length === 0 && (
+                                        <p className="text-xs text-muted-foreground mt-2 text-center italic">
+                                            Upload thumbnail first to add additional images
+                                        </p>
+                                    )}
                                 </div>
                             </div>
 
@@ -426,16 +569,16 @@ export default function SellPage() {
                                 type="submit"
                                 size="lg"
                                 disabled={loading}
-                                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/25"
+                                className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white shadow-xl shadow-violet-500/30 font-bold h-14 text-lg cursor-pointer"
                             >
                                 {loading ? (
                                     <>
-                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                                         Submitting...
                                     </>
                                 ) : (
                                     <>
-                                        <PlusCircle className="mr-2 h-4 w-4" />
+                                        <PlusCircle className="mr-2 h-5 w-5" />
                                         {t.submit_listing}
                                     </>
                                 )}

@@ -27,6 +27,8 @@ export default function HomePage() {
     minPrice: '',
     maxPrice: '',
     minCondition: '',
+    search: '',
+    color: '',
   });
 
   const fetchPhones = async () => {
@@ -34,6 +36,12 @@ export default function HomePage() {
     try {
       let url = '/phones/shop?';
 
+      if (filters.search) {
+        url += `search=${encodeURIComponent(filters.search)}&`;
+      }
+      if (filters.color && filters.color !== 'all') {
+        url += `color=${encodeURIComponent(filters.color)}&`;
+      }
       if (filters.brand && filters.brand !== 'all') {
         url += `brand=${filters.brand}&`;
       }
@@ -58,11 +66,17 @@ export default function HomePage() {
     }
   };
 
+  // Reactive filtering with debouncing
   useEffect(() => {
-    fetchPhones();
-  }, []);
+    const debounceTimer = setTimeout(() => {
+      fetchPhones();
+    }, 400); // 400ms debounce for smooth UX
+
+    return () => clearTimeout(debounceTimer);
+  }, [filters]); // Re-run whenever filters change
 
   const handleApplyFilters = () => {
+    // Still available but not required - instant effect from useEffect
     fetchPhones();
   };
 
@@ -72,8 +86,10 @@ export default function HomePage() {
       minPrice: '',
       maxPrice: '',
       minCondition: '',
+      search: '',
+      color: '',
     });
-    setTimeout(fetchPhones, 0);
+    // useEffect will handle the refetch automatically
   };
 
   return (
@@ -113,7 +129,7 @@ export default function HomePage() {
                 <Link href="#inventory">
                   <Button
                     size="lg"
-                    className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all duration-300 text-base px-8"
+                    className="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white shadow-xl shadow-violet-500/30 font-semibold text-base px-10 h-12 cursor-pointer"
                   >
                     {t.hero_cta}
                     <ChevronRight className="ml-2 h-5 w-5" />
@@ -123,7 +139,7 @@ export default function HomePage() {
                   <Button
                     size="lg"
                     variant="outline"
-                    className="border-border hover:bg-accent hover:text-accent-foreground text-base px-8"
+                    className="border-2 border-violet-600 hover:bg-violet-600 hover:text-white text-violet-600 dark:text-violet-400 dark:border-violet-500 dark:hover:bg-violet-600 dark:hover:text-white text-base px-8 h-12 font-semibold cursor-pointer transition-all"
                   >
                     {t.sell_your_phone}
                   </Button>

@@ -31,7 +31,7 @@ export default function CartPage() {
                 <h1 className="text-3xl font-bold mb-4">Your cart is empty</h1>
                 <p className="text-muted-foreground mb-8">Looks like you haven't added any phones to your cart yet.</p>
                 <Link href="/">
-                    <Button size="lg" className="bg-primary hover:bg-primary/90">
+                    <Button size="lg" className="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white shadow-xl shadow-violet-500/30 font-semibold h-12 px-8 cursor-pointer">
                         <ArrowLeft className="mr-2 h-5 w-5" />
                         Back to Shop
                     </Button>
@@ -113,8 +113,8 @@ export default function CartPage() {
                             </div>
 
                             <Link href="/checkout" className="block w-full">
-                                <Button className="w-full bg-primary hover:bg-primary/90 py-6 text-lg font-bold shadow-lg shadow-primary/20">
-                                    Checkout
+                                <Button className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white shadow-xl shadow-violet-500/30 font-bold h-14 text-lg cursor-pointer">
+                                    Proceed to Checkout
                                     <ArrowRight className="ml-2 h-5 w-5" />
                                 </Button>
                             </Link>

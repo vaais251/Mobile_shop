@@ -109,7 +109,7 @@ export default function CheckoutPage() {
                 <p className="text-muted-foreground mb-4">Your order number is <span className="text-primary font-bold">#{orderSuccess}</span></p>
                 <p className="text-muted-foreground mb-8">We will verify your details and contact you soon.</p>
                 <Link href="/">
-                    <Button size="lg" className="bg-primary hover:bg-primary/90">
+                    <Button size="lg" className="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white shadow-xl shadow-violet-500/30 font-semibold h-12 px-8 cursor-pointer">
                         Continue Shopping
                     </Button>
                 </Link>
@@ -166,34 +166,43 @@ export default function CheckoutPage() {
                             </CardHeader>
                             <CardContent>
                                 <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod} className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    <div>
+                                    <div className="relative">
                                         <RadioGroupItem value="cod" id="cod" className="peer sr-only" />
                                         <Label
                                             htmlFor="cod"
-                                            className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer transition-all"
+                                            className="flex flex-col items-center justify-between rounded-xl border-2 border-muted bg-popover p-6 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-violet-600 peer-data-[state=checked]:bg-gradient-to-br peer-data-[state=checked]:from-violet-600/10 peer-data-[state=checked]:to-indigo-600/5 cursor-pointer transition-all relative"
                                         >
-                                            <Truck className="mb-3 h-6 w-6" />
-                                            <span className="text-sm font-medium">Cash on Delivery</span>
+                                            <div className="absolute top-2 right-2 h-5 w-5 rounded-full border-2 border-muted peer-data-[state=checked]:border-violet-600 peer-data-[state=checked]:bg-violet-600 flex items-center justify-center opacity-0 peer-data-[state=checked]:opacity-100 transition-all">
+                                                <CheckCircle className="h-3 w-3 text-white" />
+                                            </div>
+                                            <Truck className="mb-3 h-8 w-8 text-muted-foreground peer-data-[state=checked]:text-violet-600" />
+                                            <span className="text-sm font-semibold">Cash on Delivery</span>
                                         </Label>
                                     </div>
-                                    <div>
+                                    <div className="relative">
                                         <RadioGroupItem value="easypaisa" id="easypaisa" className="peer sr-only" />
                                         <Label
                                             htmlFor="easypaisa"
-                                            className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer transition-all"
+                                            className="flex flex-col items-center justify-between rounded-xl border-2 border-muted bg-popover p-6 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-violet-600 peer-data-[state=checked]:bg-gradient-to-br peer-data-[state=checked]:from-violet-600/10 peer-data-[state=checked]:to-indigo-600/5 cursor-pointer transition-all relative"
                                         >
-                                            <Wallet className="mb-3 h-6 w-6" />
-                                            <span className="text-sm font-medium">Easypaisa / JazzCash</span>
+                                            <div className="absolute top-2 right-2 h-5 w-5 rounded-full border-2 border-muted peer-data-[state=checked]:border-violet-600 peer-data-[state=checked]:bg-violet-600 flex items-center justify-center opacity-0 peer-data-[state=checked]:opacity-100 transition-all">
+                                                <CheckCircle className="h-3 w-3 text-white" />
+                                            </div>
+                                            <Wallet className="mb-3 h-8 w-8 text-muted-foreground peer-data-[state=checked]:text-violet-600" />
+                                            <span className="text-sm font-semibold">Easypaisa / JazzCash</span>
                                         </Label>
                                     </div>
-                                    <div>
+                                    <div className="relative">
                                         <RadioGroupItem value="credit_card" id="credit_card" className="peer sr-only" />
                                         <Label
                                             htmlFor="credit_card"
-                                            className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer transition-all"
+                                            className="flex flex-col items-center justify-between rounded-xl border-2 border-muted bg-popover p-6 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-violet-600 peer-data-[state=checked]:bg-gradient-to-br peer-data-[state=checked]:from-violet-600/10 peer-data-[state=checked]:to-indigo-600/5 cursor-pointer transition-all relative"
                                         >
-                                            <CreditCard className="mb-3 h-6 w-6" />
-                                            <span className="text-sm font-medium">Credit / Debit Card</span>
+                                            <div className="absolute top-2 right-2 h-5 w-5 rounded-full border-2 border-muted peer-data-[state=checked]:border-violet-600 peer-data-[state=checked]:bg-violet-600 flex items-center justify-center opacity-0 peer-data-[state=checked]:opacity-100 transition-all">
+                                                <CheckCircle className="h-3 w-3 text-white" />
+                                            </div>
+                                            <CreditCard className="mb-3 h-8 w-8 text-muted-foreground peer-data-[state=checked]:text-violet-600" />
+                                            <span className="text-sm font-semibold">Credit / Debit Card</span>
                                         </Label>
                                     </div>
                                 </RadioGroup>
@@ -290,7 +299,7 @@ export default function CheckoutPage() {
                                 form="checkout-form"
                                 type="submit"
                                 disabled={loading}
-                                className="w-full bg-primary hover:bg-primary/90 py-6 text-lg font-bold shadow-lg shadow-primary/20"
+                                className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white shadow-xl shadow-violet-500/30 font-bold h-14 text-lg cursor-pointer"
                             >
                                 {loading ? (
                                     <Loader2 className="h-5 w-5 animate-spin mr-2" />

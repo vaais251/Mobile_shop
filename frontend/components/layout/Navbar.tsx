@@ -14,7 +14,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import {
     Smartphone,
     Menu,
@@ -25,9 +25,9 @@ import {
     Users,
     PlusCircle,
     LayoutDashboard,
-    Package,
     ShoppingCart,
     MessageCircle,
+    X,
 } from 'lucide-react';
 
 export function Navbar() {
@@ -43,156 +43,255 @@ export function Navbar() {
     ];
 
     return (
-        <nav className="sticky top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur-xl">
+        <nav className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/95 backdrop-blur-xl supports-[backdrop-filter]:bg-background/90 shadow-sm">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                <div className="flex h-16 items-center justify-between">
-                    {/* Logo */}
-                    <Link href="/" className="flex items-center gap-2 group">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-indigo-600 shadow-lg shadow-violet-500/25 group-hover:shadow-violet-500/40 transition-shadow">
-                            <Smartphone className="h-5 w-5 text-white" />
+                <div className="flex h-20 items-center justify-between gap-6">
+                    {/* Logo - Enhanced */}
+                    <Link href="/" className="flex items-center gap-3 group shrink-0">
+                        <div className="relative flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-600 via-indigo-600 to-violet-700 shadow-xl shadow-violet-500/30 group-hover:shadow-violet-500/50 transition-all duration-300 group-hover:scale-105">
+                            <div className="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent rounded-2xl" />
+                            <Smartphone className="h-6 w-6 text-white relative z-10" />
                         </div>
-                        <span className="text-xl font-bold bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
-                            PhoneShop
-                        </span>
+                        <div className="flex flex-col">
+                            <span className="text-xl font-bold bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">
+                                PhoneShop
+                            </span>
+                            <span className="text-[10px] text-muted-foreground font-medium tracking-wider uppercase hidden sm:block">
+                                Premium Marketplace
+                            </span>
+                        </div>
                     </Link>
 
-                    {/* Desktop Navigation */}
-                    <div className="hidden md:flex md:items-center md:gap-1">
+                    {/* Desktop Navigation - Enhanced */}
+                    <div className="hidden md:flex md:items-center md:gap-2 flex-1 justify-center">
                         {navLinks.map((link) => (
                             <Link
                                 key={link.href}
                                 href={link.href}
-                                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-lg transition-all"
+                                className="group flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-muted-foreground hover:text-foreground hover:bg-accent/80 rounded-full transition-all duration-200 hover:scale-105"
                             >
-                                <link.icon className="h-4 w-4" />
-                                {link.label}
+                                <link.icon className="h-4 w-4 group-hover:scale-110 transition-transform" />
+                                <span>{link.label}</span>
                             </Link>
                         ))}
                         {isAdmin && (
                             <Link
                                 href="/admin/dashboard"
-                                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-amber-500 hover:text-amber-400 hover:bg-muted/50 rounded-lg transition-all"
+                                className="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold bg-gradient-to-r from-amber-500/10 to-orange-500/10 text-amber-600 dark:text-amber-400 hover:from-amber-500/20 hover:to-orange-500/20 rounded-full transition-all duration-200 border border-amber-500/20"
                             >
                                 <LayoutDashboard className="h-4 w-4" />
-                                Admin
+                                <span className="hidden lg:inline">Admin</span>
                             </Link>
                         )}
                     </div>
 
-                    {/* Right side: Language toggle + User */}
-                    <div className="flex items-center gap-3">
-                        {/* Language Toggle */}
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => setLanguage(language === 'en' ? 'ur' : 'en')}
-                            className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
-                        >
-                            <Globe className="h-4 w-4" />
-                            <span className="text-xs font-medium">
-                                {language === 'en' ? 'اردو' : 'EN'}
-                            </span>
-                        </Button>
-
-                        {/* Cart Link */}
+                    {/* Right Actions - Enhanced */}
+                    <div className="flex items-center gap-3 shrink-0">
+                        {/* Cart Link - Premium Badge */}
                         <Link href="/cart">
-                            <Button variant="ghost" size="icon" className="relative text-muted-foreground hover:text-foreground hover:bg-muted/50">
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="relative text-muted-foreground hover:text-foreground hover:bg-accent/80 h-11 w-11 rounded-xl transition-all hover:scale-105"
+                            >
                                 <ShoppingCart className="h-5 w-5" />
                                 {cartCount > 0 && (
-                                    <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
-                                        {cartCount}
+                                    <span className="absolute -top-1.5 -right-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 text-[11px] font-bold text-white shadow-lg shadow-violet-500/50 ring-2 ring-background">
+                                        {cartCount > 9 ? '9+' : cartCount}
                                     </span>
                                 )}
                             </Button>
                         </Link>
 
-                        {/* Theme Toggle */}
-                        <ModeToggle />
+                        {/* Desktop: Theme + Language + User - Enhanced */}
+                        <div className="hidden md:flex items-center gap-2">
+                            <ModeToggle />
 
-                        {/* User Menu / Login */}
-                        {isAuthenticated ? (
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <Button
-                                        variant="ghost"
-                                        className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
-                                    >
-                                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-violet-600 to-indigo-600">
-                                            <User className="h-4 w-4 text-white" />
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => setLanguage(language === 'en' ? 'ur' : 'en')}
+                                className="text-muted-foreground hover:text-foreground hover:bg-accent/80 h-10 px-4 rounded-xl font-medium"
+                            >
+                                <Globe className="h-4 w-4 mr-2" />
+                                <span className="text-sm">
+                                    {language === 'en' ? 'اردو' : 'EN'}
+                                </span>
+                            </Button>
+
+                            {isAuthenticated ? (
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button
+                                            variant="ghost"
+                                            className="flex items-center gap-2.5 text-foreground hover:bg-accent/80 h-11 px-4 rounded-xl font-medium"
+                                        >
+                                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 shadow-md">
+                                                <User className="h-4 w-4 text-white" />
+                                            </div>
+                                            <span className="hidden lg:inline text-sm font-semibold">
+                                                {user?.name?.split(' ')[0]}
+                                            </span>
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end" className="w-64 bg-popover border-border shadow-xl p-2">
+                                        <div className="px-3 py-3 border-b border-border mb-2">
+                                            <p className="text-sm font-bold text-foreground">{user?.name}</p>
+                                            <p className="text-xs text-muted-foreground truncate mt-0.5">{user?.email}</p>
                                         </div>
-                                        <span className="hidden sm:inline text-sm font-medium">
-                                            {user?.name?.split(' ')[0]}
-                                        </span>
-                                    </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end" className="w-48 bg-popover border-border">
-                                    <div className="px-3 py-2 border-b border-border">
-                                        <p className="text-sm font-medium text-foreground">{user?.name}</p>
-                                        <p className="text-xs text-muted-foreground">{user?.email}</p>
-                                    </div>
-                                    <DropdownMenuItem asChild>
-                                        <Link href="/profile" className="flex items-center gap-2 cursor-pointer">
-                                            <User className="h-4 w-4" />
-                                            Profile
-                                        </Link>
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem asChild>
-                                        <Link href="/messages" className="flex items-center gap-2 cursor-pointer">
-                                            <MessageCircle className="h-4 w-4" />
-                                            Messages
-                                        </Link>
-                                    </DropdownMenuItem>
-                                    <DropdownMenuSeparator className="bg-border" />
-                                    <DropdownMenuItem
-                                        onClick={logout}
-                                        className="flex items-center gap-2 text-red-400 focus:text-red-400 cursor-pointer"
+                                        <DropdownMenuItem asChild>
+                                            <Link href="/profile" className="flex items-center gap-3 cursor-pointer px-3 py-2.5 rounded-lg">
+                                                <User className="h-4 w-4" />
+                                                <span className="font-medium">Profile</span>
+                                            </Link>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem asChild>
+                                            <Link href="/messages" className="flex items-center gap-3 cursor-pointer px-3 py-2.5 rounded-lg">
+                                                <MessageCircle className="h-4 w-4" />
+                                                <span className="font-medium">Messages</span>
+                                            </Link>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuSeparator className="bg-border my-2" />
+                                        <DropdownMenuItem
+                                            onClick={logout}
+                                            className="flex items-center gap-3 text-destructive focus:text-destructive cursor-pointer px-3 py-2.5 rounded-lg font-medium"
+                                        >
+                                            <LogOut className="h-4 w-4" />
+                                            {t.nav_logout}
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            ) : (
+                                <Link href="/login">
+                                    <Button
+                                        size="default"
+                                        className="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white shadow-lg shadow-violet-500/30 h-11 px-6 rounded-xl font-semibold"
                                     >
-                                        <LogOut className="h-4 w-4" />
-                                        {t.nav_logout}
-                                    </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                        ) : (
-                            <Link href="/login">
-                                <Button
-                                    size="sm"
-                                    className="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white shadow-lg shadow-violet-500/25"
-                                >
-                                    {t.nav_login}
-                                </Button>
-                            </Link>
-                        )}
+                                        {t.nav_login}
+                                    </Button>
+                                </Link>
+                            )}
+                        </div>
 
-                        {/* Mobile Menu */}
+                        {/* Mobile Menu Button */}
                         <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-                            <SheetTrigger asChild className="md:hidden">
-                                <Button variant="ghost" size="sm" className="text-muted-foreground">
+                            <SheetTrigger asChild>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="md:hidden text-muted-foreground h-9 w-9"
+                                >
                                     <Menu className="h-5 w-5" />
+                                    <span className="sr-only">Open menu</span>
                                 </Button>
                             </SheetTrigger>
-                            <SheetContent side="right" className="w-72 bg-background border-border">
-                                <div className="flex flex-col gap-4 mt-8">
-                                    {navLinks.map((link) => (
-                                        <Link
-                                            key={link.href}
-                                            href={link.href}
-                                            onClick={() => setMobileMenuOpen(false)}
-                                            className="flex items-center gap-3 px-4 py-3 text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-lg transition-all"
-                                        >
-                                            <link.icon className="h-5 w-5" />
-                                            {link.label}
-                                        </Link>
-                                    ))}
-                                    {isAdmin && (
-                                        <Link
-                                            href="/admin/dashboard"
-                                            onClick={() => setMobileMenuOpen(false)}
-                                            className="flex items-center gap-3 px-4 py-3 text-amber-500 hover:bg-muted/50 rounded-lg transition-all"
-                                        >
-                                            <LayoutDashboard className="h-5 w-5" />
-                                            Admin Dashboard
-                                        </Link>
-                                    )}
+                            <SheetContent side="right" className="w-80 sm:w-96 bg-background/98 backdrop-blur-xl border-border p-0 z-[100]">
+                                <SheetHeader className="px-6 py-5 border-b border-border">
+                                    <SheetTitle className="text-left text-xl font-bold">Menu</SheetTitle>
+                                </SheetHeader>
+
+                                <div className="flex flex-col h-[calc(100%-80px)]">
+                                    {/* Navigation Links */}
+                                    <div className="flex-1 px-3 py-4 space-y-1">
+                                        {navLinks.map((link) => (
+                                            <Link
+                                                key={link.href}
+                                                href={link.href}
+                                                onClick={() => setMobileMenuOpen(false)}
+                                                className="flex items-center gap-3 px-4 py-3 text-base font-medium text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-all"
+                                            >
+                                                <link.icon className="h-5 w-5" />
+                                                {link.label}
+                                            </Link>
+                                        ))}
+                                        {isAdmin && (
+                                            <Link
+                                                href="/admin/dashboard"
+                                                onClick={() => setMobileMenuOpen(false)}
+                                                className="flex items-center gap-3 px-4 py-3 text-base font-medium text-amber-600 dark:text-amber-400 hover:bg-accent rounded-lg transition-all"
+                                            >
+                                                <LayoutDashboard className="h-5 w-5" />
+                                                Admin Dashboard
+                                            </Link>
+                                        )}
+
+                                        <div className="pt-4 mt-4 border-t border-border">
+                                            <p className="px-4 pb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                                                Settings
+                                            </p>
+
+                                            {/* Theme Toggle */}
+                                            <div className="flex items-center justify-between px-4 py-3 rounded-lg hover:bg-accent">
+                                                <span className="text-sm font-medium text-foreground">Theme</span>
+                                                <ModeToggle />
+                                            </div>
+
+                                            {/* Language Toggle */}
+                                            <button
+                                                onClick={() => setLanguage(language === 'en' ? 'ur' : 'en')}
+                                                className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-foreground hover:bg-accent rounded-lg transition-all"
+                                            >
+                                                <span className="flex items-center gap-2">
+                                                    <Globe className="h-4 w-4" />
+                                                    Language
+                                                </span>
+                                                <span className="text-xs font-semibold text-muted-foreground">
+                                                    {language === 'en' ? 'اردو' : 'EN'}
+                                                </span>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    {/* User Section */}
+                                    <div className="border-t border-border px-6 py-4 bg-muted/30">
+                                        {isAuthenticated ? (
+                                            <div className="space-y-3">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-violet-600 to-indigo-600">
+                                                        <User className="h-5 w-5 text-white" />
+                                                    </div>
+                                                    <div className="flex-1 min-w-0">
+                                                        <p className="text-sm font-semibold text-foreground truncate">{user?.name}</p>
+                                                        <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
+                                                    </div>
+                                                </div>
+                                                <div className="grid grid-cols-2 gap-2">
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        onClick={() => {
+                                                            setMobileMenuOpen(false);
+                                                            window.location.href = '/profile';
+                                                        }}
+                                                        className="w-full"
+                                                    >
+                                                        <User className="h-4 w-4 mr-1.5" />
+                                                        Profile
+                                                    </Button>
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        onClick={() => {
+                                                            logout();
+                                                            setMobileMenuOpen(false);
+                                                        }}
+                                                        className="w-full text-destructive hover:text-destructive"
+                                                    >
+                                                        <LogOut className="h-4 w-4 mr-1.5" />
+                                                        Logout
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
+                                                <Button
+                                                    className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white shadow-lg shadow-violet-500/25"
+                                                >
+                                                    {t.nav_login}
+                                                </Button>
+                                            </Link>
+                                        )}
+                                    </div>
                                 </div>
                             </SheetContent>
                         </Sheet>

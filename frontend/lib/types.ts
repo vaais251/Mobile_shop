@@ -57,7 +57,8 @@ export interface PhoneInventory {
     is_active: boolean;
     seller_id?: number;
     admin_approved: boolean;
-    images?: string;
+    images?: string; // JSON array of image paths
+    thumbnail?: string; // Main cover image path
     imei?: string;
     battery_health?: number;
     warranty_months: number;
@@ -89,7 +90,8 @@ export interface PhoneCreate {
     defects?: string;
     price: number;
     original_price?: number;
-    images?: string;
+    images?: string; // JSON array of image paths
+    thumbnail?: string; // Main cover image path
     battery_health?: number;
     warranty_months?: number;
     accessories_included?: string;
@@ -101,6 +103,8 @@ export interface PhoneFilter {
     max_price?: number;
     min_condition?: number;
     storage_gb?: number;
+    search?: string; // Search by model or brand
+    color?: string; // Filter by color
     is_sold?: boolean;
     is_featured?: boolean;
 }

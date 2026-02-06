@@ -6,6 +6,7 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import { CartProvider } from "@/contexts/CartContext";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Navbar } from "@/components/layout/Navbar";
+import { Footer } from "@/components/layout/Footer";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -27,7 +28,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning className={inter.variable}>
-      <body className="font-sans min-h-screen bg-background text-foreground antialiased">
+      <body className="font-sans min-h-screen bg-background text-foreground antialiased" suppressHydrationWarning>
         <AuthProvider>
           <LanguageProvider>
             <CartProvider>
@@ -41,6 +42,7 @@ export default function RootLayout({
                 <main className="min-h-[calc(100vh-4rem)]">
                   {children}
                 </main>
+                <Footer />
               </ThemeProvider>
             </CartProvider>
           </LanguageProvider>

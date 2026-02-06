@@ -177,8 +177,8 @@ async def create_shop_phone(
     "/phones/upload",
     response_model=PhoneResponse,
     status_code=status.HTTP_201_CREATED,
-    summary="Add phone with image upload",
-    description="Add a phone with image to the shop inventory. Accepts multipart form data."
+    summary="Add phone with images upload",
+    description="Add a phone with multiple images to the shop inventory. Accepts multipart form data."
 )
 async def create_shop_phone_with_image(
     brand: str = Form(...),
@@ -193,29 +193,47 @@ async def create_shop_phone_with_image(
     battery_health: Optional[int] = Form(None),
     warranty_months: int = Form(0),
     accessories_included: Optional[str] = Form(None),
-    image: UploadFile = File(...),
+    images: List[UploadFile] = File(..., description="Multiple phone images"),
+    thumbnail_index: int = Form(0, description="Index of the image to use as thumbnail (0-based)"),
     admin: User = Depends(get_current_admin),
     db: Session = Depends(get_db)
 ):
     """
-    Add a phone with image to shop inventory.
+    Add a phone with multiple images to shop inventory.
     
-    Accepts multipart form data with image upload.
+    Accepts multipart form data with multiple image upload.
+    - `images`: List of image files
+    - `thumbnail_index`: Index (0-based) of which image to use as cover
     - `seller_id` is automatically set to NULL (shop-owned)
     - `admin_approved` is automatically set to TRUE
     """
-    # 1. Save Image
+    import json
+    
+    # 1. Save all images
     os.makedirs("static/images", exist_ok=True)
-    file_ext = os.path.splitext(image.filename)[1]
-    file_name = f"{uuid.uuid4()}{file_ext}"
-    file_path = f"static/images/{file_name}"
+    saved_image_paths = []
     
-    with open(file_path, "wb") as buffer:
-        shutil.copyfileobj(image.file, buffer)
+    for image in images:
+        file_ext = os.path.splitext(image.filename)[1]
+        file_name = f"{uuid.uuid4()}{file_ext}"
+        file_path = f"static/images/{file_name}"
+        
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(image.file, buffer)
+        
+        saved_image_paths.append(f"/static/images/{file_name}")
     
-    image_url = f"/static/images/{file_name}"
+    # 2. Set thumbnail from specified index
+    if 0 <= thumbnail_index < len(saved_image_paths):
+        thumbnail_path = saved_image_paths[thumbnail_index]
+    else:
+        # Default to first image if index is invalid
+        thumbnail_path = saved_image_paths[0] if saved_image_paths else None
     
-    # 2. Create Phone Data
+    # 3. Store images as JSON array
+    images_json = json.dumps(saved_image_paths)
+    
+    # 4. Create Phone Data
     phone_data = PhoneCreate(
         brand=brand,
         model=model,
@@ -229,7 +247,8 @@ async def create_shop_phone_with_image(
         battery_health=battery_health,
         warranty_months=warranty_months,
         accessories_included=accessories_included,
-        images=image_url
+        images=images_json,
+        thumbnail=thumbnail_path
     )
     
     phone_service = PhoneService(db)

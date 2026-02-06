@@ -17,6 +17,8 @@ export default function CommunityPage() {
         minPrice: '',
         maxPrice: '',
         minCondition: '',
+        search: '',
+        color: '',
     });
 
     const fetchPhones = async () => {
@@ -24,6 +26,12 @@ export default function CommunityPage() {
         try {
             let url = '/phones/community?';
 
+            if (filters.search) {
+                url += `search=${encodeURIComponent(filters.search)}&`;
+            }
+            if (filters.color && filters.color !== 'all') {
+                url += `color=${encodeURIComponent(filters.color)}&`;
+            }
             if (filters.brand && filters.brand !== 'all') {
                 url += `brand=${filters.brand}&`;
             }
@@ -48,11 +56,17 @@ export default function CommunityPage() {
         }
     };
 
+    // Reactive filtering with debouncing
     useEffect(() => {
-        fetchPhones();
-    }, []);
+        const debounceTimer = setTimeout(() => {
+            fetchPhones();
+        }, 400); // 400ms debounce for smooth UX
+
+        return () => clearTimeout(debounceTimer);
+    }, [filters]); // Re-run whenever filters change
 
     const handleApplyFilters = () => {
+        // Still available but not required - instant effect from useEffect
         fetchPhones();
     };
 
@@ -62,8 +76,10 @@ export default function CommunityPage() {
             minPrice: '',
             maxPrice: '',
             minCondition: '',
+            search: '',
+            color: '',
         });
-        setTimeout(fetchPhones, 0);
+        // useEffect will handle the refetch automatically
     };
 
     return (

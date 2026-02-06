@@ -35,6 +35,8 @@ class PhoneService:
         min_condition: Optional[float] = None,
         storage_gb: Optional[int] = None,
         condition_category: Optional[PhoneCondition] = None,
+        search: Optional[str] = None,
+        color: Optional[str] = None,
         page: int = 1,
         size: int = 20,
     ) -> Tuple[List[PhoneInventory], int]:
@@ -57,7 +59,8 @@ class PhoneService:
         # Apply filters
         query = self._apply_filters(
             query, brand, min_price, max_price, 
-            min_condition, storage_gb, condition_category
+            min_condition, storage_gb, condition_category,
+            search, color
         )
         
         # Get total count
@@ -82,6 +85,8 @@ class PhoneService:
         min_condition: Optional[float] = None,
         storage_gb: Optional[int] = None,
         condition_category: Optional[PhoneCondition] = None,
+        search: Optional[str] = None,
+        color: Optional[str] = None,
         page: int = 1,
         size: int = 20,
     ) -> Tuple[List[PhoneInventory], int]:
@@ -106,7 +111,8 @@ class PhoneService:
         # Apply filters
         query = self._apply_filters(
             query, brand, min_price, max_price, 
-            min_condition, storage_gb, condition_category
+            min_condition, storage_gb, condition_category,
+            search, color
         )
         
         # Get total count
@@ -201,6 +207,7 @@ class PhoneService:
             price=phone_data.price,
             original_price=phone_data.original_price,
             images=phone_data.images,
+            thumbnail=phone_data.thumbnail,
             battery_health=phone_data.battery_health,
             warranty_months=phone_data.warranty_months,
             accessories_included=phone_data.accessories_included,
@@ -237,6 +244,7 @@ class PhoneService:
             price=phone_data.price,
             original_price=phone_data.original_price,
             images=phone_data.images,
+            thumbnail=phone_data.thumbnail,
             battery_health=phone_data.battery_health,
             warranty_months=phone_data.warranty_months,
             accessories_included=phone_data.accessories_included,
@@ -351,11 +359,25 @@ class PhoneService:
         min_condition: Optional[float],
         storage_gb: Optional[int],
         condition_category: Optional[PhoneCondition],
+        search: Optional[str] = None,
+        color: Optional[str] = None,
     ):
         """Apply common filters to phone query."""
         
+        # Search filter (model OR brand contains search term)
+        if search:
+            search_filter = or_(
+                PhoneInventory.model.ilike(f"%{search}%"),
+                PhoneInventory.brand.ilike(f"%{search}%")
+            )
+            query = query.filter(search_filter)
+        
         if brand:
             query = query.filter(PhoneInventory.brand.ilike(f"%{brand}%"))
+        
+        # Exact color match
+        if color:
+            query = query.filter(PhoneInventory.color.ilike(f"%{color}%"))
         
         if min_price is not None:
             query = query.filter(PhoneInventory.price >= min_price)

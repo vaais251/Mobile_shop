@@ -124,7 +124,12 @@ class PhoneInventory(Base):
     images = Column(
         Text,
         nullable=True,
-        comment="JSON array of image URLs"
+        comment="JSON array of multiple image file paths"
+    )
+    thumbnail = Column(
+        String(255),
+        nullable=True,
+        comment="Main cover image path (one of the images)"
     )
     imei = Column(
         String(20),
