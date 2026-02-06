@@ -1,0 +1,58 @@
+"""
+Database connection and session management using SQLAlchemy.
+"""
+
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker, Session
+from typing import Generator
+
+from app.core.config import settings
+
+
+# Create SQLAlchemy engine
+engine = create_engine(
+    settings.DATABASE_URL,
+    pool_pre_ping=True,  # Verify connections before using
+    pool_size=10,
+    max_overflow=20,
+    echo=settings.DEBUG,  # Log SQL queries in debug mode
+)
+
+# Create session factory
+SessionLocal = sessionmaker(
+    autocommit=False,
+    autoflush=False,
+    bind=engine,
+)
+
+# Create declarative base for models
+Base = declarative_base()
+
+
+def get_db() -> Generator[Session, None, None]:
+    """
+    Dependency that provides a database session.
+    Ensures session is properly closed after use.
+    
+    Usage in FastAPI:
+        @app.get("/items")
+        def get_items(db: Session = Depends(get_db)):
+            ...
+    """
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+def init_db() -> None:
+    """
+    Initialize database by creating all tables.
+    Should be called on application startup.
+    """
+    # Import all models to ensure they are registered with Base
+    from app.models import user, phone_inventory, order, chat  # noqa: F401
+    
+    Base.metadata.create_all(bind=engine)
