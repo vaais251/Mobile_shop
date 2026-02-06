@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { api } from '@/lib/api';
 import { PhoneInventory } from '@/lib/types';
@@ -28,6 +29,7 @@ import {
     Loader2,
     ShieldCheck,
     Ban,
+    PlusCircle,
 } from 'lucide-react';
 
 interface Stats {
@@ -122,8 +124,16 @@ export default function AdminDashboard() {
                     <h1 className="text-3xl font-bold tracking-tight">Admin Dashboard</h1>
                     <p className="text-muted-foreground">Manage inventory, approvals, and system stats.</p>
                 </div>
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/20">
-                    <ShieldCheck className="h-6 w-6 text-primary" />
+                <div className="flex items-center gap-3">
+                    <Link href="/admin/add-phone">
+                        <Button className="gap-2 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white">
+                            <PlusCircle className="h-4 w-4" />
+                            Add New Phone
+                        </Button>
+                    </Link>
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/20">
+                        <ShieldCheck className="h-6 w-6 text-primary" />
+                    </div>
                 </div>
             </div>
 

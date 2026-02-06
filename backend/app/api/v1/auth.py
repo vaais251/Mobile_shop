@@ -14,7 +14,7 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.core.security import create_access_token
 from app.core.dependencies import get_current_user
-from app.schemas.user import UserCreate, UserLogin, UserResponse, TokenResponse
+from app.schemas.user import UserCreate, UserLogin, UserResponse, TokenResponse, UserUpdate
 from app.services.user_service import UserService
 from app.models.user import User
 

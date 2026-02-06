@@ -9,7 +9,9 @@ import { Navbar } from "@/components/layout/Navbar";
 
 const inter = Inter({
   subsets: ["latin"],
+  display: "swap",
   variable: "--font-sans",
+  weight: ["300", "400", "500", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -24,16 +26,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.variable} font-sans min-h-screen bg-background`}>
+    <html lang="en" suppressHydrationWarning className={inter.variable}>
+      <body className="font-sans min-h-screen bg-background text-foreground antialiased">
         <AuthProvider>
           <LanguageProvider>
             <CartProvider>
               <ThemeProvider
                 attribute="class"
-                defaultTheme="dark"
+                defaultTheme="system"
                 enableSystem
-                disableTransitionOnChange
+                disableTransitionOnChange={false}
               >
                 <Navbar />
                 <main className="min-h-[calc(100vh-4rem)]">

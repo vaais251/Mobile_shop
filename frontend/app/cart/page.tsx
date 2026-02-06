@@ -61,10 +61,10 @@ export default function CartPage() {
                                     <h3 className="text-lg font-semibold">{phone.brand} {phone.model}</h3>
                                     <div className="flex flex-wrap justify-center sm:justify-start gap-2 mt-1">
                                         <span className="text-sm text-muted-foreground">{phone.storage_gb}GB</span>
-                                        <span className="text-slate-300">•</span>
+                                        <span className="text-muted-foreground">•</span>
                                         <span className="text-sm text-muted-foreground">{phone.color}</span>
-                                        <span className="text-slate-300">•</span>
-                                        <span className="text-sm text-emerald-500 font-medium">{phone.condition_grade}/10</span>
+                                        <span className="text-muted-foreground">•</span>
+                                        <span className="text-sm text-emerald-600 dark:text-emerald-400 font-medium">{phone.condition_grade}/10</span>
                                     </div>
                                     {!phone.seller_id && (
                                         <div className="mt-2 flex items-center gap-1 text-xs text-primary">

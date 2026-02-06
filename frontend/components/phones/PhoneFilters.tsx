@@ -29,10 +29,10 @@ export function PhoneFilters({ filters, setFilters, onApply, onClear }: PhoneFil
     const { t } = useLanguage();
 
     return (
-        <div className="p-4 rounded-xl bg-slate-900/50 border border-slate-800 backdrop-blur-sm">
+        <div className="p-5 rounded-2xl bg-card border border-border shadow-sm">
             <div className="flex items-center gap-2 mb-4">
-                <Filter className="h-4 w-4 text-violet-400" />
-                <h3 className="font-medium text-white">{t.filter_by}</h3>
+                <Filter className="h-4 w-4 text-primary" />
+                <h3 className="font-medium text-foreground">{t.filter_by}</h3>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
@@ -41,10 +41,10 @@ export function PhoneFilters({ filters, setFilters, onApply, onClear }: PhoneFil
                     value={filters.brand}
                     onValueChange={(value) => setFilters({ ...filters, brand: value })}
                 >
-                    <SelectTrigger className="bg-slate-800 border-slate-700 text-white">
+                    <SelectTrigger className="bg-background border-input text-foreground">
                         <SelectValue placeholder={t.all_brands} />
                     </SelectTrigger>
-                    <SelectContent className="bg-slate-900 border-slate-700">
+                    <SelectContent className="bg-popover border-border">
                         <SelectItem value="all">{t.all_brands}</SelectItem>
                         {PHONE_BRANDS.map((brand) => (
                             <SelectItem key={brand} value={brand}>
@@ -60,7 +60,7 @@ export function PhoneFilters({ filters, setFilters, onApply, onClear }: PhoneFil
                     placeholder={t.min_price}
                     value={filters.minPrice}
                     onChange={(e) => setFilters({ ...filters, minPrice: e.target.value })}
-                    className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-500"
+                    className="bg-background border-input text-foreground placeholder:text-muted-foreground"
                 />
 
                 {/* Max Price */}
@@ -69,7 +69,7 @@ export function PhoneFilters({ filters, setFilters, onApply, onClear }: PhoneFil
                     placeholder={t.max_price}
                     value={filters.maxPrice}
                     onChange={(e) => setFilters({ ...filters, maxPrice: e.target.value })}
-                    className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-500"
+                    className="bg-background border-input text-foreground placeholder:text-muted-foreground"
                 />
 
                 {/* Min Condition */}
@@ -77,10 +77,10 @@ export function PhoneFilters({ filters, setFilters, onApply, onClear }: PhoneFil
                     value={filters.minCondition}
                     onValueChange={(value) => setFilters({ ...filters, minCondition: value })}
                 >
-                    <SelectTrigger className="bg-slate-800 border-slate-700 text-white">
+                    <SelectTrigger className="bg-background border-input text-foreground">
                         <SelectValue placeholder={t.min_condition} />
                     </SelectTrigger>
-                    <SelectContent className="bg-slate-900 border-slate-700">
+                    <SelectContent className="bg-popover border-border">
                         <SelectItem value="any">Any Condition</SelectItem>
                         <SelectItem value="10">10/10 Only</SelectItem>
                         <SelectItem value="9">9/10+</SelectItem>
@@ -93,14 +93,14 @@ export function PhoneFilters({ filters, setFilters, onApply, onClear }: PhoneFil
                 <div className="flex gap-2">
                     <Button
                         onClick={onApply}
-                        className="flex-1 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700"
+                        className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground"
                     >
                         {t.apply_filters}
                     </Button>
                     <Button
                         variant="outline"
                         onClick={onClear}
-                        className="border-slate-700 text-slate-400 hover:text-white hover:bg-slate-800"
+                        className="border-border text-muted-foreground hover:text-foreground hover:bg-accent"
                     >
                         <X className="h-4 w-4" />
                     </Button>

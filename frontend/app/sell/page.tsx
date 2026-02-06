@@ -82,12 +82,11 @@ export default function SellPage() {
         if (!formData.brand || !formData.model || !formData.storage_gb ||
             !formData.color || !formData.condition_grade || !formData.condition_category ||
             !formData.price || !image) {
-            setError('Please fill in all required fields and upload an image');
+            setError('Please fill in all required fields and upload an image.');
             return;
         }
 
         setLoading(true);
-        setError('');
 
         try {
             const data = new FormData();
@@ -126,19 +125,19 @@ export default function SellPage() {
     // Not authenticated view
     if (!isAuthenticated) {
         return (
-            <div className="min-h-screen bg-slate-950 py-16">
+            <div className="min-h-screen bg-background py-16">
                 <div className="mx-auto max-w-md px-4">
-                    <Card className="bg-slate-900/50 border-slate-800">
+                    <Card className="bg-card border-border">
                         <CardContent className="p-8 text-center">
-                            <LogIn className="h-16 w-16 text-slate-600 mx-auto mb-4" />
-                            <h2 className="text-2xl font-bold text-white mb-2">
+                            <LogIn className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+                            <h2 className="text-2xl font-bold text-foreground mb-2">
                                 {t.login_required}
                             </h2>
-                            <p className="text-slate-400 mb-6">
+                            <p className="text-muted-foreground mb-6">
                                 Please login to list your phone for sale.
                             </p>
                             <Link href="/login">
-                                <Button className="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700">
+                                <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
                                     {t.nav_login}
                                 </Button>
                             </Link>
@@ -150,39 +149,39 @@ export default function SellPage() {
     }
 
     return (
-        <div className="min-h-screen bg-slate-950 py-12">
+        <div className="min-h-screen bg-background py-12">
             <div className="mx-auto max-w-2xl px-4 sm:px-6">
                 {/* Header */}
                 <div className="text-center mb-8">
-                    <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500 to-indigo-600 shadow-lg shadow-violet-500/25 mb-4">
+                    <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500 to-indigo-600 shadow-lg shadow-primary/25 mb-4">
                         <PlusCircle className="h-8 w-8 text-white" />
                     </div>
-                    <h1 className="text-3xl font-bold text-white mb-2">
+                    <h1 className="text-3xl font-bold text-foreground mb-2">
                         {t.sell_form_title}
                     </h1>
-                    <p className="text-slate-400">
+                    <p className="text-muted-foreground">
                         {t.sell_form_subtitle}
                     </p>
                 </div>
 
                 {/* Form */}
-                <Card className="bg-slate-900/50 border-slate-800">
+                <Card className="bg-card border-border shadow-lg">
                     <CardContent className="p-6 sm:p-8">
                         <form onSubmit={handleSubmit} className="space-y-6">
                             {/* Brand & Model Row */}
                             <div className="grid sm:grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-300 mb-2">
+                                    <label className="block text-sm font-medium text-foreground mb-2">
                                         {t.brand} *
                                     </label>
                                     <Select
                                         value={formData.brand}
                                         onValueChange={(value) => handleChange('brand', value)}
                                     >
-                                        <SelectTrigger className="bg-slate-800 border-slate-700 text-white">
+                                        <SelectTrigger className="bg-background border-input text-foreground">
                                             <SelectValue placeholder={t.select_brand} />
                                         </SelectTrigger>
-                                        <SelectContent className="bg-slate-900 border-slate-700">
+                                        <SelectContent className="bg-popover border-border">
                                             {PHONE_BRANDS.map((brand) => (
                                                 <SelectItem key={brand} value={brand}>
                                                     {brand}
@@ -192,14 +191,14 @@ export default function SellPage() {
                                     </Select>
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-300 mb-2">
+                                    <label className="block text-sm font-medium text-foreground mb-2">
                                         {t.model} *
                                     </label>
                                     <Input
                                         value={formData.model}
                                         onChange={(e) => handleChange('model', e.target.value)}
                                         placeholder={t.enter_model}
-                                        className="bg-slate-800 border-slate-700 text-white"
+                                        className="bg-background border-input text-foreground"
                                     />
                                 </div>
                             </div>
@@ -207,17 +206,17 @@ export default function SellPage() {
                             {/* Storage & Color Row */}
                             <div className="grid sm:grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-300 mb-2">
+                                    <label className="block text-sm font-medium text-foreground mb-2">
                                         {t.storage} (GB) *
                                     </label>
                                     <Select
                                         value={formData.storage_gb}
                                         onValueChange={(value) => handleChange('storage_gb', value)}
                                     >
-                                        <SelectTrigger className="bg-slate-800 border-slate-700 text-white">
+                                        <SelectTrigger className="bg-background border-input text-foreground">
                                             <SelectValue placeholder="Select storage" />
                                         </SelectTrigger>
-                                        <SelectContent className="bg-slate-900 border-slate-700">
+                                        <SelectContent className="bg-popover border-border">
                                             <SelectItem value="64">64 GB</SelectItem>
                                             <SelectItem value="128">128 GB</SelectItem>
                                             <SelectItem value="256">256 GB</SelectItem>
@@ -227,14 +226,14 @@ export default function SellPage() {
                                     </Select>
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-300 mb-2">
+                                    <label className="block text-sm font-medium text-foreground mb-2">
                                         {t.color} *
                                     </label>
                                     <Input
                                         value={formData.color}
                                         onChange={(e) => handleChange('color', e.target.value)}
                                         placeholder="e.g., Space Black"
-                                        className="bg-slate-800 border-slate-700 text-white"
+                                        className="bg-background border-input text-foreground"
                                     />
                                 </div>
                             </div>
@@ -242,7 +241,7 @@ export default function SellPage() {
                             {/* Condition Row */}
                             <div className="grid sm:grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-300 mb-2">
+                                    <label className="block text-sm font-medium text-foreground mb-2">
                                         {t.condition} Grade (1-10) *
                                     </label>
                                     <Input
@@ -253,21 +252,21 @@ export default function SellPage() {
                                         value={formData.condition_grade}
                                         onChange={(e) => handleChange('condition_grade', e.target.value)}
                                         placeholder={t.condition_placeholder}
-                                        className="bg-slate-800 border-slate-700 text-white"
+                                        className="bg-background border-input text-foreground"
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-300 mb-2">
+                                    <label className="block text-sm font-medium text-foreground mb-2">
                                         {t.condition} Category *
                                     </label>
                                     <Select
                                         value={formData.condition_category}
                                         onValueChange={(value) => handleChange('condition_category', value)}
                                     >
-                                        <SelectTrigger className="bg-slate-800 border-slate-700 text-white">
+                                        <SelectTrigger className="bg-background border-input text-foreground">
                                             <SelectValue placeholder={t.select_condition} />
                                         </SelectTrigger>
-                                        <SelectContent className="bg-slate-900 border-slate-700">
+                                        <SelectContent className="bg-popover border-border">
                                             {PHONE_CONDITIONS.map((condition) => (
                                                 <SelectItem key={condition.value} value={condition.value}>
                                                     {condition.label}
@@ -281,7 +280,7 @@ export default function SellPage() {
                             {/* Price Row */}
                             <div className="grid sm:grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-300 mb-2">
+                                    <label className="block text-sm font-medium text-foreground mb-2">
                                         {t.price} (PKR) *
                                     </label>
                                     <Input
@@ -290,11 +289,11 @@ export default function SellPage() {
                                         value={formData.price}
                                         onChange={(e) => handleChange('price', e.target.value)}
                                         placeholder={t.enter_price}
-                                        className="bg-slate-800 border-slate-700 text-white"
+                                        className="bg-background border-input text-foreground"
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-300 mb-2">
+                                    <label className="block text-sm font-medium text-foreground mb-2">
                                         Original Price (PKR)
                                     </label>
                                     <Input
@@ -303,7 +302,7 @@ export default function SellPage() {
                                         value={formData.original_price}
                                         onChange={(e) => handleChange('original_price', e.target.value)}
                                         placeholder="Optional"
-                                        className="bg-slate-800 border-slate-700 text-white"
+                                        className="bg-background border-input text-foreground"
                                     />
                                 </div>
                             </div>
@@ -311,7 +310,7 @@ export default function SellPage() {
                             {/* Battery & Warranty Row */}
                             <div className="grid sm:grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-300 mb-2">
+                                    <label className="block text-sm font-medium text-foreground mb-2">
                                         {t.battery_health} (%)
                                     </label>
                                     <Input
@@ -321,11 +320,11 @@ export default function SellPage() {
                                         value={formData.battery_health}
                                         onChange={(e) => handleChange('battery_health', e.target.value)}
                                         placeholder="e.g., 92"
-                                        className="bg-slate-800 border-slate-700 text-white"
+                                        className="bg-background border-input text-foreground"
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-300 mb-2">
+                                    <label className="block text-sm font-medium text-foreground mb-2">
                                         {t.warranty} ({t.months})
                                     </label>
                                     <Input
@@ -335,27 +334,27 @@ export default function SellPage() {
                                         value={formData.warranty_months}
                                         onChange={(e) => handleChange('warranty_months', e.target.value)}
                                         placeholder="0"
-                                        className="bg-slate-800 border-slate-700 text-white"
+                                        className="bg-background border-input text-foreground"
                                     />
                                 </div>
                             </div>
 
                             {/* Image Upload */}
                             <div className="space-y-2">
-                                <label className="block text-sm font-medium text-slate-300">
+                                <label className="block text-sm font-medium text-foreground">
                                     Phone Image *
                                 </label>
-                                <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-700 border-dashed rounded-lg hover:border-violet-500 transition-colors bg-slate-800/50">
+                                <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-border border-dashed rounded-xl hover:border-primary/50 transition-colors bg-muted/30">
                                     <div className="space-y-1 text-center">
                                         {image ? (
                                             <div className="flex flex-col items-center">
-                                                <CheckCircle className="h-10 w-10 text-emerald-400 mb-2" />
-                                                <p className="text-sm text-slate-300">{image.name}</p>
+                                                <CheckCircle className="h-10 w-10 text-emerald-500 mb-2" />
+                                                <p className="text-sm text-foreground">{image.name}</p>
                                                 <Button
                                                     type="button"
                                                     variant="ghost"
                                                     size="sm"
-                                                    className="mt-2 text-slate-400 hover:text-red-400"
+                                                    className="mt-2 text-muted-foreground hover:text-destructive"
                                                     onClick={() => setImage(null)}
                                                 >
                                                     Change Image
@@ -363,9 +362,9 @@ export default function SellPage() {
                                             </div>
                                         ) : (
                                             <>
-                                                <Smartphone className="mx-auto h-12 w-12 text-slate-500" />
-                                                <div className="flex text-sm text-slate-400">
-                                                    <label htmlFor="file-upload" className="relative cursor-pointer bg-transparent rounded-md font-medium text-violet-400 hover:text-violet-300 focus-within:outline-none">
+                                                <Smartphone className="mx-auto h-12 w-12 text-muted-foreground" />
+                                                <div className="flex text-sm text-muted-foreground">
+                                                    <label htmlFor="file-upload" className="relative cursor-pointer bg-transparent rounded-md font-medium text-primary hover:text-primary/80 focus-within:outline-none">
                                                         <span>Upload a file</span>
                                                         <input
                                                             id="file-upload"
@@ -376,9 +375,9 @@ export default function SellPage() {
                                                             onChange={handleFileChange}
                                                         />
                                                     </label>
-                                                    <p className="pl-1 text-slate-500">or drag and drop</p>
+                                                    <p className="pl-1">or drag and drop</p>
                                                 </div>
-                                                <p className="text-xs text-slate-500">
+                                                <p className="text-xs text-muted-foreground">
                                                     PNG, JPG, GIF up to 10MB
                                                 </p>
                                             </>
@@ -389,7 +388,7 @@ export default function SellPage() {
 
                             {/* Defects */}
                             <div>
-                                <label className="block text-sm font-medium text-slate-300 mb-2">
+                                <label className="block text-sm font-medium text-foreground mb-2">
                                     {t.defects}
                                 </label>
                                 <textarea
@@ -397,26 +396,26 @@ export default function SellPage() {
                                     onChange={(e) => handleChange('defects', e.target.value)}
                                     placeholder={t.enter_defects}
                                     rows={3}
-                                    className="w-full px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500"
+                                    className="w-full px-3 py-2 rounded-lg bg-background border border-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                                 />
                             </div>
 
                             {/* Accessories */}
                             <div>
-                                <label className="block text-sm font-medium text-slate-300 mb-2">
+                                <label className="block text-sm font-medium text-foreground mb-2">
                                     {t.accessories}
                                 </label>
                                 <Input
                                     value={formData.accessories_included}
                                     onChange={(e) => handleChange('accessories_included', e.target.value)}
                                     placeholder="e.g., Original box, charger, cable"
-                                    className="bg-slate-800 border-slate-700 text-white"
+                                    className="bg-background border-input text-foreground"
                                 />
                             </div>
 
                             {/* Error */}
                             {error && (
-                                <div className="flex items-center gap-2 p-4 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400">
+                                <div className="flex items-center gap-2 p-4 rounded-lg bg-destructive/10 border border-destructive/30 text-destructive">
                                     <AlertCircle className="h-5 w-5" />
                                     {error}
                                 </div>
@@ -427,7 +426,7 @@ export default function SellPage() {
                                 type="submit"
                                 size="lg"
                                 disabled={loading}
-                                className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 shadow-lg shadow-violet-500/25"
+                                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/25"
                             >
                                 {loading ? (
                                     <>
@@ -443,7 +442,7 @@ export default function SellPage() {
                             </Button>
 
                             {/* Notice */}
-                            <p className="text-center text-sm text-slate-500">
+                            <p className="text-center text-sm text-muted-foreground">
                                 ⚠️ Your listing will be reviewed by our admin team before it goes live.
                             </p>
                         </form>
@@ -453,17 +452,17 @@ export default function SellPage() {
 
             {/* Success Dialog */}
             <Dialog open={showSuccess} onOpenChange={setShowSuccess}>
-                <DialogContent className="bg-slate-900 border-slate-800">
+                <DialogContent className="bg-card border-border">
                     <DialogHeader>
                         <div className="flex justify-center mb-4">
                             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/20">
-                                <CheckCircle className="h-8 w-8 text-emerald-400" />
+                                <CheckCircle className="h-8 w-8 text-emerald-500" />
                             </div>
                         </div>
-                        <DialogTitle className="text-center text-xl text-white">
+                        <DialogTitle className="text-center text-xl text-foreground">
                             {t.listing_success}
                         </DialogTitle>
-                        <DialogDescription className="text-center text-slate-400">
+                        <DialogDescription className="text-center text-muted-foreground">
                             {t.listing_pending}
                         </DialogDescription>
                     </DialogHeader>
@@ -487,13 +486,13 @@ export default function SellPage() {
                                     accessories_included: '',
                                 });
                             }}
-                            className="border-slate-700"
+                            className="border-border"
                         >
                             List Another
                         </Button>
                         <Button
                             onClick={() => router.push('/my-listings')}
-                            className="bg-gradient-to-r from-violet-600 to-indigo-600"
+                            className="bg-primary hover:bg-primary/90 text-primary-foreground"
                         >
                             View My Listings
                         </Button>

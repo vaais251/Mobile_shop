@@ -13,10 +13,14 @@ Routes:
 - PATCH /admin/users/{id}/role - Change user role
 """
 
-from fastapi import APIRouter, Depends, HTTPException, status, Query
+from fastapi import APIRouter, Depends, HTTPException, status, Query, File, UploadFile, Form
 from sqlalchemy.orm import Session
 from typing import Optional, List
+from decimal import Decimal
 import math
+import shutil
+import uuid
+import os
 
 from app.core.database import get_db
 from app.core.dependencies import get_current_admin
@@ -25,7 +29,7 @@ from app.schemas.user import UserResponse
 from app.services.phone_service import PhoneService
 from app.services.user_service import UserService
 from app.models.user import User, UserRole
-from app.models.phone_inventory import PhoneInventory
+from app.models.phone_inventory import PhoneInventory, PhoneCondition
 
 
 router = APIRouter(prefix="/admin", tags=["Admin"])
@@ -164,6 +168,71 @@ async def create_shop_phone(
     """
     phone_service = PhoneService(db)
     
+    phone = phone_service.create_shop_phone(phone_data)
+    
+    return phone_to_response(phone)
+
+
+@router.post(
+    "/phones/upload",
+    response_model=PhoneResponse,
+    status_code=status.HTTP_201_CREATED,
+    summary="Add phone with image upload",
+    description="Add a phone with image to the shop inventory. Accepts multipart form data."
+)
+async def create_shop_phone_with_image(
+    brand: str = Form(...),
+    model: str = Form(...),
+    storage_gb: int = Form(...),
+    color: str = Form(...),
+    condition_grade: float = Form(...),
+    condition_category: PhoneCondition = Form(...),
+    price: Decimal = Form(...),
+    defects: Optional[str] = Form(None),
+    original_price: Optional[Decimal] = Form(None),
+    battery_health: Optional[int] = Form(None),
+    warranty_months: int = Form(0),
+    accessories_included: Optional[str] = Form(None),
+    image: UploadFile = File(...),
+    admin: User = Depends(get_current_admin),
+    db: Session = Depends(get_db)
+):
+    """
+    Add a phone with image to shop inventory.
+    
+    Accepts multipart form data with image upload.
+    - `seller_id` is automatically set to NULL (shop-owned)
+    - `admin_approved` is automatically set to TRUE
+    """
+    # 1. Save Image
+    os.makedirs("static/images", exist_ok=True)
+    file_ext = os.path.splitext(image.filename)[1]
+    file_name = f"{uuid.uuid4()}{file_ext}"
+    file_path = f"static/images/{file_name}"
+    
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(image.file, buffer)
+    
+    image_url = f"/static/images/{file_name}"
+    
+    # 2. Create Phone Data
+    phone_data = PhoneCreate(
+        brand=brand,
+        model=model,
+        storage_gb=storage_gb,
+        color=color,
+        condition_grade=condition_grade,
+        condition_category=condition_category,
+        price=price,
+        defects=defects,
+        original_price=original_price,
+        battery_health=battery_health,
+        warranty_months=warranty_months,
+        accessories_included=accessories_included,
+        images=image_url
+    )
+    
+    phone_service = PhoneService(db)
     phone = phone_service.create_shop_phone(phone_data)
     
     return phone_to_response(phone)

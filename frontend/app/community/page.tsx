@@ -82,14 +82,14 @@ export default function CommunityPage() {
                             <Users className="h-7 w-7 text-white" />
                         </div>
                         <div>
-                            <h1 className="text-3xl sm:text-4xl font-bold text-white">
+                            <h1 className="text-3xl sm:text-4xl font-bold text-foreground">
                                 {t.nav_community}
                             </h1>
-                            <p className="text-slate-400">Marketplace</p>
+                            <p className="text-muted-foreground">Marketplace</p>
                         </div>
                     </div>
 
-                    <p className="text-slate-400 max-w-2xl mt-4">
+                    <p className="text-muted-foreground max-w-2xl mt-4">
                         Phones listed by our community members. All listings are verified and
                         approved by our admin team before appearing here.
                     </p>
@@ -128,9 +128,9 @@ export default function CommunityPage() {
                         </div>
                     ) : phones.length === 0 ? (
                         <div className="text-center py-20">
-                            <Smartphone className="h-16 w-16 text-slate-600 mx-auto mb-4" />
-                            <p className="text-slate-400 text-lg">{t.no_phones_found}</p>
-                            <p className="text-slate-500 mt-2">
+                            <Smartphone className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+                            <p className="text-muted-foreground text-lg">{t.no_phones_found}</p>
+                            <p className="text-muted-foreground/70 mt-2">
                                 Community listings will appear here once approved by admin.
                             </p>
                         </div>

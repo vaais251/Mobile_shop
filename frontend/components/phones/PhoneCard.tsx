@@ -30,9 +30,9 @@ export function PhoneCard({ phone, variant = 'shop' }: PhoneCardProps) {
     const inCart = isInCart(phone.id);
 
     const getConditionColor = (grade: number) => {
-        if (grade >= 9) return 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30';
-        if (grade >= 7) return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
-        return 'bg-orange-500/20 text-orange-400 border-orange-500/30';
+        if (grade >= 9) return 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30';
+        if (grade >= 7) return 'bg-yellow-500/15 text-yellow-600 dark:text-yellow-400 border-yellow-500/30';
+        return 'bg-orange-500/15 text-orange-600 dark:text-orange-400 border-orange-500/30';
     };
 
     const discountPercentage = phone.original_price
@@ -44,12 +44,7 @@ export function PhoneCard({ phone, variant = 'shop' }: PhoneCardProps) {
         : null;
 
     return (
-        <Card
-            className={`group relative overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:shadow-xl ${variant === 'shop'
-                ? 'bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 border-slate-700/50 hover:border-violet-500/50 hover:shadow-violet-500/10'
-                : 'bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 border-slate-700/50 hover:border-cyan-500/50 hover:shadow-cyan-500/10'
-                }`}
-        >
+        <Card className="card-premium group relative overflow-hidden">
             {/* Featured Badge */}
             {phone.is_featured && (
                 <div className="absolute top-3 left-3 z-10">
@@ -70,7 +65,7 @@ export function PhoneCard({ phone, variant = 'shop' }: PhoneCardProps) {
             )}
 
             {/* Image Section */}
-            <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-slate-800 to-slate-900">
+            <div className="relative aspect-square overflow-hidden bg-muted">
                 {imageUrl ? (
                     <img
                         src={imageUrl}
@@ -80,12 +75,12 @@ export function PhoneCard({ phone, variant = 'shop' }: PhoneCardProps) {
                 ) : (
                     <div className="absolute inset-0 flex items-center justify-center">
                         <div className={`p-8 rounded-full ${variant === 'shop'
-                            ? 'bg-violet-500/10'
+                            ? 'bg-primary/10'
                             : 'bg-cyan-500/10'
                             }`}>
                             <Smartphone className={`h-20 w-20 ${variant === 'shop'
-                                ? 'text-violet-400'
-                                : 'text-cyan-400'
+                                ? 'text-primary'
+                                : 'text-cyan-500'
                                 }`} />
                         </div>
                     </div>
@@ -93,7 +88,7 @@ export function PhoneCard({ phone, variant = 'shop' }: PhoneCardProps) {
 
                 {/* Overlay on hover */}
                 <Link href={`/phone/${phone.id}`}>
-                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <div className="absolute inset-0 bg-foreground/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                         <Button variant="secondary" size="sm">
                             {t.view_details}
                         </Button>
@@ -104,12 +99,12 @@ export function PhoneCard({ phone, variant = 'shop' }: PhoneCardProps) {
             <CardContent className="p-4">
                 {/* Brand & Model */}
                 <div className="mb-3">
-                    <p className="text-xs text-slate-500 uppercase tracking-wider">{phone.brand}</p>
-                    <h3 className="text-lg font-semibold text-white truncate">{phone.model}</h3>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wider font-medium">{phone.brand}</p>
+                    <h3 className="text-lg font-semibold text-foreground truncate">{phone.model}</h3>
                 </div>
 
                 {/* Specs Row */}
-                <div className="flex items-center gap-3 mb-3 text-xs text-slate-400">
+                <div className="flex items-center gap-3 mb-3 text-xs text-muted-foreground">
                     <span className="flex items-center gap-1">
                         <HardDrive className="h-3 w-3" />
                         {phone.storage_gb}GB
@@ -120,7 +115,7 @@ export function PhoneCard({ phone, variant = 'shop' }: PhoneCardProps) {
                             {phone.battery_health}%
                         </span>
                     )}
-                    <span className="px-2 py-0.5 rounded bg-slate-800 text-slate-300">
+                    <span className="px-2 py-0.5 rounded bg-muted text-muted-foreground">
                         {phone.color}
                     </span>
                 </div>
@@ -134,12 +129,12 @@ export function PhoneCard({ phone, variant = 'shop' }: PhoneCardProps) {
                 {variant === 'community' && phone.seller && (
                     <div className="mt-3 flex items-center gap-2 text-xs">
                         {phone.seller.is_verified ? (
-                            <span className="flex items-center gap-1 text-cyan-400">
+                            <span className="flex items-center gap-1 text-cyan-600 dark:text-cyan-400">
                                 <ShieldCheck className="h-3 w-3" />
                                 {t.verified_seller}
                             </span>
                         ) : (
-                            <span className="flex items-center gap-1 text-slate-400">
+                            <span className="flex items-center gap-1 text-muted-foreground">
                                 <CheckCircle className="h-3 w-3" />
                                 {phone.seller.name}
                             </span>
@@ -149,7 +144,7 @@ export function PhoneCard({ phone, variant = 'shop' }: PhoneCardProps) {
 
                 {/* Shop Owned Badge */}
                 {variant === 'shop' && (
-                    <div className="mt-3 flex items-center gap-1 text-xs text-violet-400">
+                    <div className="mt-3 flex items-center gap-1 text-xs text-primary">
                         <ShieldCheck className="h-3 w-3" />
                         {t.shop_owned}
                     </div>
@@ -159,11 +154,11 @@ export function PhoneCard({ phone, variant = 'shop' }: PhoneCardProps) {
             <CardFooter className="p-4 pt-0 flex items-center justify-between">
                 {/* Price */}
                 <div>
-                    <p className="text-xl font-bold text-white">
+                    <p className="text-xl font-bold text-foreground">
                         {formatPrice(Number(phone.price))}
                     </p>
                     {phone.original_price && (
-                        <p className="text-xs text-slate-500 line-through">
+                        <p className="text-xs text-muted-foreground line-through">
                             {formatPrice(Number(phone.original_price))}
                         </p>
                     )}
@@ -176,10 +171,10 @@ export function PhoneCard({ phone, variant = 'shop' }: PhoneCardProps) {
                     onClick={() => addToCart(phone)}
                     className={
                         inCart
-                            ? 'bg-slate-700 text-slate-400 border-slate-600'
+                            ? 'bg-muted text-muted-foreground'
                             : variant === 'shop'
-                                ? 'bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 shadow-lg shadow-violet-500/25'
-                                : 'bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 shadow-lg shadow-cyan-500/25'
+                                ? 'bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/25'
+                                : 'bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white shadow-lg shadow-cyan-500/25'
                     }
                 >
                     {inCart ? (

@@ -120,7 +120,7 @@ export default function ProfilePage() {
             case 'shipped': return <Truck className="h-4 w-4 text-blue-500" />;
             case 'delivered': return <CheckCircle className="h-4 w-4 text-emerald-500" />;
             case 'cancelled': return <AlertCircle className="h-4 w-4 text-red-500" />;
-            default: return <Clock className="h-4 w-4 text-slate-500" />;
+            default: return <Clock className="h-4 w-4 text-muted-foreground" />;
         }
     };
 

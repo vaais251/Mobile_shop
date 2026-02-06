@@ -58,9 +58,9 @@ export default function PhoneDetailPage() {
     }, [params.id]);
 
     const getConditionColor = (grade: number) => {
-        if (grade >= 9) return 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30';
-        if (grade >= 7) return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
-        return 'bg-orange-500/20 text-orange-400 border-orange-500/30';
+        if (grade >= 9) return 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30';
+        if (grade >= 7) return 'bg-yellow-500/15 text-yellow-600 dark:text-yellow-400 border-yellow-500/30';
+        return 'bg-orange-500/15 text-orange-600 dark:text-orange-400 border-orange-500/30';
     };
 
     const inCart = phone ? isInCart(phone.id) : false;
@@ -103,7 +103,7 @@ export default function PhoneDetailPage() {
                 {/* Back Button */}
                 <Button
                     variant="ghost"
-                    className="mb-6 text-slate-400 hover:text-white"
+                    className="mb-6 text-muted-foreground hover:text-foreground"
                     onClick={() => router.back()}
                 >
                     <ArrowLeft className="mr-2 h-4 w-4" />
@@ -113,7 +113,7 @@ export default function PhoneDetailPage() {
                 <div className="grid lg:grid-cols-2 gap-8">
                     {/* Left: Image */}
                     <div className="relative">
-                        <div className={`aspect-square rounded-2xl overflow-hidden bg-gradient-to-br from-slate-800 to-slate-900 border ${isShopOwned ? 'border-violet-500/30' : 'border-cyan-500/30'
+                        <div className={`aspect-square rounded-2xl overflow-hidden bg-muted border ${isShopOwned ? 'border-primary/30' : 'border-cyan-500/30'
                             }`}>
                             {imageUrl ? (
                                 <img
@@ -123,9 +123,9 @@ export default function PhoneDetailPage() {
                                 />
                             ) : (
                                 <div className="absolute inset-0 flex items-center justify-center">
-                                    <div className={`p-16 rounded-full ${isShopOwned ? 'bg-violet-500/10' : 'bg-cyan-500/10'
+                                    <div className={`p-16 rounded-full ${isShopOwned ? 'bg-primary/10' : 'bg-cyan-500/10'
                                         }`}>
-                                        <Smartphone className={`h-32 w-32 ${isShopOwned ? 'text-violet-400' : 'text-cyan-400'
+                                        <Smartphone className={`h-32 w-32 ${isShopOwned ? 'text-primary' : 'text-cyan-500'
                                             }`} />
                                     </div>
                                 </div>
@@ -139,7 +139,7 @@ export default function PhoneDetailPage() {
                                     </Badge>
                                 )}
                                 {isShopOwned && (
-                                    <Badge className="bg-violet-500/20 text-violet-400 border-violet-500/30">
+                                    <Badge className="bg-primary/20 text-primary border-primary/30">
                                         <ShieldCheck className="h-3 w-3 mr-1" />
                                         {t.shop_owned}
                                     </Badge>
@@ -159,20 +159,20 @@ export default function PhoneDetailPage() {
                     {/* Right: Details */}
                     <div>
                         {/* Brand & Model */}
-                        <p className="text-sm text-slate-500 uppercase tracking-wider">
+                        <p className="text-sm text-muted-foreground uppercase tracking-wider font-medium">
                             {phone.brand}
                         </p>
-                        <h1 className="text-3xl sm:text-4xl font-bold text-white mb-4">
+                        <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
                             {phone.model}
                         </h1>
 
                         {/* Price */}
                         <div className="mb-6">
-                            <p className="text-4xl font-bold text-white">
+                            <p className="text-4xl font-bold text-foreground">
                                 {formatPrice(Number(phone.price))}
                             </p>
                             {phone.original_price && (
-                                <p className="text-lg text-slate-500 line-through">
+                                <p className="text-lg text-muted-foreground line-through">
                                     {formatPrice(Number(phone.original_price))}
                                 </p>
                             )}
@@ -186,46 +186,46 @@ export default function PhoneDetailPage() {
                         </div>
 
                         {/* Specs Grid */}
-                        <Card className="bg-slate-900/50 border-slate-800 mb-6">
+                        <Card className="bg-card border-border mb-6">
                             <CardContent className="p-6">
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="flex items-center gap-3">
-                                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-800">
-                                            <HardDrive className="h-5 w-5 text-slate-400" />
+                                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
+                                            <HardDrive className="h-5 w-5 text-muted-foreground" />
                                         </div>
                                         <div>
-                                            <p className="text-xs text-slate-500">{t.storage}</p>
-                                            <p className="font-medium text-white">{phone.storage_gb}GB</p>
+                                            <p className="text-xs text-muted-foreground">{t.storage}</p>
+                                            <p className="font-medium text-foreground">{phone.storage_gb}GB</p>
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-3">
-                                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-800">
-                                            <Palette className="h-5 w-5 text-slate-400" />
+                                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
+                                            <Palette className="h-5 w-5 text-muted-foreground" />
                                         </div>
                                         <div>
-                                            <p className="text-xs text-slate-500">Color</p>
-                                            <p className="font-medium text-white">{phone.color}</p>
+                                            <p className="text-xs text-muted-foreground">Color</p>
+                                            <p className="font-medium text-foreground">{phone.color}</p>
                                         </div>
                                     </div>
                                     {phone.battery_health && (
                                         <div className="flex items-center gap-3">
-                                            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-800">
-                                                <Battery className="h-5 w-5 text-slate-400" />
+                                            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
+                                                <Battery className="h-5 w-5 text-muted-foreground" />
                                             </div>
                                             <div>
-                                                <p className="text-xs text-slate-500">{t.battery_health}</p>
-                                                <p className="font-medium text-white">{phone.battery_health}%</p>
+                                                <p className="text-xs text-muted-foreground">{t.battery_health}</p>
+                                                <p className="font-medium text-foreground">{phone.battery_health}%</p>
                                             </div>
                                         </div>
                                     )}
                                     {phone.warranty_months > 0 && (
                                         <div className="flex items-center gap-3">
-                                            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-800">
-                                                <Calendar className="h-5 w-5 text-slate-400" />
+                                            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
+                                                <Calendar className="h-5 w-5 text-muted-foreground" />
                                             </div>
                                             <div>
-                                                <p className="text-xs text-slate-500">{t.warranty}</p>
-                                                <p className="font-medium text-white">{phone.warranty_months} {t.months}</p>
+                                                <p className="text-xs text-muted-foreground">{t.warranty}</p>
+                                                <p className="font-medium text-foreground">{phone.warranty_months} {t.months}</p>
                                             </div>
                                         </div>
                                     )}
@@ -234,16 +234,16 @@ export default function PhoneDetailPage() {
                         </Card>
 
                         {/* Defects Section */}
-                        <Card className="bg-slate-900/50 border-slate-800 mb-6">
+                        <Card className="bg-card border-border mb-6">
                             <CardContent className="p-6">
-                                <h3 className="font-semibold text-white mb-3 flex items-center gap-2">
-                                    <AlertTriangle className="h-4 w-4 text-amber-400" />
+                                <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
+                                    <AlertTriangle className="h-4 w-4 text-amber-500" />
                                     {t.defects}
                                 </h3>
                                 {phone.defects ? (
-                                    <p className="text-slate-400">{phone.defects}</p>
+                                    <p className="text-muted-foreground">{phone.defects}</p>
                                 ) : (
-                                    <p className="text-emerald-400 flex items-center gap-2">
+                                    <p className="text-emerald-600 dark:text-emerald-400 flex items-center gap-2">
                                         <CheckCircle className="h-4 w-4" />
                                         {t.no_defects}
                                     </p>
@@ -253,35 +253,35 @@ export default function PhoneDetailPage() {
 
                         {/* Accessories */}
                         {phone.accessories_included && (
-                            <Card className="bg-slate-900/50 border-slate-800 mb-6">
+                            <Card className="bg-card border-border mb-6">
                                 <CardContent className="p-6">
-                                    <h3 className="font-semibold text-white mb-3 flex items-center gap-2">
-                                        <Package className="h-4 w-4 text-violet-400" />
+                                    <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
+                                        <Package className="h-4 w-4 text-primary" />
                                         {t.accessories}
                                     </h3>
-                                    <p className="text-slate-400">{phone.accessories_included}</p>
+                                    <p className="text-muted-foreground">{phone.accessories_included}</p>
                                 </CardContent>
                             </Card>
                         )}
 
                         {/* Seller Info */}
                         {phone.seller && (
-                            <Card className="bg-slate-900/50 border-slate-800 mb-6">
+                            <Card className="bg-card border-border mb-6">
                                 <CardContent className="p-6">
-                                    <h3 className="font-semibold text-white mb-3">{t.seller}</h3>
+                                    <h3 className="font-semibold text-foreground mb-3">{t.seller}</h3>
                                     <div className="flex items-center gap-3">
                                         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-cyan-500/20">
-                                            <Smartphone className="h-5 w-5 text-cyan-400" />
+                                            <Smartphone className="h-5 w-5 text-cyan-500" />
                                         </div>
                                         <div>
-                                            <p className="font-medium text-white">{phone.seller.name}</p>
+                                            <p className="font-medium text-foreground">{phone.seller.name}</p>
                                             {phone.seller.is_verified ? (
-                                                <p className="text-sm text-cyan-400 flex items-center gap-1">
+                                                <p className="text-sm text-cyan-600 dark:text-cyan-400 flex items-center gap-1">
                                                     <ShieldCheck className="h-3 w-3" />
                                                     {t.verified_seller}
                                                 </p>
                                             ) : (
-                                                <p className="text-sm text-slate-500">Community Seller</p>
+                                                <p className="text-sm text-muted-foreground">Community Seller</p>
                                             )}
                                         </div>
                                     </div>
@@ -297,9 +297,7 @@ export default function PhoneDetailPage() {
                                 onClick={() => phone && addToCart(phone)}
                                 className={`flex-1 ${inCart
                                     ? 'bg-muted text-muted-foreground'
-                                    : isShopOwned
-                                        ? 'bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 shadow-lg shadow-violet-500/25'
-                                        : 'bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 shadow-lg shadow-cyan-500/25'
+                                    : 'bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/25'
                                     }`}
                             >
                                 {inCart ? (
@@ -319,7 +317,7 @@ export default function PhoneDetailPage() {
                                     <Button
                                         size="lg"
                                         variant="outline"
-                                        className="w-full border-slate-700 text-slate-300 hover:bg-slate-800"
+                                        className="w-full border-border text-foreground hover:bg-accent"
                                     >
                                         <MessageCircle className="mr-2 h-4 w-4" />
                                         Chat with Seller

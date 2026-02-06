@@ -85,34 +85,34 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="min-h-screen bg-slate-950 flex items-center justify-center py-12 px-4">
-            {/* Background */}
-            <div className="absolute inset-0 overflow-hidden">
-                <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-violet-600/10 rounded-full blur-3xl" />
-                <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl" />
+        <div className="min-h-screen bg-background flex items-center justify-center py-12 px-4">
+            {/* Background Effects */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
+                <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-violet-500/10 rounded-full blur-3xl" />
             </div>
 
             <div className="relative w-full max-w-md">
                 {/* Logo */}
                 <div className="text-center mb-8">
                     <Link href="/" className="inline-flex items-center gap-2">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-indigo-600 shadow-lg shadow-violet-500/25">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-indigo-600 shadow-lg shadow-primary/25">
                             <Smartphone className="h-6 w-6 text-white" />
                         </div>
-                        <span className="text-2xl font-bold bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
+                        <span className="text-2xl font-bold gradient-text">
                             PhoneShop
                         </span>
                     </Link>
                 </div>
 
-                <Card className="bg-slate-900/80 border-slate-800 backdrop-blur-xl">
+                <Card className="bg-card/80 border-border backdrop-blur-xl shadow-2xl">
                     <CardContent className="p-6">
                         <Tabs value={activeTab} onValueChange={setActiveTab}>
-                            <TabsList className="grid w-full grid-cols-2 mb-6 bg-slate-800">
-                                <TabsTrigger value="login" className="data-[state=active]:bg-violet-600">
+                            <TabsList className="grid w-full grid-cols-2 mb-6 bg-muted">
+                                <TabsTrigger value="login" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
                                     {t.login}
                                 </TabsTrigger>
-                                <TabsTrigger value="signup" className="data-[state=active]:bg-violet-600">
+                                <TabsTrigger value="signup" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
                                     {t.signup}
                                 </TabsTrigger>
                             </TabsList>
@@ -121,48 +121,48 @@ export default function LoginPage() {
                             <TabsContent value="login">
                                 <form onSubmit={handleLogin} className="space-y-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-300 mb-2">
+                                        <label className="block text-sm font-medium text-foreground mb-2">
                                             {t.email}
                                         </label>
                                         <div className="relative">
-                                            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+                                            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                                             <Input
                                                 type="email"
                                                 value={loginData.email}
                                                 onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
                                                 placeholder="you@example.com"
-                                                className="pl-10 bg-slate-800 border-slate-700 text-white"
+                                                className="pl-10 bg-background border-input text-foreground"
                                                 required
                                             />
                                         </div>
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-300 mb-2">
+                                        <label className="block text-sm font-medium text-foreground mb-2">
                                             {t.password}
                                         </label>
                                         <div className="relative">
-                                            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+                                            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                                             <Input
                                                 type="password"
                                                 value={loginData.password}
                                                 onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
                                                 placeholder="••••••••"
-                                                className="pl-10 bg-slate-800 border-slate-700 text-white"
+                                                className="pl-10 bg-background border-input text-foreground"
                                                 required
                                             />
                                         </div>
                                     </div>
 
                                     {error && (
-                                        <div className="flex items-center gap-2 p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-sm">
+                                        <div className="flex items-center gap-2 p-3 rounded-lg bg-destructive/10 border border-destructive/30 text-destructive text-sm">
                                             <AlertCircle className="h-4 w-4" />
                                             {error}
                                         </div>
                                     )}
 
                                     {success && (
-                                        <div className="flex items-center gap-2 p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-sm">
+                                        <div className="flex items-center gap-2 p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-sm">
                                             <CheckCircle className="h-4 w-4" />
                                             {success}
                                         </div>
@@ -170,7 +170,7 @@ export default function LoginPage() {
 
                                     <Button
                                         type="submit"
-                                        className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700"
+                                        className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
                                         disabled={loading}
                                     >
                                         {loading ? (
@@ -186,67 +186,67 @@ export default function LoginPage() {
                             <TabsContent value="signup">
                                 <form onSubmit={handleSignup} className="space-y-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-300 mb-2">
+                                        <label className="block text-sm font-medium text-foreground mb-2">
                                             {t.name}
                                         </label>
                                         <div className="relative">
-                                            <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+                                            <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                                             <Input
                                                 type="text"
                                                 value={signupData.name}
                                                 onChange={(e) => setSignupData({ ...signupData, name: e.target.value })}
                                                 placeholder="Ali Ahmed"
-                                                className="pl-10 bg-slate-800 border-slate-700 text-white"
+                                                className="pl-10 bg-background border-input text-foreground"
                                                 required
                                             />
                                         </div>
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-300 mb-2">
+                                        <label className="block text-sm font-medium text-foreground mb-2">
                                             {t.email}
                                         </label>
                                         <div className="relative">
-                                            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+                                            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                                             <Input
                                                 type="email"
                                                 value={signupData.email}
                                                 onChange={(e) => setSignupData({ ...signupData, email: e.target.value })}
                                                 placeholder="you@example.com"
-                                                className="pl-10 bg-slate-800 border-slate-700 text-white"
+                                                className="pl-10 bg-background border-input text-foreground"
                                                 required
                                             />
                                         </div>
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-300 mb-2">
+                                        <label className="block text-sm font-medium text-foreground mb-2">
                                             {t.phone_number}
                                         </label>
                                         <div className="relative">
-                                            <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+                                            <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                                             <Input
                                                 type="tel"
                                                 value={signupData.phone_number}
                                                 onChange={(e) => setSignupData({ ...signupData, phone_number: e.target.value })}
                                                 placeholder="+92 300 1234567"
-                                                className="pl-10 bg-slate-800 border-slate-700 text-white"
+                                                className="pl-10 bg-background border-input text-foreground"
                                             />
                                         </div>
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-300 mb-2">
+                                        <label className="block text-sm font-medium text-foreground mb-2">
                                             {t.password}
                                         </label>
                                         <div className="relative">
-                                            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+                                            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                                             <Input
                                                 type="password"
                                                 value={signupData.password}
                                                 onChange={(e) => setSignupData({ ...signupData, password: e.target.value })}
                                                 placeholder="Min 6 characters"
-                                                className="pl-10 bg-slate-800 border-slate-700 text-white"
+                                                className="pl-10 bg-background border-input text-foreground"
                                                 required
                                                 minLength={6}
                                             />
@@ -254,14 +254,14 @@ export default function LoginPage() {
                                     </div>
 
                                     {error && (
-                                        <div className="flex items-center gap-2 p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-sm">
+                                        <div className="flex items-center gap-2 p-3 rounded-lg bg-destructive/10 border border-destructive/30 text-destructive text-sm">
                                             <AlertCircle className="h-4 w-4" />
                                             {error}
                                         </div>
                                     )}
 
                                     {success && (
-                                        <div className="flex items-center gap-2 p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-sm">
+                                        <div className="flex items-center gap-2 p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-sm">
                                             <CheckCircle className="h-4 w-4" />
                                             {success}
                                         </div>
@@ -269,7 +269,7 @@ export default function LoginPage() {
 
                                     <Button
                                         type="submit"
-                                        className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700"
+                                        className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
                                         disabled={loading}
                                     >
                                         {loading ? (
@@ -279,7 +279,7 @@ export default function LoginPage() {
                                         )}
                                     </Button>
 
-                                    <p className="text-center text-xs text-slate-500">
+                                    <p className="text-center text-xs text-muted-foreground">
                                         By signing up, you agree to our Terms of Service
                                     </p>
                                 </form>

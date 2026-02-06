@@ -43,7 +43,7 @@ export function Navbar() {
     ];
 
     return (
-        <nav className="sticky top-0 z-50 w-full border-b border-slate-800 bg-slate-950/80 backdrop-blur-xl">
+        <nav className="sticky top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur-xl">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div className="flex h-16 items-center justify-between">
                     {/* Logo */}
@@ -51,7 +51,7 @@ export function Navbar() {
                         <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-indigo-600 shadow-lg shadow-violet-500/25 group-hover:shadow-violet-500/40 transition-shadow">
                             <Smartphone className="h-5 w-5 text-white" />
                         </div>
-                        <span className="text-xl font-bold bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
+                        <span className="text-xl font-bold bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
                             PhoneShop
                         </span>
                     </Link>
@@ -62,7 +62,7 @@ export function Navbar() {
                             <Link
                                 key={link.href}
                                 href={link.href}
-                                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all"
+                                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-lg transition-all"
                             >
                                 <link.icon className="h-4 w-4" />
                                 {link.label}
@@ -71,7 +71,7 @@ export function Navbar() {
                         {isAdmin && (
                             <Link
                                 href="/admin/dashboard"
-                                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-amber-400 hover:text-amber-300 hover:bg-slate-800/50 rounded-lg transition-all"
+                                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-amber-500 hover:text-amber-400 hover:bg-muted/50 rounded-lg transition-all"
                             >
                                 <LayoutDashboard className="h-4 w-4" />
                                 Admin
@@ -86,7 +86,7 @@ export function Navbar() {
                             variant="ghost"
                             size="sm"
                             onClick={() => setLanguage(language === 'en' ? 'ur' : 'en')}
-                            className="flex items-center gap-2 text-slate-400 hover:text-white"
+                            className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
                         >
                             <Globe className="h-4 w-4" />
                             <span className="text-xs font-medium">
@@ -96,10 +96,10 @@ export function Navbar() {
 
                         {/* Cart Link */}
                         <Link href="/cart">
-                            <Button variant="ghost" size="icon" className="relative text-slate-400 hover:text-white hover:bg-slate-800/50">
+                            <Button variant="ghost" size="icon" className="relative text-muted-foreground hover:text-foreground hover:bg-muted/50">
                                 <ShoppingCart className="h-5 w-5" />
                                 {cartCount > 0 && (
-                                    <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white">
+                                    <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
                                         {cartCount}
                                     </span>
                                 )}
@@ -115,7 +115,7 @@ export function Navbar() {
                                 <DropdownMenuTrigger asChild>
                                     <Button
                                         variant="ghost"
-                                        className="flex items-center gap-2 text-slate-300 hover:text-white"
+                                        className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
                                     >
                                         <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-violet-600 to-indigo-600">
                                             <User className="h-4 w-4 text-white" />
@@ -125,10 +125,10 @@ export function Navbar() {
                                         </span>
                                     </Button>
                                 </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end" className="w-48 bg-slate-900 border-slate-800">
-                                    <div className="px-3 py-2 border-b border-slate-800">
-                                        <p className="text-sm font-medium text-white">{user?.name}</p>
-                                        <p className="text-xs text-slate-400">{user?.email}</p>
+                                <DropdownMenuContent align="end" className="w-48 bg-popover border-border">
+                                    <div className="px-3 py-2 border-b border-border">
+                                        <p className="text-sm font-medium text-foreground">{user?.name}</p>
+                                        <p className="text-xs text-muted-foreground">{user?.email}</p>
                                     </div>
                                     <DropdownMenuItem asChild>
                                         <Link href="/profile" className="flex items-center gap-2 cursor-pointer">
@@ -142,7 +142,7 @@ export function Navbar() {
                                             Messages
                                         </Link>
                                     </DropdownMenuItem>
-                                    <DropdownMenuSeparator className="bg-slate-800" />
+                                    <DropdownMenuSeparator className="bg-border" />
                                     <DropdownMenuItem
                                         onClick={logout}
                                         className="flex items-center gap-2 text-red-400 focus:text-red-400 cursor-pointer"
@@ -166,18 +166,18 @@ export function Navbar() {
                         {/* Mobile Menu */}
                         <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
                             <SheetTrigger asChild className="md:hidden">
-                                <Button variant="ghost" size="sm" className="text-slate-400">
+                                <Button variant="ghost" size="sm" className="text-muted-foreground">
                                     <Menu className="h-5 w-5" />
                                 </Button>
                             </SheetTrigger>
-                            <SheetContent side="right" className="w-72 bg-slate-950 border-slate-800">
+                            <SheetContent side="right" className="w-72 bg-background border-border">
                                 <div className="flex flex-col gap-4 mt-8">
                                     {navLinks.map((link) => (
                                         <Link
                                             key={link.href}
                                             href={link.href}
                                             onClick={() => setMobileMenuOpen(false)}
-                                            className="flex items-center gap-3 px-4 py-3 text-slate-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all"
+                                            className="flex items-center gap-3 px-4 py-3 text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-lg transition-all"
                                         >
                                             <link.icon className="h-5 w-5" />
                                             {link.label}
@@ -187,7 +187,7 @@ export function Navbar() {
                                         <Link
                                             href="/admin/dashboard"
                                             onClick={() => setMobileMenuOpen(false)}
-                                            className="flex items-center gap-3 px-4 py-3 text-amber-400 hover:bg-slate-800/50 rounded-lg transition-all"
+                                            className="flex items-center gap-3 px-4 py-3 text-amber-500 hover:bg-muted/50 rounded-lg transition-all"
                                         >
                                             <LayoutDashboard className="h-5 w-5" />
                                             Admin Dashboard
