@@ -148,15 +148,29 @@ export default function HomePage() {
             </div>
 
             {/* Right: Phone Visual */}
-            <div className="hidden lg:flex justify-center">
-              <div className="relative">
-                {/* Glow Effect */}
-                <div className="absolute inset-0 bg-gradient-to-br from-primary via-violet-500 to-indigo-500 rounded-3xl blur-2xl opacity-30 animate-pulse-glow" />
+            <div className="hidden lg:flex justify-center items-center">
+              <div className="relative w-full max-w-md">
+                {/* Animated Glow Effect */}
+                <div className="absolute inset-0 bg-gradient-to-br from-primary via-violet-500 to-indigo-500 rounded-3xl blur-[100px] opacity-40 animate-pulse-glow" />
 
-                {/* Phone Container */}
-                <div className="relative bg-card p-12 rounded-3xl border border-border shadow-2xl animate-float">
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent rounded-3xl" />
-                  <Smartphone className="h-48 w-48 text-primary relative z-10" />
+                {/* Phone Container with Image */}
+                <div className="relative bg-gradient-to-br from-card/80 via-card to-card/90 backdrop-blur-sm p-8 lg:p-12 rounded-3xl border border-border/50 shadow-2xl animate-float">
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-violet-500/5 to-transparent rounded-3xl" />
+
+                  {/* Beautiful Phone SVG */}
+                  <img
+                    src="/phone-hero.svg"
+                    alt="Premium Smartphone"
+                    className="relative z-10 w-full h-auto drop-shadow-2xl"
+                  />
+
+                  {/* Floating Badges */}
+                  <div className="absolute -top-4 -right-4 bg-gradient-to-br from-emerald-500 to-teal-600 text-white px-5 py-2.5 rounded-full shadow-xl shadow-emerald-500/30 font-bold text-sm animate-bounce-slow z-20">
+                    ✓ Verified
+                  </div>
+                  <div className="absolute -bottom-4 -left-4 bg-gradient-to-br from-violet-600 to-purple-600 text-white px-5 py-2.5 rounded-full shadow-xl shadow-violet-500/30 font-bold text-sm animate-bounce-slow z-20" style={{ animationDelay: '0.5s' }}>
+                    Hot Deals
+                  </div>
                 </div>
               </div>
             </div>

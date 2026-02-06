@@ -95,12 +95,26 @@ export default function LoginPage() {
             <div className="relative w-full max-w-md">
                 {/* Logo */}
                 <div className="text-center mb-8">
-                    <Link href="/" className="inline-flex items-center gap-2">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-indigo-600 shadow-lg shadow-primary/25">
-                            <Smartphone className="h-6 w-6 text-white" />
+                    <Link href="/" className="inline-flex items-center gap-3">
+                        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-600 via-indigo-600 to-violet-700 shadow-xl shadow-violet-500/30 overflow-hidden">
+                            <div className="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent rounded-2xl" />
+                            <svg width="32" height="32" viewBox="0 0 120 120" className="relative z-10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M35 45 Q35 30, 50 30 L70 30 Q75 30, 75 35 Q75 40, 70 40 L50 40 Q45 40, 45 45 Q45 50, 50 50 L70 50 Q85 50, 85 65 Q85 80, 70 80 L50 80 Q35 80, 35 65"
+                                    stroke="white"
+                                    strokeWidth="6"
+                                    fill="none"
+                                    strokeLinecap="round" />
+                                <path d="M45 75 L45 35 L60 55 L75 35 L75 75"
+                                    stroke="white"
+                                    strokeWidth="6"
+                                    fill="none"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    transform="translate(15, 0)" />
+                            </svg>
                         </div>
-                        <span className="text-2xl font-bold gradient-text">
-                            PhoneShop
+                        <span className="text-2xl font-bold bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
+                            Skardu Mobile
                         </span>
                     </Link>
                 </div>

@@ -16,7 +16,11 @@ class PhoneCreate(BaseModel):
     brand: str = Field(..., min_length=1, max_length=50)
     model: str = Field(..., min_length=1, max_length=100)
     storage_gb: int = Field(..., ge=8, le=2048)
+    ram_gb: Optional[int] = Field(None, ge=1, le=64)
+    camera_mp: Optional[int] = Field(None, ge=1, le=200)
     color: str = Field(..., min_length=1, max_length=50)
+    seller_phone: Optional[str] = Field(None, max_length=20)
+    seller_city: Optional[str] = Field(None, max_length=100)
     condition_grade: float = Field(..., ge=1.0, le=10.0)
     condition_category: PhoneCondition
     defects: Optional[str] = Field(None, max_length=1000)
@@ -59,7 +63,11 @@ class PhoneUpdate(BaseModel):
     brand: Optional[str] = Field(None, min_length=1, max_length=50)
     model: Optional[str] = Field(None, min_length=1, max_length=100)
     storage_gb: Optional[int] = Field(None, ge=8, le=2048)
+    ram_gb: Optional[int] = Field(None, ge=1, le=64)
+    camera_mp: Optional[int] = Field(None, ge=1, le=200)
     color: Optional[str] = Field(None, min_length=1, max_length=50)
+    seller_phone: Optional[str] = Field(None, max_length=20)
+    seller_city: Optional[str] = Field(None, max_length=100)
     condition_grade: Optional[float] = Field(None, ge=1.0, le=10.0)
     condition_category: Optional[PhoneCondition] = None
     defects: Optional[str] = Field(None, max_length=1000)
@@ -104,7 +112,11 @@ class PhoneResponse(BaseModel):
     brand: str
     model: str
     storage_gb: int
+    ram_gb: Optional[int] = None
+    camera_mp: Optional[int] = None
     color: str
+    seller_phone: Optional[str] = None
+    seller_city: Optional[str] = None
     condition_grade: float
     condition_category: PhoneCondition
     defects: Optional[str] = None

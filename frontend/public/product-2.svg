@@ -1,0 +1,42 @@
+<svg width="400" height="400" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f093fb;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f5576c;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="phoneGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffd89b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#19547b;stop-opacity:1" />
+    </linearGradient>
+    <filter id="phoneShadow2">
+      <feDropShadow dx="0" dy="10" stdDeviation="15" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  
+  <!-- Background Circle -->
+  <circle cx="200" cy="200" r="180" fill="url(#bgGrad2)" opacity="0.15"/>
+  
+  <!-- Phone Body -->
+  <rect x="100" y="50" width="200" height="300" rx="25" fill="url(#phoneGrad2)" filter="url(#phoneShadow2)"/>
+  
+  <!-- Screen -->
+  <rect x="110" y="70" width="180" height="260" rx="15" fill="#1e1b4b"/>
+  
+  <!-- Notch -->
+  <rect x="160" y="70" width="80" height="20" rx="10" fill="#312e81"/>
+  
+  <!-- Camera -->
+  <circle cx="185" cy="80" r="4" fill="#7c3aed" stroke="#a78bfa" stroke-width="1"/>
+  <circle cx="200" cy="80" r="4" fill="#7c3aed" stroke="#a78bfa" stroke-width="1"/>
+  <circle cx="215" cy="80" r="4" fill="#7c3aed" stroke="#a78bfa" stroke-width="1"/>
+  
+  <!-- Screen Shine -->
+  <rect x="115" y="75" width="60" height="250" rx="10" fill="white" opacity="0.08"/>
+  
+  <!-- Volume Buttons -->
+  <rect x="95" y="120" width="5" height="30" rx="2.5" fill="#312e81"/>
+  <rect x="95" y="160" width="5" height="30" rx="2.5" fill="#312e81"/>
+  
+  <!-- Power Button -->
+  <rect x="300" y="140" width="5" height="40" rx="2.5" fill="#312e81"/>
+</svg>

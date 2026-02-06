@@ -49,6 +49,8 @@ export default function SellPage() {
         brand: '',
         model: '',
         storage_gb: '',
+        ram_gb: '',
+        camera_mp: '',
         color: '',
         condition_grade: '',
         condition_category: '',
@@ -58,6 +60,8 @@ export default function SellPage() {
         battery_health: '',
         warranty_months: '0',
         accessories_included: '',
+        seller_phone: '',
+        seller_city: '',
     });
     const [images, setImages] = useState<File[]>([]);
     const [imagePreviews, setImagePreviews] = useState<string[]>([]);
@@ -108,12 +112,12 @@ export default function SellPage() {
         handleFilesSelect(e.target.files);
     };
 
-    const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    const handleDrop = (e: React.DragEvent) => {
         e.preventDefault();
         handleFilesSelect(e.dataTransfer.files);
     };
 
-    const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    const handleDragOver = (e: React.DragEvent) => {
         e.preventDefault();
     };
 
@@ -133,8 +137,9 @@ export default function SellPage() {
         // Validation
         if (!formData.brand || !formData.model || !formData.storage_gb ||
             !formData.color || !formData.condition_grade || !formData.condition_category ||
-            !formData.price || images.length === 0) {
-            setError('Please fill in all required fields and upload at least one image.');
+            !formData.price || !formData.seller_phone || !formData.seller_city ||
+            images.length === 0) {
+            setError('Please fill in all required fields (including seller phone and city) and upload at least one image.');
             return;
         }
 
@@ -149,7 +154,11 @@ export default function SellPage() {
             data.append('condition_grade', formData.condition_grade);
             data.append('condition_category', formData.condition_category);
             data.append('price', formData.price);
+            data.append('seller_phone', formData.seller_phone);
+            data.append('seller_city', formData.seller_city);
 
+            if (formData.ram_gb) data.append('ram_gb', formData.ram_gb);
+            if (formData.camera_mp) data.append('camera_mp', formData.camera_mp);
             if (formData.defects) data.append('defects', formData.defects);
             if (formData.original_price) data.append('original_price', formData.original_price);
             if (formData.battery_health) data.append('battery_health', formData.battery_health);
@@ -266,21 +275,15 @@ export default function SellPage() {
                                     <label className="block text-sm font-medium text-foreground mb-2">
                                         {t.storage} (GB) *
                                     </label>
-                                    <Select
+                                    <Input
+                                        type="number"
+                                        min="8"
+                                        max="2048"
                                         value={formData.storage_gb}
-                                        onValueChange={(value) => handleChange('storage_gb', value)}
-                                    >
-                                        <SelectTrigger className="bg-background border-input text-foreground">
-                                            <SelectValue placeholder="Select storage" />
-                                        </SelectTrigger>
-                                        <SelectContent className="bg-popover border-border">
-                                            <SelectItem value="64">64 GB</SelectItem>
-                                            <SelectItem value="128">128 GB</SelectItem>
-                                            <SelectItem value="256">256 GB</SelectItem>
-                                            <SelectItem value="512">512 GB</SelectItem>
-                                            <SelectItem value="1024">1 TB</SelectItem>
-                                        </SelectContent>
-                                    </Select>
+                                        onChange={(e) => handleChange('storage_gb', e.target.value)}
+                                        placeholder="e.g., 128, 256, 512"
+                                        className="bg-background border-input text-foreground"
+                                    />
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-foreground mb-2">
@@ -290,6 +293,69 @@ export default function SellPage() {
                                         value={formData.color}
                                         onChange={(e) => handleChange('color', e.target.value)}
                                         placeholder="e.g., Space Black"
+                                        className="bg-background border-input text-foreground"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Phone Specifications Row */}
+                            <div className="grid sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-foreground mb-2">
+                                        RAM (GB)
+                                    </label>
+                                    <Input
+                                        type="number"
+                                        min="1"
+                                        max="64"
+                                        value={formData.ram_gb}
+                                        onChange={(e) => handleChange('ram_gb', e.target.value)}
+                                        placeholder="e.g., 4, 6, 8, 12"
+                                        className="bg-background border-input text-foreground"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-foreground mb-2">
+                                        Camera (MP)
+                                    </label>
+                                    <Input
+                                        type="number"
+                                        min="1"
+                                        max="200"
+                                        value={formData.camera_mp}
+                                        onChange={(e) => handleChange('camera_mp', e.target.value)}
+                                        placeholder="e.g., 12, 48, 108"
+                                        className="bg-background border-input text-foreground"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Seller Contact Information */}
+                            <div className="space-y-2">
+                                <h3 className="text-sm font-semibold text-foreground">Seller Contact Information</h3>
+                                <p className="text-xs text-muted-foreground">Provide your contact details for potential buyers</p>
+                            </div>
+                            <div className="grid sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-foreground mb-2">
+                                        Phone Number *
+                                    </label>
+                                    <Input
+                                        type="tel"
+                                        value={formData.seller_phone}
+                                        onChange={(e) => handleChange('seller_phone', e.target.value)}
+                                        placeholder="e.g., +923001234567"
+                                        className="bg-background border-input text-foreground"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-foreground mb-2">
+                                        City *
+                                    </label>
+                                    <Input
+                                        value={formData.seller_city}
+                                        onChange={(e) => handleChange('seller_city', e.target.value)}
+                                        placeholder="e.g., Karachi, Lahore, Islamabad"
                                         className="bg-background border-input text-foreground"
                                     />
                                 </div>
@@ -618,6 +684,8 @@ export default function SellPage() {
                                     brand: '',
                                     model: '',
                                     storage_gb: '',
+                                    ram_gb: '',
+                                    camera_mp: '',
                                     color: '',
                                     condition_grade: '',
                                     condition_category: '',
@@ -627,7 +695,11 @@ export default function SellPage() {
                                     battery_health: '',
                                     warranty_months: '0',
                                     accessories_included: '',
+                                    seller_phone: '',
+                                    seller_city: '',
                                 });
+                                setImages([]);
+                                setImagePreviews([]);
                             }}
                             className="border-border"
                         >

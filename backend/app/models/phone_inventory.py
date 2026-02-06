@@ -42,7 +42,11 @@ class PhoneInventory(Base):
         brand: Phone manufacturer (Apple, Samsung, etc.)
         model: Phone model name (iPhone 14 Pro, Galaxy S23, etc.)
         storage_gb: Storage capacity in GB
+        ram_gb: Phone RAM in GB
+        camera_mp: Main camera megapixels
         color: Phone color
+        seller_phone: Seller's contact phone number
+        seller_city: Seller's city
         condition_grade: Numeric condition rating (1-10)
         condition_category: Categorical condition (Mint, Excellent, etc.)
         defects: Text description of any issues/defects
@@ -69,7 +73,13 @@ class PhoneInventory(Base):
     brand = Column(String(50), nullable=False, index=True)
     model = Column(String(100), nullable=False, index=True)
     storage_gb = Column(Integer, nullable=False)  # e.g., 64, 128, 256, 512, 1024
+    ram_gb = Column(Integer, nullable=True, comment="Phone RAM in GB")
+    camera_mp = Column(Integer, nullable=True, comment="Main camera megapixels")
     color = Column(String(50), nullable=False)
+    
+    # Seller Contact Information
+    seller_phone = Column(String(20), nullable=True, comment="Seller's contact phone number")
+    seller_city = Column(String(100), nullable=True, comment="Seller's city")
     
     # Condition Information
     condition_grade = Column(

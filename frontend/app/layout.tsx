@@ -16,9 +16,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "PhoneShop - Premium Second-Hand Phones",
-  description: "Buy and sell certified second-hand phones. Premium quality, verified condition, unbeatable prices.",
-  keywords: ["phones", "second-hand", "used phones", "mobile", "Pakistan"],
+  title: "Skardu Mobile - Premium Second-Hand Phones",
+  description: "Discover Skardu Mobile's premium collection of certified second-hand phones. Top quality, verified condition, unbeatable prices.",
+  keywords: ["phones", "second-hand", "used phones", "mobile", "Skardu", "Pakistan", "Skardu Mobile"],
 };
 
 export default function RootLayout({
