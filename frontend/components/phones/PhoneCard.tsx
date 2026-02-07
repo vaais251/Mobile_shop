@@ -127,8 +127,12 @@ export function PhoneCard({ phone, variant = 'shop' }: PhoneCardProps) {
 
                 {/* Overlay on hover */}
                 <Link href={`/phone/${phone.id}`}>
-                    <div className="absolute inset-0 bg-foreground/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <Button variant="secondary" size="sm">
+                    <div className="absolute inset-0 bg-black/40 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center">
+                        <Button
+                            variant="secondary"
+                            size="lg"
+                            className="bg-white dark:bg-zinc-900 text-foreground hover:bg-white/90 dark:hover:bg-zinc-800 shadow-2xl border-2 border-white/20 font-bold text-base px-8 py-6 transform group-hover:scale-110 transition-transform duration-300"
+                        >
                             {t.view_details}
                         </Button>
                     </div>

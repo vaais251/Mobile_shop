@@ -1173,9 +1173,9 @@ export default function SellPage() {
                             </DialogTitle>
                             <DialogDescription className="text-center text-muted-foreground text-base">
                                 {t.listing_pending}
-                                <p className="mt-2 text-sm italic font-medium text-emerald-600 dark:text-emerald-400">
+                                <span className="mt-2 text-sm italic font-medium text-emerald-600 dark:text-emerald-400 block">
                                     Our team will review it within 24 hours.
-                                </p>
+                                </span>
                             </DialogDescription>
                         </DialogHeader>
 
@@ -1198,6 +1198,7 @@ export default function SellPage() {
                                         price: '',
                                         original_price: '',
                                         battery_health: '',
+                                        battery_mah: '',
                                         warranty_months: '0',
                                         accessories_included: '',
                                         seller_phone: '',
