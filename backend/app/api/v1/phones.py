@@ -298,6 +298,17 @@ async def sell_phone(
         seller_id=current_user.id
     )
     
+    # **TRIGGER 1: Create notification for new listing**
+    from app.models.notification import Notification, NotificationType
+    notification = Notification(
+        type=NotificationType.NEW_LISTING,
+        title="New Listing Pending Approval",
+        message=f"New listing submitted: {brand} {model} ({storage_gb}GB) by {current_user.name}",
+        related_id=phone.id
+    )
+    db.add(notification)
+    db.commit()
+    
     return phone_to_response(phone)
 
 

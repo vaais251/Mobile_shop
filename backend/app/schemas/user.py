@@ -50,6 +50,7 @@ class UserUpdate(BaseModel):
     phone_number: Optional[str] = Field(None, max_length=20)
     city: Optional[str] = Field(None, max_length=100)
     address: Optional[str] = None
+    shipping_address: Optional[str] = None
     profile_image_url: Optional[str] = None
 
 
@@ -64,8 +65,10 @@ class UserResponse(BaseModel):
     city: Optional[str] = None
     profile_image_url: Optional[str] = None
     address: Optional[str] = None
+    shipping_address: Optional[str] = None
     role: UserRole
     is_verified: bool
+    is_verified_seller: bool
     is_active: bool
     created_at: datetime
 

@@ -105,6 +105,7 @@ class SellerInfo(BaseModel):
     id: int
     name: str
     is_verified: bool
+    is_verified_seller: bool  # Verified seller trust badge
 
     class Config:
         from_attributes = True

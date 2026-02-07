@@ -8,6 +8,7 @@ from app.models.phone_inventory import PhoneInventory, PhoneCondition
 from app.models.order import Order, OrderStatus, PaymentMethod, OrderItem
 from app.models.chat import ChatMessage
 from app.models.message import Message
+from app.models.notification import Notification, NotificationType
 
 __all__ = [
     # User models
@@ -25,5 +26,8 @@ __all__ = [
     "ChatMessage",
     # Messages
     "Message",
+    # Notifications
+    "Notification",
+    "NotificationType",
 ]
 

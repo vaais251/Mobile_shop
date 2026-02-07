@@ -20,6 +20,26 @@ async def create_order(
     order_service = OrderService(db)
     try:
         order = order_service.create_order(current_user.id, order_data)
+        
+        # **FEATURE 2: Auto-update user's shipping address**
+        # If the user doesn't have a saved shipping address, save this one
+        if not current_user.shipping_address and order_data.shipping_address:
+            current_user.shipping_address = order_data.shipping_address
+            current_user.city = order_data.shipping_city
+            current_user.phone_number = order_data.shipping_phone
+            db.commit()
+        
+        # **TRIGGER 2: Create notification for new order**
+        from app.models.notification import Notification, NotificationType
+        notification = Notification(
+            type=NotificationType.NEW_ORDER,
+            title="New Order Received",
+            message=f"New order #{order.order_number} from {current_user.name} - Total: {order.total_amount} PKR",
+            related_id=order.id
+        )
+        db.add(notification)
+        db.commit()
+        
         return order
     except ValueError as e:
         raise HTTPException(

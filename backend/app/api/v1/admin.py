@@ -474,6 +474,39 @@ async def verify_seller(
     return UserResponse.model_validate(user)
 
 
+@router.patch(
+    "/users/{user_id}/verified-seller-badge",
+    response_model=UserResponse,
+    summary="Toggle Verified Seller Badge",
+    description="Toggle the verified seller trust badge for community listings."
+)
+async def toggle_verified_seller_badge(
+    user_id: int,
+    verified_seller: bool = True,
+    admin: User = Depends(get_current_admin),
+    db: Session = Depends(get_db)
+):
+    """
+    Toggle verified seller badge (trust system).
+    
+    This is separate from basic seller verification and indicates
+    a trusted seller in the community marketplace with a blue checkmark.
+    """
+    user = db.query(User).filter(User.id == user_id).first()
+    
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+    
+    user.is_verified_seller = verified_seller
+    db.commit()
+    db.refresh(user)
+    
+    return UserResponse.model_validate(user)
+
+
 @router.delete(
     "/users/{user_id}",
     status_code=status.HTTP_204_NO_CONTENT,

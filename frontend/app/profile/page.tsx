@@ -40,6 +40,9 @@ export default function ProfilePage() {
         name: user?.name || '',
         email: user?.email || '',
         phone_number: user?.phone_number || '',
+        city: user?.city || '',
+        address: user?.address || '',
+        shipping_address: user?.shipping_address || '',
         password: '',
     });
     const [updating, setUpdating] = useState(false);
@@ -51,6 +54,9 @@ export default function ProfilePage() {
                 name: user.name,
                 email: user.email,
                 phone_number: user.phone_number || '',
+                city: user.city || '',
+                address: user.address || '',
+                shipping_address: user.shipping_address || '',
                 password: '',
             });
         }
@@ -98,6 +104,9 @@ export default function ProfilePage() {
             const response = await api.patch<User>('/auth/me', {
                 name: settingsData.name,
                 phone_number: settingsData.phone_number,
+                city: settingsData.city,
+                address: settingsData.address,
+                shipping_address: settingsData.shipping_address,
                 password: settingsData.password || undefined
             }, token ?? undefined);
 
@@ -291,26 +300,73 @@ export default function ProfilePage() {
                                 <CardDescription>Update your personal information and password.</CardDescription>
                             </CardHeader>
                             <CardContent>
-                                <form onSubmit={handleUpdateSettings} className="space-y-4">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div className="space-y-2">
-                                            <label className="text-sm font-medium">Full Name</label>
-                                            <Input
-                                                value={settingsData.name}
-                                                onChange={e => setSettingsData({ ...settingsData, name: e.target.value })}
-                                            />
+                                <form onSubmit={handleUpdateSettings} className="space-y-6">
+                                    {/* Personal Information */}
+                                    <div>
+                                        <h3 className="text-sm font-semibold mb-3">Personal Information</h3>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-medium">Full Name</label>
+                                                <Input
+                                                    value={settingsData.name}
+                                                    onChange={e => setSettingsData({ ...settingsData, name: e.target.value })}
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-medium">Email (read-only)</label>
+                                                <Input value={settingsData.email} disabled className="opacity-60" />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-medium">Phone Number</label>
+                                                <Input
+                                                    value={settingsData.phone_number}
+                                                    onChange={e => setSettingsData({ ...settingsData, phone_number: e.target.value })}
+                                                    placeholder="+92 300 1234567"
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-medium">City</label>
+                                                <Input
+                                                    value={settingsData.city}
+                                                    onChange={e => setSettingsData({ ...settingsData, city: e.target.value })}
+                                                    placeholder="e.g., Karachi, Lahore"
+                                                />
+                                            </div>
                                         </div>
-                                        <div className="space-y-2">
-                                            <label className="text-sm font-medium">Email (read-only)</label>
-                                            <Input value={settingsData.email} disabled className="opacity-60" />
+                                    </div>
+
+                                    {/* Shipping Information */}
+                                    <div className="border-t pt-6">
+                                        <h3 className="text-sm font-semibold mb-1">Shipping Information</h3>
+                                        <p className="text-xs text-muted-foreground mb-3">
+                                            Save your default shipping address for faster checkout
+                                        </p>
+                                        <div className="grid grid-cols-1 gap-4">
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-medium">Default Shipping Address</label>
+                                                <Input
+                                                    value={settingsData.shipping_address}
+                                                    onChange={e => setSettingsData({ ...settingsData, shipping_address: e.target.value })}
+                                                    placeholder="House #, Street, Area, City"
+                                                />
+                                                <p className="text-xs text-muted-foreground">
+                                                    This address will be used to pre-fill checkout forms
+                                                </p>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-medium">General Address (Optional)</label>
+                                                <Input
+                                                    value={settingsData.address}
+                                                    onChange={e => setSettingsData({ ...settingsData, address: e.target.value })}
+                                                    placeholder="Alternative address or notes"
+                                                />
+                                            </div>
                                         </div>
-                                        <div className="space-y-2">
-                                            <label className="text-sm font-medium">Phone Number</label>
-                                            <Input
-                                                value={settingsData.phone_number}
-                                                onChange={e => setSettingsData({ ...settingsData, phone_number: e.target.value })}
-                                            />
-                                        </div>
+                                    </div>
+
+                                    {/* Security */}
+                                    <div className="border-t pt-6">
+                                        <h3 className="text-sm font-semibold mb-3">Security</h3>
                                         <div className="space-y-2">
                                             <label className="text-sm font-medium">New Password</label>
                                             <Input

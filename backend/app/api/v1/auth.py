@@ -180,8 +180,12 @@ async def update_me(
         current_user.name = user_data.name
     if user_data.phone_number:
         current_user.phone_number = user_data.phone_number
+    if user_data.city:
+        current_user.city = user_data.city
     if user_data.address:
         current_user.address = user_data.address
+    if user_data.shipping_address:
+        current_user.shipping_address = user_data.shipping_address
         
     db.commit()
     db.refresh(current_user)

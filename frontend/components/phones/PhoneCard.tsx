@@ -180,7 +180,12 @@ export function PhoneCard({ phone, variant = 'shop' }: PhoneCardProps) {
                 <div className="mt-auto pt-3 min-h-[28px]">
                     {variant === 'community' && phone.seller && (
                         <div className="flex items-center gap-2 text-xs">
-                            {phone.seller.is_verified ? (
+                            {phone.seller.is_verified_seller ? (
+                                <span className="flex items-center gap-1 text-blue-600 dark:text-blue-400 font-semibold">
+                                    <BadgeCheck className="h-4 w-4 fill-current" />
+                                    Verified Seller
+                                </span>
+                            ) : phone.seller.is_verified ? (
                                 <span className="flex items-center gap-1 text-cyan-600 dark:text-cyan-400">
                                     <ShieldCheck className="h-3 w-3" />
                                     {t.verified_seller}

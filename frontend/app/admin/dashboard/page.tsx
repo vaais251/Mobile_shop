@@ -56,6 +56,7 @@ import {
     Edit2,
     Save,
 } from 'lucide-react';
+import { NotificationBell } from '@/components/NotificationBell';
 
 interface Stats {
     total_users: number;
@@ -309,6 +310,7 @@ export default function AdminDashboard() {
                     <p className="text-muted-foreground">Manage inventory, approvals, and system stats.</p>
                 </div>
                 <div className="flex items-center gap-3">
+                    {token && <NotificationBell token={token} />}
                     <Link href="/admin/add-phone">
                         <Button className="gap-2 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white">
                             <PlusCircle className="h-4 w-4" />
