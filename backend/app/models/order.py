@@ -159,6 +159,24 @@ class Order(Base):
         comment="Reason for cancellation if cancelled"
     )
     
+    # Order completion tracking (for admin)
+    completed_at = Column(
+        DateTime,
+        nullable=True,
+        comment="When admin marked order as complete"
+    )
+    completion_notes = Column(
+        Text,
+        nullable=True,
+        comment="Admin notes when completing order"
+    )
+    can_be_rated = Column(
+        Boolean,
+        default=False,
+        nullable=False,
+        comment="Whether customer can rate products in this order"
+    )
+    
     # Timestamps
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     updated_at = Column(
@@ -181,6 +199,12 @@ class Order(Base):
     
     items = relationship(
         "OrderItem",
+        back_populates="order",
+        cascade="all, delete-orphan"
+    )
+    
+    ratings = relationship(
+        "ProductRating",
         back_populates="order",
         cascade="all, delete-orphan"
     )

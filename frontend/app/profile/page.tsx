@@ -158,18 +158,27 @@ export default function ProfilePage() {
                 </div>
 
                 <Tabs defaultValue="orders" className="space-y-6">
-                    <TabsList className="grid w-full grid-cols-3 h-12 bg-muted/50 p-1 rounded-xl">
-                        <TabsTrigger value="orders" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
-                            <Package className="h-4 w-4 mr-2" />
-                            My Orders
+                    <TabsList className="grid w-full grid-cols-3 gap-3 h-auto bg-transparent p-0">
+                        <TabsTrigger
+                            value="orders"
+                            className="h-16 rounded-2xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 transition-all duration-300 hover:border-violet-400 dark:hover:border-violet-500 hover:shadow-lg data-[state=active]:bg-gradient-to-br data-[state=active]:from-violet-600 data-[state=active]:to-indigo-600 data-[state=active]:text-white data-[state=active]:border-transparent data-[state=active]:shadow-xl data-[state=active]:shadow-violet-500/30 hover:scale-[1.02] data-[state=active]:scale-[1.02]"
+                        >
+                            <Package className="h-5 w-5 mr-2" />
+                            <span className="font-semibold">My Orders</span>
                         </TabsTrigger>
-                        <TabsTrigger value="listings" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
-                            <Smartphone className="h-4 w-4 mr-2" />
-                            My Listings
+                        <TabsTrigger
+                            value="listings"
+                            className="h-16 rounded-2xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 transition-all duration-300 hover:border-emerald-400 dark:hover:border-emerald-500 hover:shadow-lg data-[state=active]:bg-gradient-to-br data-[state=active]:from-emerald-600 data-[state=active]:to-teal-600 data-[state=active]:text-white data-[state=active]:border-transparent data-[state=active]:shadow-xl data-[state=active]:shadow-emerald-500/30 hover:scale-[1.02] data-[state=active]:scale-[1.02]"
+                        >
+                            <Smartphone className="h-5 w-5 mr-2" />
+                            <span className="font-semibold">My Listings</span>
                         </TabsTrigger>
-                        <TabsTrigger value="settings" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
-                            <Settings className="h-4 w-4 mr-2" />
-                            Settings
+                        <TabsTrigger
+                            value="settings"
+                            className="h-16 rounded-2xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 transition-all duration-300 hover:border-amber-400 dark:hover:border-amber-500 hover:shadow-lg data-[state=active]:bg-gradient-to-br data-[state=active]:from-amber-600 data-[state=active]:to-orange-600 data-[state=active]:text-white data-[state=active]:border-transparent data-[state=active]:shadow-xl data-[state=active]:shadow-amber-500/30 hover:scale-[1.02] data-[state=active]:scale-[1.02]"
+                        >
+                            <Settings className="h-5 w-5 mr-2" />
+                            <span className="font-semibold">Settings</span>
                         </TabsTrigger>
                     </TabsList>
 
@@ -385,8 +394,22 @@ export default function ProfilePage() {
                                         </div>
                                     )}
 
-                                    <Button type="submit" disabled={updating} className="w-full md:w-auto px-8">
-                                        {updating ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Updating...</> : 'Save Changes'}
+                                    <Button
+                                        type="submit"
+                                        disabled={updating}
+                                        className="w-full md:w-auto h-12 px-8 rounded-xl font-semibold text-base bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white shadow-xl shadow-violet-500/30 hover:shadow-2xl hover:shadow-violet-500/40 transition-all duration-300 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                                    >
+                                        {updating ? (
+                                            <>
+                                                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                                                Updating...
+                                            </>
+                                        ) : (
+                                            <>
+                                                <CheckCircle className="mr-2 h-5 w-5" />
+                                                Save Changes
+                                            </>
+                                        )}
                                     </Button>
                                 </form>
                             </CardContent>

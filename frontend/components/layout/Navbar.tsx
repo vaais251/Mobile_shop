@@ -180,6 +180,14 @@ export function Navbar() {
                                                 )}
                                             </Link>
                                         </DropdownMenuItem>
+                                        {isAdmin && (
+                                            <DropdownMenuItem asChild>
+                                                <Link href="/admin/orders" className="flex items-center gap-3 cursor-pointer px-3 py-2.5 rounded-lg">
+                                                    <Package className="h-4 w-4" />
+                                                    <span className="font-medium">Orders</span>
+                                                </Link>
+                                            </DropdownMenuItem>
+                                        )}
                                         <DropdownMenuSeparator className="bg-border my-2" />
                                         <DropdownMenuItem
                                             onClick={logout}

@@ -14,9 +14,20 @@ import {
     Smartphone,
     ArrowLeft,
     Loader2,
-    MessageCircle
+    MessageCircle,
+    Trash2,
+    Package
 } from 'lucide-react';
 import { format } from 'date-fns';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
+import { Badge } from '@/components/ui/badge';
 
 interface Message {
     id: number;
@@ -47,14 +58,23 @@ export default function MessagesPage() {
     const [newMessage, setNewMessage] = useState('');
     const [loading, setLoading] = useState(true);
     const [conversationsLoading, setConversationsLoading] = useState(true);
+    const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+    const [deleting, setDeleting] = useState(false);
+    const [orderNumber, setOrderNumber] = useState<string | null>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
-    // Initial load from query params
+    // Initial load from query params - Auto-open chat with user
     useEffect(() => {
         const userId = searchParams.get('userId');
         const userName = searchParams.get('userName');
-        if (userId && userName) {
-            setSelectedUser({ id: parseInt(userId), name: userName });
+
+        if (userId) {
+            const uid = parseInt(userId);
+            // Set selected user immediately
+            setSelectedUser({
+                id: uid,
+                name: userName || 'User'
+            });
         }
     }, [searchParams]);
 
@@ -132,6 +152,30 @@ export default function MessagesPage() {
         }
     };
 
+    const handleDeleteConversation = async () => {
+        if (!selectedUser || !token) return;
+
+        setDeleting(true);
+        try {
+            await api.delete(`/chat/conversations/${selectedUser.id}`, token);
+            // Remove conversation from list
+            setConversations(conversations.filter(c => c.other_user_id !== selectedUser.id));
+            setSelectedUser(null);
+            setMessages([]);
+            setShowDeleteDialog(false);
+        } catch (error) {
+            console.error('Error deleting conversation:', error);
+        } finally {
+            setDeleting(false);
+        }
+    };
+
+    // Extract order number from query params
+    useEffect(() => {
+        const order = searchParams.get('orderNumber');
+        setOrderNumber(order);
+    }, [searchParams]);
+
     if (!isAuthenticated) {
         return (
             <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -199,24 +243,47 @@ export default function MessagesPage() {
                 {selectedUser ? (
                     <>
                         {/* Chat Header */}
-                        <div className="p-4 border-b flex items-center gap-4 bg-background/50 backdrop-blur">
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                className="md:hidden"
-                                onClick={() => setSelectedUser(null)}
-                            >
-                                <ArrowLeft className="h-5 w-5" />
-                            </Button>
-                            <div className="flex items-center gap-3">
-                                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                                    <UserIcon className="h-6 w-6 text-primary" />
-                                </div>
-                                <div>
-                                    <h3 className="font-bold">{selectedUser.name}</h3>
-                                    <p className="text-xs text-emerald-500 font-medium">Online</p>
+                        <div className="p-4 border-b flex items-center justify-between bg-background/50 backdrop-blur">
+                            <div className="flex items-center gap-4">
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="md:hidden"
+                                    onClick={() => setSelectedUser(null)}
+                                >
+                                    <ArrowLeft className="h-5 w-5" />
+                                </Button>
+                                <div className="flex items-center gap-3">
+                                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                                        <UserIcon className="h-6 w-6 text-primary" />
+                                    </div>
+                                    <div>
+                                        <h3 className="font-bold">{selectedUser.name}</h3>
+                                        {orderNumber ? (
+                                            <div className="flex items-center gap-2 mt-1">
+                                                <Badge variant="secondary" className="text-xs flex items-center gap-1">
+                                                    <Package className="h-3 w-3" />
+                                                    Order #{orderNumber}
+                                                </Badge>
+                                            </div>
+                                        ) : (
+                                            <p className="text-xs text-emerald-500 font-medium">Online</p>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
+
+                            {/* Delete button for admins */}
+                            {user?.role === 'admin' && (
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => setShowDeleteDialog(true)}
+                                    className="hover:bg-destructive/10 hover:text-destructive"
+                                >
+                                    <Trash2 className="h-5 w-5" />
+                                </Button>
+                            )}
                         </div>
 
                         {/* Messages Area */}
@@ -234,8 +301,8 @@ export default function MessagesPage() {
                                             className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}
                                         >
                                             <div className={`max-w-[75%] rounded-2xl p-3 shadow-sm ${isMe
-                                                    ? 'bg-primary text-primary-foreground rounded-tr-none'
-                                                    : 'bg-card border rounded-tl-none'
+                                                ? 'bg-primary text-primary-foreground rounded-tr-none'
+                                                : 'bg-card border rounded-tl-none'
                                                 }`}>
                                                 {msg.phone_id && (
                                                     <div className="mb-2 p-2 bg-black/10 rounded flex items-center gap-2 text-xs">
@@ -280,6 +347,45 @@ export default function MessagesPage() {
                     </div>
                 )}
             </div>
+
+            {/* Delete Conversation Dialog */}
+            <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Delete Conversation?</DialogTitle>
+                        <DialogDescription>
+                            This will permanently delete all messages between you and {selectedUser?.name}.
+                            This action cannot be undone.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter className="gap-2">
+                        <Button
+                            variant="outline"
+                            onClick={() => setShowDeleteDialog(false)}
+                            disabled={deleting}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            variant="destructive"
+                            onClick={handleDeleteConversation}
+                            disabled={deleting}
+                        >
+                            {deleting ? (
+                                <>
+                                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                    Deleting...
+                                </>
+                            ) : (
+                                <>
+                                    <Trash2 className="h-4 w-4 mr-2" />
+                                    Delete
+                                </>
+                            )}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

@@ -106,3 +106,24 @@ async def get_unread_count(
         ChatMessage.is_read == False
     ).count()
     return {"count": count}
+
+@router.delete("/conversations/{other_user_id}")
+async def delete_conversation(
+    other_user_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Delete all messages in a conversation between current user and another user.
+    Available to all users to delete their own conversations.
+    """
+    # Delete all messages between these two users
+    deleted = db.query(ChatMessage).filter(
+        or_(
+            and_(ChatMessage.sender_id == current_user.id, ChatMessage.receiver_id == other_user_id),
+            and_(ChatMessage.sender_id == other_user_id, ChatMessage.receiver_id == current_user.id)
+        )
+    ).delete()
+    
+    db.commit()
+    return {"deleted_count": deleted, "message": "Conversation deleted successfully"}

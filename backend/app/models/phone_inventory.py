@@ -196,6 +196,13 @@ class PhoneInventory(Base):
         cascade="all, delete-orphan"
     )
     
+    # Product ratings for this phone
+    ratings = relationship(
+        "ProductRating",
+        back_populates="phone",
+        foreign_keys="ProductRating.phone_id"
+    )
+    
     def __repr__(self) -> str:
         return f"<PhoneInventory(id={self.id}, brand='{self.brand}', model='{self.model}', price={self.price})>"
     

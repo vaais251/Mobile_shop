@@ -127,6 +127,13 @@ class User(Base):
         foreign_keys="Message.sender_id"
     )
     
+    # Product ratings given by this user
+    ratings = relationship(
+        "ProductRating",
+        back_populates="user",
+        foreign_keys="ProductRating.user_id"
+    )
+    
     def __repr__(self) -> str:
         return f"<User(id={self.id}, email='{self.email}', role={self.role.value})>"
     
