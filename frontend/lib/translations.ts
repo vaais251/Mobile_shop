@@ -98,9 +98,9 @@ export const translations: Record<Language, Translations> = {
         nav_my_listings: 'My Listings',
 
         // Hero Section
-        hero_title: 'Premium Second-Hand Phones',
-        hero_subtitle: 'Certified quality, unbeatable prices. Every phone inspected and graded.',
-        hero_cta: 'Browse Collection',
+        hero_title: 'Premium Pre-Owned Devices',
+        hero_subtitle: 'Discover certified pre-loved smartphones. Premium quality, verified authenticity, exceptional value.',
+        hero_cta: 'Explore Collection',
 
         // Product
         condition: 'Condition',
@@ -179,8 +179,8 @@ export const translations: Record<Language, Translations> = {
         nav_my_listings: 'میری فہرستیں',
 
         // Hero Section
-        hero_title: 'پریمیم سیکنڈ ہینڈ فونز',
-        hero_subtitle: 'تصدیق شدہ معیار، بہترین قیمتیں۔ ہر فون کا معائنہ اور درجہ بندی۔',
+        hero_title: 'پریمیم تجدید شدہ ڈیوائسز',
+        hero_subtitle: 'تصدیق شدہ پری لوڈ اسمارٹ فونز دریافت کریں۔ پریمیم معیار، تصدیق شدہ اصلیت، شاندار قیمت۔',
         hero_cta: 'کلیکشن دیکھیں',
 
         // Product

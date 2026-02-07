@@ -16,6 +16,7 @@ class UserCreate(BaseModel):
     password: str = Field(..., min_length=6, max_length=100)
     name: str = Field(..., min_length=2, max_length=100)
     phone_number: Optional[str] = Field(None, max_length=20)
+    city: str = Field(..., min_length=2, max_length=100)
 
     class Config:
         json_schema_extra = {
@@ -23,7 +24,8 @@ class UserCreate(BaseModel):
                 "email": "user@example.com",
                 "password": "securepassword123",
                 "name": "Ali Ahmed",
-                "phone_number": "+923001234567"
+                "phone_number": "+923001234567",
+                "city": "Karachi"
             }
         }
 
@@ -46,6 +48,7 @@ class UserUpdate(BaseModel):
     """Schema for updating user profile."""
     name: Optional[str] = Field(None, min_length=2, max_length=100)
     phone_number: Optional[str] = Field(None, max_length=20)
+    city: Optional[str] = Field(None, max_length=100)
     address: Optional[str] = None
     profile_image_url: Optional[str] = None
 
@@ -58,6 +61,7 @@ class UserResponse(BaseModel):
     email: EmailStr
     name: str
     phone_number: Optional[str] = None
+    city: Optional[str] = None
     profile_image_url: Optional[str] = None
     address: Optional[str] = None
     role: UserRole

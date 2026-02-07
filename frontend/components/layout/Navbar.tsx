@@ -27,19 +27,22 @@ import {
     LayoutDashboard,
     ShoppingCart,
     MessageCircle,
-    X,
+    Package,
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 export function Navbar() {
     const { user, isAuthenticated, isAdmin, logout } = useAuth();
     const { language, setLanguage, t } = useLanguage();
     const { cartCount } = useCart();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const router = useRouter();
 
     const navLinks = [
         { href: '/', label: t.nav_shop, icon: Store },
         { href: '/community', label: t.nav_community, icon: Users },
         { href: '/sell', label: t.nav_sell, icon: PlusCircle },
+        ...(isAuthenticated ? [{ href: '/my-listings', label: 'Dashboard', icon: LayoutDashboard }] : []),
     ];
 
     return (
@@ -272,15 +275,20 @@ export function Navbar() {
                                                     <Button
                                                         variant="outline"
                                                         size="sm"
-                                                        onClick={() => {
-                                                            setMobileMenuOpen(false);
-                                                            window.location.href = '/profile';
-                                                        }}
+                                                        asChild
                                                         className="w-full"
                                                     >
-                                                        <User className="h-4 w-4 mr-1.5" />
-                                                        Profile
+                                                        <Link href="/profile" onClick={() => setMobileMenuOpen(false)}>
+                                                            <User className="h-4 w-4 mr-1.5" />
+                                                            Profile
+                                                        </Link>
                                                     </Button>
+                                                    <Link href="/messages" onClick={() => setMobileMenuOpen(false)} className="w-full">
+                                                        <Button variant="outline" size="sm" className="w-full">
+                                                            <MessageCircle className="h-4 w-4 mr-1.5" />
+                                                            Messages
+                                                        </Button>
+                                                    </Link>
                                                     <Button
                                                         variant="outline"
                                                         size="sm"
@@ -288,7 +296,7 @@ export function Navbar() {
                                                             logout();
                                                             setMobileMenuOpen(false);
                                                         }}
-                                                        className="w-full text-destructive hover:text-destructive"
+                                                        className="w-full text-destructive hover:text-destructive col-span-2"
                                                     >
                                                         <LogOut className="h-4 w-4 mr-1.5" />
                                                         Logout

@@ -32,6 +32,7 @@ class PhoneCreate(BaseModel):
     warranty_months: int = Field(default=0, ge=0, le=24)
     accessories_included: Optional[str] = Field(None, max_length=500)
     imei: Optional[str] = Field(None, max_length=20)
+    pta_approved: bool = Field(default=False, description="Is the phone PTA approved?")
 
     @field_validator('condition_grade')
     @classmethod
@@ -80,6 +81,7 @@ class PhoneUpdate(BaseModel):
     accessories_included: Optional[str] = Field(None, max_length=500)
     is_featured: Optional[bool] = None
     is_active: Optional[bool] = None
+    pta_approved: Optional[bool] = None
 
 
 class PhoneFilter(BaseModel):
@@ -125,6 +127,7 @@ class PhoneResponse(BaseModel):
     is_sold: bool
     is_featured: bool
     is_active: bool
+    pta_approved: bool
     seller_id: Optional[int] = None
     admin_approved: bool
     images: Optional[str] = None

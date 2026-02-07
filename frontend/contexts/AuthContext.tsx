@@ -8,6 +8,7 @@ interface User {
     email: string;
     name: string;
     phone_number?: string;
+    city?: string;
     role: 'admin' | 'seller' | 'buyer';
     is_verified: boolean;
 }
@@ -28,6 +29,7 @@ interface SignupData {
     password: string;
     name: string;
     phone_number?: string;
+    city: string;
 }
 
 interface AuthResponse {

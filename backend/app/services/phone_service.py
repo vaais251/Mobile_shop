@@ -200,6 +200,8 @@ class PhoneService:
             brand=phone_data.brand,
             model=phone_data.model,
             storage_gb=phone_data.storage_gb,
+            ram_gb=phone_data.ram_gb,
+            camera_mp=phone_data.camera_mp,
             color=phone_data.color,
             condition_grade=phone_data.condition_grade,
             condition_category=phone_data.condition_category,
@@ -212,6 +214,7 @@ class PhoneService:
             warranty_months=phone_data.warranty_months,
             accessories_included=phone_data.accessories_included,
             imei=phone_data.imei,
+            pta_approved=phone_data.pta_approved,
             seller_id=None,  # Shop-owned
             admin_approved=True,  # Auto-approved
             is_sold=False,
@@ -237,7 +240,11 @@ class PhoneService:
             brand=phone_data.brand,
             model=phone_data.model,
             storage_gb=phone_data.storage_gb,
+            ram_gb=phone_data.ram_gb,  # Added
+            camera_mp=phone_data.camera_mp,  # Added
             color=phone_data.color,
+            seller_phone=phone_data.seller_phone,  # Added
+            seller_city=phone_data.seller_city,  # Added
             condition_grade=phone_data.condition_grade,
             condition_category=phone_data.condition_category,
             defects=phone_data.defects,
@@ -249,6 +256,7 @@ class PhoneService:
             warranty_months=phone_data.warranty_months,
             accessories_included=phone_data.accessories_included,
             imei=phone_data.imei,
+            pta_approved=phone_data.pta_approved,  # Added
             seller_id=seller_id,  # User-owned
             admin_approved=False,  # HARDCODED: Requires admin approval
             is_sold=False,

@@ -7,6 +7,7 @@ from app.models.user import User, UserRole
 from app.models.phone_inventory import PhoneInventory, PhoneCondition
 from app.models.order import Order, OrderStatus, PaymentMethod, OrderItem
 from app.models.chat import ChatMessage
+from app.models.message import Message
 
 __all__ = [
     # User models
@@ -22,4 +23,7 @@ __all__ = [
     "OrderItem",
     # Chat
     "ChatMessage",
+    # Messages
+    "Message",
 ]
+

@@ -18,6 +18,9 @@ import {
     ShieldCheck,
     ShoppingCart,
     MessageCircle,
+    MemoryStick,
+    BadgeCheck,
+    AlertCircle,
 } from 'lucide-react';
 
 interface PhoneCardProps {
@@ -40,12 +43,30 @@ export function PhoneCard({ phone, variant = 'shop' }: PhoneCardProps) {
         ? Math.round(((Number(phone.original_price) - Number(phone.price)) / Number(phone.original_price)) * 100)
         : 0;
 
-    const imageUrl = phone.images
-        ? (phone.images.startsWith('http') ? phone.images : `${BACKEND_URL}${phone.images}`)
-        : null;
+    // Prioritize thumbnail, then images, handling both absolute and relative URLs
+    const getImageUrl = () => {
+        const imagePath = phone.thumbnail || phone.images;
+        if (!imagePath) return null;
+
+        // Handle JSON array of images (take first one)
+        let finalPath = imagePath;
+        if (imagePath.startsWith('[')) {
+            try {
+                const parsed = JSON.parse(imagePath);
+                finalPath = Array.isArray(parsed) && parsed.length > 0 ? parsed[0] : null;
+            } catch {
+                finalPath = imagePath;
+            }
+        }
+
+        if (!finalPath) return null;
+        return finalPath.startsWith('http') ? finalPath : `${BACKEND_URL}${finalPath}`;
+    };
+
+    const imageUrl = getImageUrl();
 
     return (
-        <Card className="card-premium group relative overflow-hidden">
+        <Card className="card-premium group relative overflow-hidden flex flex-col h-full">
             {/* Featured Badge */}
             {phone.is_featured && (
                 <div className="absolute top-3 left-3 z-10">
@@ -61,6 +82,23 @@ export function PhoneCard({ phone, variant = 'shop' }: PhoneCardProps) {
                 <div className="absolute top-3 right-3 z-10">
                     <Badge className="bg-red-500 text-white border-0 shadow-lg">
                         -{discountPercentage}%
+                    </Badge>
+                </div>
+            )}
+
+            {/* PTA Approval Badge */}
+            {phone.pta_approved ? (
+                <div className="absolute top-14 right-3 z-10">
+                    <Badge className="bg-gradient-to-r from-emerald-500 to-green-600 text-white border-0 shadow-lg">
+                        <BadgeCheck className="h-3 w-3 mr-1" />
+                        PTA Approved
+                    </Badge>
+                </div>
+            ) : (
+                <div className="absolute top-14 right-3 z-10">
+                    <Badge className="bg-gradient-to-r from-orange-500 to-red-500 text-white border-0 shadow-lg opacity-90">
+                        <AlertCircle className="h-3 w-3 mr-1" />
+                        Non-PTA
                     </Badge>
                 </div>
             )}
@@ -97,59 +135,67 @@ export function PhoneCard({ phone, variant = 'shop' }: PhoneCardProps) {
                 </Link>
             </div>
 
-            <CardContent className="p-5">
-                {/* Brand & Model */}
-                <div className="mb-4">
+            <CardContent className="p-5 flex-grow flex flex-col">
+                {/* Brand & Model - Fixed height */}
+                <div className="mb-3 h-14">
                     <p className="text-xs text-muted-foreground uppercase tracking-wider font-medium">{phone.brand}</p>
                     <h3 className="text-lg font-semibold text-foreground truncate mt-1">{phone.model}</h3>
                 </div>
 
-                {/* Specs Row */}
-                <div className="flex items-center gap-3 mb-4 text-xs text-muted-foreground">
-                    <span className="flex items-center gap-1">
+                {/* Specs Row - Fixed height */}
+                <div className="flex items-center gap-2 mb-3 text-xs text-muted-foreground flex-wrap min-h-[28px]">
+                    {/* Storage & RAM combined */}
+                    <span className="flex items-center gap-1 px-2 py-1 bg-muted/50 rounded-md font-medium">
                         <HardDrive className="h-3 w-3" />
                         {phone.storage_gb}GB
+                        {phone.ram_gb != null && phone.ram_gb > 0 && (
+                            <span className="opacity-70">• {phone.ram_gb}GB RAM</span>
+                        )}
                     </span>
                     {phone.battery_health && (
-                        <span className="flex items-center gap-1">
+                        <span className="flex items-center gap-1 px-2 py-1 bg-muted/50 rounded-md font-medium">
                             <Battery className="h-3 w-3" />
                             {phone.battery_health}%
                         </span>
                     )}
-                    <span className="px-2 py-0.5 rounded bg-muted text-muted-foreground">
+                </div>
+
+                {/* Color - Fixed height */}
+                <div className="mb-3 h-7">
+                    <span className="px-2 py-1 rounded-md bg-muted/50 font-medium text-xs text-muted-foreground">
                         {phone.color}
                     </span>
                 </div>
 
                 {/* Condition Badge */}
-                <Badge className={`${getConditionColor(phone.condition_grade)} border`}>
+                <Badge className={`${getConditionColor(phone.condition_grade)} border w-fit`}>
                     {phone.condition_grade.toFixed(1)}/10 • {phone.condition_category}
                 </Badge>
 
-                {/* Seller Info (for community) */}
-                {variant === 'community' && phone.seller && (
-                    <div className="mt-3 flex items-center gap-2 text-xs">
-                        {phone.seller.is_verified ? (
-                            <span className="flex items-center gap-1 text-cyan-600 dark:text-cyan-400">
-                                <ShieldCheck className="h-3 w-3" />
-                                {t.verified_seller}
-                            </span>
-                        ) : (
-                            <span className="flex items-center gap-1 text-muted-foreground">
-                                <CheckCircle className="h-3 w-3" />
-                                {phone.seller.name}
-                            </span>
-                        )}
-                    </div>
-                )}
-
-                {/* Shop Owned Badge */}
-                {variant === 'shop' && (
-                    <div className="mt-3 flex items-center gap-1 text-xs text-primary">
-                        <ShieldCheck className="h-3 w-3" />
-                        {t.shop_owned}
-                    </div>
-                )}
+                {/* Seller/Shop Info - Fixed height with mt-auto to push to bottom */}
+                <div className="mt-auto pt-3 min-h-[28px]">
+                    {variant === 'community' && phone.seller && (
+                        <div className="flex items-center gap-2 text-xs">
+                            {phone.seller.is_verified ? (
+                                <span className="flex items-center gap-1 text-cyan-600 dark:text-cyan-400">
+                                    <ShieldCheck className="h-3 w-3" />
+                                    {t.verified_seller}
+                                </span>
+                            ) : (
+                                <span className="flex items-center gap-1 text-muted-foreground">
+                                    <CheckCircle className="h-3 w-3" />
+                                    {phone.seller.name}
+                                </span>
+                            )}
+                        </div>
+                    )}
+                    {variant === 'shop' && (
+                        <div className="flex items-center gap-1 text-xs text-primary">
+                            <ShieldCheck className="h-3 w-3" />
+                            {t.shop_owned}
+                        </div>
+                    )}
+                </div>
             </CardContent>
 
             <CardFooter className="p-5 pt-3 flex flex-col gap-4">

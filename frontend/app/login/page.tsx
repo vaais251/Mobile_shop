@@ -18,6 +18,7 @@ import {
     Loader2,
     AlertCircle,
     CheckCircle,
+    MapPin,
 } from 'lucide-react';
 
 export default function LoginPage() {
@@ -42,6 +43,7 @@ export default function LoginPage() {
         password: '',
         name: '',
         phone_number: '',
+        city: '',
     });
 
     const handleLogin = async (e: React.FormEvent) => {
@@ -245,6 +247,23 @@ export default function LoginPage() {
                                                 onChange={(e) => setSignupData({ ...signupData, phone_number: e.target.value })}
                                                 placeholder="+92 300 1234567"
                                                 className="pl-10 bg-background border-input text-foreground"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-foreground mb-2">
+                                            City <span className="text-destructive">*</span>
+                                        </label>
+                                        <div className="relative">
+                                            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                            <Input
+                                                type="text"
+                                                value={signupData.city}
+                                                onChange={(e) => setSignupData({ ...signupData, city: e.target.value })}
+                                                placeholder="Skardu, Karachi, Lahore..."
+                                                className="pl-10 bg-background border-input text-foreground"
+                                                required
                                             />
                                         </div>
                                     </div>

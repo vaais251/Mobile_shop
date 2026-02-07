@@ -35,7 +35,8 @@ export const PHONE_BRANDS = [
   'Nokia',
   'Sony',
   'Asus',
-  'Other',
+  'Infinix',
+  'Tecno',
 ];
 
 /**
@@ -47,6 +48,40 @@ export const PHONE_CONDITIONS = [
   { value: 'good', label: 'Good' },
   { value: 'fair', label: 'Fair' },
   { value: 'poor', label: 'Poor' },
+];
+
+/**
+ * Phone color options
+ */
+export const PHONE_COLORS = [
+  'Space Black',
+  'Midnight Black',
+  'Titanium Black',
+  'Graphite',
+  'Space Gray',
+  'Silver',
+  'White',
+  'Gold',
+  'Rose Gold',
+  'Deep Purple',
+  'Purple',
+  'Blue',
+  'Pacific Blue',
+  'Sierra Blue',
+  'Alpine Green',
+  'Green',
+  'Mint',
+  'Pink',
+  'Red',
+  'Yellow',
+  'Orange',
+  'Natural Titanium',
+  'Blue Titanium',
+  'White Titanium',
+  'Phantom Black',
+  'Cream',
+  'Lavender',
+  'Other',
 ];
 
 /**

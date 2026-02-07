@@ -48,6 +48,7 @@ class UserService:
             password_hash=get_password_hash(user_data.password),
             name=user_data.name,
             phone_number=user_data.phone_number,
+            city=user_data.city,
             role=UserRole.BUYER,  # Default role is Buyer
             is_verified=False,
             is_active=True,

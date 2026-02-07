@@ -55,6 +55,7 @@ class User(Base):
     # Profile information
     name = Column(String(100), nullable=False)
     phone_number = Column(String(20), nullable=True)
+    city = Column(String(100), nullable=False, default="Unknown")
     profile_image_url = Column(String(500), nullable=True)
     address = Column(Text, nullable=True)
     
@@ -108,6 +109,13 @@ class User(Base):
         back_populates="receiver",
         foreign_keys="ChatMessage.receiver_id",
         cascade="all, delete-orphan"
+    )
+    
+    # Admin messages sent by this user
+    messages = relationship(
+        "Message",
+        back_populates="sender",
+        foreign_keys="Message.sender_id"
     )
     
     def __repr__(self) -> str:

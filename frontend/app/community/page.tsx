@@ -151,7 +151,7 @@ export default function CommunityPage() {
                             </p>
                         </div>
                     ) : (
-                        <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 items-stretch">
                             {phones.map((phone) => (
                                 <PhoneCard key={phone.id} phone={phone} variant="community" />
                             ))}

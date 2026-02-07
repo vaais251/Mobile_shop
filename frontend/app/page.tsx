@@ -249,7 +249,7 @@ export default function HomePage() {
               <p className="text-muted-foreground text-lg">{t.no_phones_found}</p>
             </div>
           ) : (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 items-stretch">
               {phones.map((phone) => (
                 <PhoneCard key={phone.id} phone={phone} variant="shop" />
               ))}

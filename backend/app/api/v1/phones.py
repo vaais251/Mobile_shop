@@ -231,6 +231,7 @@ async def sell_phone(
     battery_health: Optional[int] = Form(None),
     warranty_months: int = Form(0),
     accessories_included: Optional[str] = Form(None),
+    pta_approved: bool = Form(False),
     images: List[UploadFile] = File(..., description="Multiple phone images"),
     thumbnail_index: int = Form(0, description="Index of the image to use as thumbnail (0-based)"),
     current_user: User = Depends(get_current_user),
@@ -283,6 +284,7 @@ async def sell_phone(
         battery_health=battery_health,
         warranty_months=warranty_months,
         accessories_included=accessories_included,
+        pta_approved=pta_approved,
         images=images_json,
         thumbnail=thumbnail_path
     )
@@ -295,3 +297,51 @@ async def sell_phone(
     
     return phone_to_response(phone)
 
+
+@router.delete(
+    "/my-listings/{phone_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Delete my listing",
+    description="Delete a phone listing that belongs to the current user."
+)
+async def delete_my_listing(
+    phone_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Delete a listing owned by the current user.
+    
+    - Can only delete listings that belong to the user
+    - Cannot delete if the phone is already sold
+    """
+    phone_service = PhoneService(db)
+    phone = phone_service.get_phone_by_id(phone_id)
+    
+    if not phone:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Listing not found"
+        )
+    
+    if phone.seller_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You can only delete your own listings"
+        )
+    
+    if phone.is_sold:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Cannot delete a listing that has been sold"
+        )
+    
+    success = phone_service.delete_phone(phone_id)
+    
+    if not success:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to delete listing"
+        )
+    
+    return None

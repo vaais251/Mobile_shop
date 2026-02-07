@@ -7,6 +7,7 @@ import { CartProvider } from "@/contexts/CartContext";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { FloatingButtons } from "@/components/layout/FloatingButtons";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -43,6 +44,7 @@ export default function RootLayout({
                   {children}
                 </main>
                 <Footer />
+                <FloatingButtons />
               </ThemeProvider>
             </CartProvider>
           </LanguageProvider>

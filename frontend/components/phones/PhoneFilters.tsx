@@ -73,6 +73,7 @@ export function PhoneFilters({ filters, setFilters, onApply, onClear }: PhoneFil
                                     {brand}
                                 </SelectItem>
                             ))}
+                            <SelectItem value="Other">Other Brands</SelectItem>
                         </SelectContent>
                     </Select>
 

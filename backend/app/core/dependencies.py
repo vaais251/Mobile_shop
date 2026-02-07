@@ -108,7 +108,43 @@ async def get_current_seller(
 
 
 def get_optional_user(
-    token: Optional[str] = Depends(oauth2_scheme),
+    db: Session = Depends(get_db)
+):
+    """
+    Optional authentication - returns user if token valid, None otherwise.
+    Useful for endpoints that work both authenticated and unauthenticated.
+    This is a factory that returns the actual dependency.
+    """
+    from fastapi import Request
+    
+    async def _get_optional_user(request: Request, db: Session = Depends(get_db)) -> Optional[User]:
+        auth_header = request.headers.get("Authorization")
+        if not auth_header or not auth_header.startswith("Bearer "):
+            return None
+        
+        token = auth_header.split(" ")[1]
+        if not token:
+            return None
+        
+        try:
+            user_id = decode_access_token(token)
+            if user_id is None:
+                return None
+            
+            user = db.query(User).filter(User.id == int(user_id)).first()
+            return user if user and user.is_active else None
+        except Exception:
+            return None
+    
+    return _get_optional_user
+
+
+# Optional OAuth2 scheme that doesn't require authentication
+oauth2_scheme_optional = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login", auto_error=False)
+
+
+async def get_optional_current_user(
+    token: Optional[str] = Depends(oauth2_scheme_optional),
     db: Session = Depends(get_db)
 ) -> Optional[User]:
     """
@@ -127,3 +163,4 @@ def get_optional_user(
         return user if user and user.is_active else None
     except Exception:
         return None
+

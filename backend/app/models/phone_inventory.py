@@ -114,6 +114,12 @@ class PhoneInventory(Base):
     is_sold = Column(Boolean, default=False, nullable=False, index=True)
     is_featured = Column(Boolean, default=False, nullable=False)
     is_active = Column(Boolean, default=True, nullable=False)
+    pta_approved = Column(
+        Boolean,
+        default=False,
+        nullable=False,
+        comment="Indicates if the phone is PTA approved for use in Pakistan"
+    )
     
     # Seller and approval
     seller_id = Column(

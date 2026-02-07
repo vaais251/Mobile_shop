@@ -46,6 +46,8 @@ export interface PhoneInventory {
     brand: string;
     model: string;
     storage_gb: number;
+    ram_gb?: number;
+    camera_mp?: number;
     color: string;
     condition_grade: number;
     condition_category: PhoneCondition;
@@ -55,7 +57,10 @@ export interface PhoneInventory {
     is_sold: boolean;
     is_featured: boolean;
     is_active: boolean;
+    pta_approved: boolean;
     seller_id?: number;
+    seller_phone?: string;
+    seller_city?: string;
     admin_approved: boolean;
     images?: string; // JSON array of image paths
     thumbnail?: string; // Main cover image path
@@ -70,6 +75,7 @@ export interface PhoneInventory {
     seller?: {
         id: number;
         name: string;
+        email: string;
         is_verified: boolean;
     };
 
@@ -84,6 +90,7 @@ export interface PhoneCreate {
     brand: string;
     model: string;
     storage_gb: number;
+    ram_gb?: number;
     color: string;
     condition_grade: number;
     condition_category: PhoneCondition;
@@ -95,6 +102,7 @@ export interface PhoneCreate {
     battery_health?: number;
     warranty_months?: number;
     accessories_included?: string;
+    pta_approved?: boolean;
 }
 
 export interface PhoneFilter {

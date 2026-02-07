@@ -184,6 +184,8 @@ async def create_shop_phone_with_image(
     brand: str = Form(...),
     model: str = Form(...),
     storage_gb: int = Form(...),
+    ram_gb: Optional[int] = Form(None),
+    camera_mp: Optional[int] = Form(None),
     color: str = Form(...),
     condition_grade: float = Form(...),
     condition_category: PhoneCondition = Form(...),
@@ -193,6 +195,8 @@ async def create_shop_phone_with_image(
     battery_health: Optional[int] = Form(None),
     warranty_months: int = Form(0),
     accessories_included: Optional[str] = Form(None),
+    pta_approved: bool = Form(False),
+    is_featured: bool = Form(False),
     images: List[UploadFile] = File(..., description="Multiple phone images"),
     thumbnail_index: int = Form(0, description="Index of the image to use as thumbnail (0-based)"),
     admin: User = Depends(get_current_admin),
@@ -238,6 +242,8 @@ async def create_shop_phone_with_image(
         brand=brand,
         model=model,
         storage_gb=storage_gb,
+        ram_gb=ram_gb,
+        camera_mp=camera_mp,
         color=color,
         condition_grade=condition_grade,
         condition_category=condition_category,
@@ -247,12 +253,19 @@ async def create_shop_phone_with_image(
         battery_health=battery_health,
         warranty_months=warranty_months,
         accessories_included=accessories_included,
+        pta_approved=pta_approved,
         images=images_json,
         thumbnail=thumbnail_path
     )
     
     phone_service = PhoneService(db)
     phone = phone_service.create_shop_phone(phone_data)
+    
+    # Update is_featured if set
+    if is_featured:
+        phone.is_featured = True
+        db.commit()
+        db.refresh(phone)
     
     return phone_to_response(phone)
 
@@ -423,5 +436,93 @@ async def verify_seller(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="User not found or not a seller"
         )
+    
+    return UserResponse.model_validate(user)
+
+
+@router.delete(
+    "/users/{user_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Delete user",
+    description="Permanently delete a user account."
+)
+async def delete_user(
+    user_id: int,
+    admin: User = Depends(get_current_admin),
+    db: Session = Depends(get_db)
+):
+    """
+    Permanently delete a user account.
+    
+    - Cannot delete own account
+    - This will also delete all their listings
+    """
+    if user_id == admin.id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Cannot delete your own account"
+        )
+    
+    user = db.query(User).filter(User.id == user_id).first()
+    
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+    
+    # Delete user's phone listings first
+    db.query(PhoneInventory).filter(PhoneInventory.seller_id == user_id).delete()
+    
+    # Delete user
+    db.delete(user)
+    db.commit()
+    
+    return None
+
+
+from pydantic import BaseModel
+from app.core.security import get_password_hash
+
+
+class PasswordChange(BaseModel):
+    new_password: str
+
+
+@router.patch(
+    "/users/{user_id}/password",
+    response_model=UserResponse,
+    summary="Change user password",
+    description="Change a user's password (Admin only)."
+)
+async def change_user_password(
+    user_id: int,
+    password_data: PasswordChange,
+    admin: User = Depends(get_current_admin),
+    db: Session = Depends(get_db)
+):
+    """
+    Change a user's password.
+    
+    - Admin can change any user's password
+    - Useful for helping users who forgot their password
+    """
+    user = db.query(User).filter(User.id == user_id).first()
+    
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+    
+    if len(password_data.new_password) < 6:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Password must be at least 6 characters"
+        )
+    
+    user.password_hash = get_password_hash(password_data.new_password)
+    db.commit()
+    db.refresh(user)
     
     return UserResponse.model_validate(user)

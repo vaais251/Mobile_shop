@@ -65,7 +65,7 @@ export default function ProfilePage() {
 
     const fetchOrders = async () => {
         try {
-            const response = await api.get<Order[]>('/orders', token);
+            const response = await api.get<Order[]>('/orders/me', token ?? undefined);
             if (response.data) {
                 setOrders(response.data);
             }
@@ -78,7 +78,7 @@ export default function ProfilePage() {
 
     const fetchListings = async () => {
         try {
-            const response = await api.get<{ items: PhoneInventory[] }>('/phones/my-listings', token);
+            const response = await api.get<{ items: PhoneInventory[] }>('/phones/my-listings', token ?? undefined);
             if (response.data) {
                 setListings(response.data.items);
             }
@@ -99,7 +99,7 @@ export default function ProfilePage() {
                 name: settingsData.name,
                 phone_number: settingsData.phone_number,
                 password: settingsData.password || undefined
-            }, token);
+            }, token ?? undefined);
 
             if (response.error) {
                 setMessage({ type: 'error', text: response.error });
@@ -223,38 +223,63 @@ export default function ProfilePage() {
 
                     {/* Tab 2: My Listings */}
                     <TabsContent value="listings">
-                        <div className="grid sm:grid-cols-2 gap-4">
-                            {listingsLoading ? (
-                                <div className="col-span-full flex justify-center py-12"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
-                            ) : listings.length === 0 ? (
-                                <Card className="col-span-full"><CardContent className="p-12 text-center text-muted-foreground">You haven't listed any phones yet.</CardContent></Card>
-                            ) : (
-                                listings.map(phone => (
-                                    <Card key={phone.id}>
-                                        <CardContent className="p-4 flex gap-4">
-                                            <div className="h-20 w-20 rounded-lg bg-muted flex items-center justify-center shrink-0">
-                                                {phone.images ? (
-                                                    <img src={phone.images.startsWith('http') ? phone.images : `${BACKEND_URL}${phone.images}`} className="w-full h-full object-cover rounded-lg" />
-                                                ) : (
-                                                    <Smartphone className="h-10 w-10 text-muted-foreground" />
-                                                )}
-                                            </div>
-                                            <div className="flex-1 min-w-0">
-                                                <h3 className="font-bold truncate">{phone.brand} {phone.model}</h3>
-                                                <p className="text-xs text-muted-foreground mb-2">{formatPrice(phone.price)}</p>
-                                                <div className="flex gap-2">
-                                                    {phone.admin_approved ? (
-                                                        <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20">Approved</Badge>
-                                                    ) : (
-                                                        <Badge variant="outline" className="text-amber-500 border-amber-500/20">Pending</Badge>
-                                                    )}
-                                                    {phone.is_sold && <Badge className="bg-slate-500">Sold</Badge>}
-                                                </div>
-                                            </div>
-                                        </CardContent>
-                                    </Card>
-                                ))
+                        <div className="space-y-4">
+                            {/* Pending Review Info Banner */}
+                            {listings.some(phone => !phone.admin_approved) && (
+                                <div className="bg-amber-50 dark:bg-amber-950/20 border-2 border-amber-200 dark:border-amber-800 rounded-xl p-4 flex gap-3">
+                                    <Clock className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
+                                    <div>
+                                        <h4 className="font-semibold text-amber-900 dark:text-amber-100 mb-1">Listings Under Review</h4>
+                                        <p className="text-sm text-amber-700 dark:text-amber-300">
+                                            Phones marked as <strong>"Pending"</strong> are currently being reviewed by our admin team.
+                                            Once approved, they will be published on the shop page for buyers to see.
+                                        </p>
+                                    </div>
+                                </div>
                             )}
+
+                            <div className="grid sm:grid-cols-2 gap-4">
+                                {listingsLoading ? (
+                                    <div className="col-span-full flex justify-center py-12"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
+                                ) : listings.length === 0 ? (
+                                    <Card className="col-span-full"><CardContent className="p-12 text-center text-muted-foreground">You haven't listed any phones yet.</CardContent></Card>
+                                ) : (
+                                    listings.map(phone => (
+                                        <Card key={phone.id} className={!phone.admin_approved ? 'border-amber-200 dark:border-amber-800' : ''}>
+                                            <CardContent className="p-4 flex gap-4">
+                                                <div className="h-20 w-20 rounded-lg bg-muted flex items-center justify-center shrink-0 relative">
+                                                    {phone.images ? (
+                                                        <img src={phone.images.startsWith('http') ? phone.images : `${BACKEND_URL}${phone.images}`} className="w-full h-full object-cover rounded-lg" />
+                                                    ) : (
+                                                        <Smartphone className="h-10 w-10 text-muted-foreground" />
+                                                    )}
+                                                    {!phone.admin_approved && (
+                                                        <div className="absolute inset-0 bg-amber-500/20 rounded-lg flex items-center justify-center">
+                                                            <Clock className="h-6 w-6 text-amber-600 dark:text-amber-400" />
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                <div className="flex-1 min-w-0">
+                                                    <h3 className="font-bold truncate">{phone.brand} {phone.model}</h3>
+                                                    <p className="text-xs text-muted-foreground mb-2">{formatPrice(phone.price)}</p>
+                                                    <div className="flex gap-2 flex-wrap">
+                                                        {phone.admin_approved ? (
+                                                            <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20">✓ Approved</Badge>
+                                                        ) : (
+                                                            <Badge variant="outline" className="text-amber-600 border-amber-500/30 bg-amber-50 dark:bg-amber-950/30">
+                                                                <Clock className="h-3 w-3 mr-1" />
+                                                                Pending Review
+                                                            </Badge>
+                                                        )}
+                                                        {phone.is_sold && <Badge className="bg-slate-500">Sold</Badge>}
+                                                        {phone.pta_approved && <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20">PTA</Badge>}
+                                                    </div>
+                                                </div>
+                                            </CardContent>
+                                        </Card>
+                                    ))
+                                )}
+                            </div>
                         </div>
                     </TabsContent>
 

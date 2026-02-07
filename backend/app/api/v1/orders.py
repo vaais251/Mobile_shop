@@ -53,3 +53,40 @@ async def get_order(
         raise HTTPException(status_code=403, detail="Not authorized to view this order")
         
     return order
+
+
+@router.patch("/{order_id}/cancel", response_model=OrderResponse)
+async def cancel_order(
+    order_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Cancel an order.
+    
+    - Only the buyer can cancel their own order
+    - Can only cancel orders that are still pending or confirmed
+    """
+    order_service = OrderService(db)
+    order = order_service.get_order_by_id(order_id)
+    
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    
+    if order.buyer_id != current_user.id and current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Not authorized to cancel this order")
+    
+    # Can only cancel pending or confirmed orders
+    if order.status not in ["pending", "confirmed"]:
+        raise HTTPException(
+            status_code=400, 
+            detail=f"Cannot cancel order with status '{order.status}'. Only pending or confirmed orders can be cancelled."
+        )
+    
+    # Update order status
+    order.status = "cancelled"
+    db.commit()
+    db.refresh(order)
+    
+    return order
+
