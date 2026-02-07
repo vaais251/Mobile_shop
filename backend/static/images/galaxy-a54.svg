@@ -1,0 +1,22 @@
+<svg width="800" height="800" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="galaxyA54Grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#a855f7;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="800" fill="#f0f0f0"/>
+  <rect x="200" y="50" width="400" height="700" rx="50" fill="url(#galaxyA54Grad)"/>
+  <rect x="210" y="60" width="380" height="680" rx="40" fill="#0a0a0a"/>
+  <rect x="220" y="80" width="360" height="640" rx="30" fill="#6b21a8"/>
+  <circle cx="300" cy="140" r="45" fill="#7c3aed"/>
+  <circle cx="300" cy="140" r="35" fill="#8b5cf6"/>
+  <circle cx="285" cy="130" r="12" fill="#a78bfa"/>
+  <circle cx="315" cy="130" r="12" fill="#a78bfa"/>
+  <circle cx="300" cy="155" r="10" fill="#a78bfa"/>
+  <text x="400" y="400" font-family="Arial, sans-serif" font-size="46" fill="#fff" text-anchor="middle" font-weight="bold">Galaxy A54</text>
+  <text x="400" y="450" font-family="Arial, sans-serif" font-size="24" fill="#e9d5ff" text-anchor="middle">128GB • Awesome Violet</text>
+  <text x="400" y="500" font-family="Arial, sans-serif" font-size="32" fill="#c084fc" text-anchor="middle" font-weight="bold">PKR 55,000</text>
+  <text x="400" y="540" font-family="Arial, sans-serif" font-size="18" fill="#10b981" text-anchor="middle">8GB RAM • 50MP Camera</text>
+  <text x="400" y="570" font-family="Arial, sans-serif" font-size="16" fill="#fbbf24" text-anchor="middle">User Listing • Excellent Condition</text>
+</svg>

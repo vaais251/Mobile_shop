@@ -94,3 +94,15 @@ async def get_conversations(
         })
     
     return sorted(conversations, key=lambda x: x["last_message_at"], reverse=True)
+
+@router.get("/unread-count")
+async def get_unread_count(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Get the total number of unread messages for the current user."""
+    count = db.query(ChatMessage).filter(
+        ChatMessage.receiver_id == current_user.id,
+        ChatMessage.is_read == False
+    ).count()
+    return {"count": count}

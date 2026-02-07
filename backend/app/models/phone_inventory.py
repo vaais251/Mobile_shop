@@ -158,6 +158,11 @@ class PhoneInventory(Base):
         nullable=True,
         comment="Battery health percentage (0-100)"
     )
+    battery_mah = Column(
+        Integer,
+        nullable=True,
+        comment="Battery capacity in mAh (e.g., 4000, 5000)"
+    )
     warranty_months = Column(
         Integer,
         default=0,

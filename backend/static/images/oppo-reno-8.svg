@@ -1,0 +1,22 @@
+<svg width="800" height="800" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="oppoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#059669;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#047857;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="800" fill="#f0f0f0"/>
+  <rect x="200" y="50" width="400" height="700" rx="50" fill="url(#oppoGrad)"/>
+  <rect x="210" y="60" width="380" height="680" rx="40" fill="#0a0a0a"/>
+  <rect x="220" y="80" width="360" height="640" rx="30" fill="#065f46"/>
+  <rect x="260" y="110" width="100" height="70" rx="15" fill="#047857"/>
+  <circle cx="280" cy="130" r="12" fill="#10b981"/>
+  <circle cx="310" cy="130" r="12" fill="#10b981"/>
+  <circle cx="340" cy="130" r="12" fill="#10b981"/>
+  <circle cx="295" cy="160" r="8" fill="#10b981"/>
+  <text x="400" y="400" font-family="Arial, sans-serif" font-size="46" fill="#fff" text-anchor="middle" font-weight="bold">Oppo Reno 8</text>
+  <text x="400" y="450" font-family="Arial, sans-serif" font-size="24" fill="#d1fae5" text-anchor="middle">128GB • Shimmer Gold</text>
+  <text x="400" y="500" font-family="Arial, sans-serif" font-size="32" fill="#34d399" text-anchor="middle" font-weight="bold">PKR 42,000</text>
+  <text x="400" y="540" font-family="Arial, sans-serif" font-size="18" fill="#fbbf24" text-anchor="middle">8GB RAM • Excellent Battery</text>
+  <text x="400" y="570" font-family="Arial, sans-serif" font-size="16" fill="#60a5fa" text-anchor="middle">Community Listing • Islamabad</text>
+</svg>

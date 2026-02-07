@@ -24,7 +24,7 @@ import os
 
 from app.core.database import get_db
 from app.core.dependencies import get_current_admin
-from app.schemas.phone import PhoneCreate, PhoneResponse, PhoneListResponse, SellerInfo
+from app.schemas.phone import PhoneCreate, PhoneUpdate, PhoneResponse, PhoneListResponse, SellerInfo
 from app.schemas.user import UserResponse
 from app.services.phone_service import PhoneService
 from app.services.user_service import UserService
@@ -193,6 +193,7 @@ async def create_shop_phone_with_image(
     defects: Optional[str] = Form(None),
     original_price: Optional[Decimal] = Form(None),
     battery_health: Optional[int] = Form(None),
+    battery_mah: Optional[int] = Form(None),
     warranty_months: int = Form(0),
     accessories_included: Optional[str] = Form(None),
     pta_approved: bool = Form(False),
@@ -251,6 +252,7 @@ async def create_shop_phone_with_image(
         defects=defects,
         original_price=original_price,
         battery_health=battery_health,
+        battery_mah=battery_mah,
         warranty_months=warranty_months,
         accessories_included=accessories_included,
         pta_approved=pta_approved,
@@ -297,6 +299,38 @@ async def delete_phone(
         )
     
     return None
+
+
+@router.patch(
+    "/phones/{phone_id}",
+    response_model=PhoneResponse,
+    summary="Update any phone listing",
+    description="Update an existing phone listing (Admin only)."
+)
+async def update_phone_admin(
+    phone_id: int,
+    phone_data: PhoneUpdate,
+    admin: User = Depends(get_current_admin),
+    db: Session = Depends(get_db)
+):
+    """
+    Update any phone listing as an administrator.
+    """
+    phone_service = PhoneService(db)
+    
+    updated_phone = phone_service.update_phone(
+        phone_id=phone_id,
+        phone_data=phone_data,
+        requesting_user=admin
+    )
+    
+    if not updated_phone:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Phone not found or update failed"
+        )
+        
+    return phone_to_response(updated_phone)
 
 
 @router.get(

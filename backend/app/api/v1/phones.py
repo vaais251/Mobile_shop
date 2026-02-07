@@ -24,6 +24,7 @@ from app.core.database import get_db
 from app.core.dependencies import get_current_user
 from app.schemas.phone import (
     PhoneCreate,
+    PhoneUpdate,
     PhoneResponse,
     PhoneListResponse,
     SellerInfo,
@@ -229,6 +230,7 @@ async def sell_phone(
     defects: Optional[str] = Form(None),
     original_price: Optional[Decimal] = Form(None),
     battery_health: Optional[int] = Form(None),
+    battery_mah: Optional[int] = Form(None),
     warranty_months: int = Form(0),
     accessories_included: Optional[str] = Form(None),
     pta_approved: bool = Form(False),
@@ -282,6 +284,7 @@ async def sell_phone(
         defects=defects,
         original_price=original_price,
         battery_health=battery_health,
+        battery_mah=battery_mah,
         warranty_months=warranty_months,
         accessories_included=accessories_included,
         pta_approved=pta_approved,
@@ -345,3 +348,55 @@ async def delete_my_listing(
         )
     
     return None
+
+
+@router.patch(
+    "/my-listings/{phone_id}",
+    response_model=PhoneResponse,
+    summary="Update my listing",
+    description="Update an existing phone listing that belongs to the current user."
+)
+async def update_my_listing(
+    phone_id: int,
+    phone_data: PhoneUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Update a phone listing owned by the current user.
+    """
+    phone_service = PhoneService(db)
+    
+    # Check if phone exists and belongs to user
+    existing_phone = phone_service.get_by_id(phone_id)
+    if not existing_phone:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Listing not found"
+        )
+    
+    if existing_phone.seller_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You can only update your own listings"
+        )
+    
+    # If listing was approved, updating it will require re-approval
+    if existing_phone.admin_approved:
+        # Note: We could decide whether to auto-hide listings on update
+        # For now, let's just keep it simple and update the fields
+        pass
+        
+    updated_phone = phone_service.update_phone(
+        phone_id=phone_id,
+        phone_data=phone_data,
+        requesting_user=current_user
+    )
+    
+    if not updated_phone:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to update listing"
+        )
+        
+    return phone_to_response(updated_phone)

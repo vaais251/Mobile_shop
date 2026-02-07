@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { api } from '@/lib/api';
 import { PhoneInventory } from '@/lib/types';
-import { formatPrice } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -25,7 +24,19 @@ import {
     DialogDescription,
     DialogHeader,
     DialogTitle,
+    DialogFooter,
 } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import { formatPrice, PHONE_BRANDS, PHONE_CONDITIONS, PHONE_COLORS } from '@/lib/utils';
 import {
     Smartphone,
     CheckCircle,
@@ -42,6 +53,8 @@ import {
     Phone,
     MapPin,
     MessageSquare,
+    Edit2,
+    Save,
 } from 'lucide-react';
 
 interface Stats {
@@ -59,6 +72,9 @@ export default function AdminDashboard() {
     const [loading, setLoading] = useState(true);
     const [actionLoading, setActionLoading] = useState<number | null>(null);
     const [selectedPhone, setSelectedPhone] = useState<PhoneInventory | null>(null);
+    const [editingPhone, setEditingPhone] = useState<PhoneInventory | null>(null);
+    const [editFormData, setEditFormData] = useState<any>(null);
+    const [updating, setUpdating] = useState(false);
 
     useEffect(() => {
         if (!authLoading) {
@@ -117,6 +133,51 @@ export default function AdminDashboard() {
             console.error('Error deleting phone:', error);
         } finally {
             setActionLoading(null);
+        }
+    };
+
+    const handleEditClick = (phone: PhoneInventory) => {
+        setEditingPhone(phone);
+        setSelectedPhone(null); // Close view dialog if open
+        setEditFormData({
+            brand: phone.brand,
+            model: phone.model,
+            storage_gb: phone.storage_gb,
+            ram_gb: phone.ram_gb,
+            camera_mp: phone.camera_mp,
+            color: phone.color,
+            price: Number(phone.price),
+            original_price: phone.original_price ? Number(phone.original_price) : undefined,
+            condition_grade: phone.condition_grade,
+            condition_category: phone.condition_category,
+            battery_health: phone.battery_health,
+            battery_mah: phone.battery_mah,
+            warranty_months: phone.warranty_months,
+            defects: phone.defects || '',
+            accessories_included: phone.accessories_included || '',
+            seller_phone: phone.seller_phone || '',
+            seller_city: phone.seller_city || '',
+            pta_approved: phone.pta_approved,
+        });
+    };
+
+    const handleUpdatePhone = async () => {
+        if (!editingPhone || !token) return;
+        setUpdating(true);
+        try {
+            const res = await api.patch<PhoneInventory>(
+                `/admin/phones/${editingPhone.id}`,
+                editFormData,
+                token
+            );
+            if (!res.error) {
+                setPhones(phones.map(p => p.id === editingPhone.id ? { ...p, ...res.data } : p));
+                setEditingPhone(null);
+            }
+        } catch (error) {
+            console.error('Error updating phone:', error);
+        } finally {
+            setUpdating(false);
         }
     };
 
@@ -211,6 +272,15 @@ export default function AdminDashboard() {
                                                 <span className="ml-2 hidden sm:inline">Approve</span>
                                             </Button>
                                         )}
+                                        <Button
+                                            size="sm"
+                                            variant="ghost"
+                                            className="text-indigo-500 hover:text-indigo-600 hover:bg-indigo-500/10"
+                                            onClick={() => handleEditClick(phone)}
+                                        >
+                                            <Edit2 className="h-4 w-4" />
+                                            <span className="ml-2 hidden sm:inline">Edit</span>
+                                        </Button>
                                         <Button
                                             size="sm"
                                             variant="ghost"
@@ -626,6 +696,144 @@ export default function AdminDashboard() {
                     )}
                 </DialogContent>
             </Dialog>
-        </div>
+
+            {/* Edit Phone Dialog */}
+            <Dialog open={!!editingPhone} onOpenChange={(open) => !open && setEditingPhone(null)}>
+                <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
+                    <DialogHeader>
+                        <DialogTitle className="text-2xl font-bold">Edit Phone (Admin)</DialogTitle>
+                        <DialogDescription>
+                            Edit any phone listing in the system.
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    {editFormData && (
+                        <div className="grid gap-6 py-4">
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="brand">Brand</Label>
+                                    <Select
+                                        value={editFormData.brand}
+                                        onValueChange={(v) => setEditFormData({ ...editFormData, brand: v })}
+                                    >
+                                        <SelectTrigger id="brand">
+                                            <SelectValue placeholder="Brand" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {PHONE_BRANDS.map(b => <SelectItem key={b} value={b}>{b}</SelectItem>)}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="model">Model</Label>
+                                    <Input
+                                        id="model"
+                                        value={editFormData.model}
+                                        onChange={(e) => setEditFormData({ ...editFormData, model: e.target.value })}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="price">Price (PKR)</Label>
+                                    <Input
+                                        id="price"
+                                        type="number"
+                                        value={editFormData.price}
+                                        onChange={(e) => setEditFormData({ ...editFormData, price: Number(e.target.value) })}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="color">Color</Label>
+                                    <Input
+                                        id="color"
+                                        value={editFormData.color}
+                                        onChange={(e) => setEditFormData({ ...editFormData, color: e.target.value })}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-3 gap-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="storage">Storage (GB)</Label>
+                                    <Input
+                                        id="storage"
+                                        type="number"
+                                        value={editFormData.storage_gb}
+                                        onChange={(e) => setEditFormData({ ...editFormData, storage_gb: Number(e.target.value) })}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="ram">RAM (GB)</Label>
+                                    <Input
+                                        id="ram"
+                                        type="number"
+                                        value={editFormData.ram_gb}
+                                        onChange={(e) => setEditFormData({ ...editFormData, ram_gb: Number(e.target.value) })}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="battery_mah">Battery (mAh)</Label>
+                                    <Input
+                                        id="battery_mah"
+                                        type="number"
+                                        value={editFormData.battery_mah}
+                                        onChange={(e) => setEditFormData({ ...editFormData, battery_mah: Number(e.target.value) })}
+                                        placeholder="Optional"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="condition">Condition Grade</Label>
+                                    <Select
+                                        value={String(editFormData.condition_grade)}
+                                        onValueChange={(v) => setEditFormData({ ...editFormData, condition_grade: Number(v) })}
+                                    >
+                                        <SelectTrigger id="condition">
+                                            <SelectValue placeholder="Grade" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {[10, 9.5, 9, 8.5, 8, 7.5, 7, 6].map(g => (
+                                                <SelectItem key={g} value={String(g)}>{g}/10</SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="battery_health">Battery Health (%)</Label>
+                                    <Input
+                                        id="battery_health"
+                                        type="number"
+                                        value={editFormData.battery_health}
+                                        onChange={(e) => setEditFormData({ ...editFormData, battery_health: Number(e.target.value) })}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="defects">Defects</Label>
+                                <Textarea
+                                    id="defects"
+                                    value={editFormData.defects}
+                                    onChange={(e) => setEditFormData({ ...editFormData, defects: e.target.value })}
+                                    placeholder="Enter any defects..."
+                                />
+                            </div>
+                        </div>
+                    )}
+
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setEditingPhone(null)}>Cancel</Button>
+                        <Button onClick={handleUpdatePhone} disabled={updating} className="gap-2">
+                            {updating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                            Save Changes
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+        </div >
     );
 }

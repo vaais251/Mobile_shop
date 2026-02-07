@@ -1,0 +1,21 @@
+<svg width="800" height="800" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="iphone12Grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color="#1e40af;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="800" fill="#f0f0f0"/>
+  <rect x="200" y="50" width="400" height="700" rx="50" fill="url(#iphone12Grad)"/>
+  <rect x="210" y="60" width="380" height="680" rx="40" fill="#0a0a0a"/>
+  <rect x="220" y="80" width="360" height="640" rx="30" fill="#1e3a8a"/>
+  <rect x="260" y="120" width="40" height="40" rx="10" fill="#2563eb"/>
+  <rect x="310" y="120" width="40" height="40" rx="10" fill="#2563eb"/>
+  <circle cx="280" cy="140" r="15" fill="#60a5fa"/>
+  <circle cx="330" cy="140" r="15" fill="#60a5fa"/>
+  <text x="400" y="400" font-family="Arial, sans-serif" font-size="48" fill="#fff" text-anchor="middle" font-weight="bold">iPhone 12</text>
+  <text x="400" y="450" font-family="Arial, sans-serif" font-size="24" fill="#dbeafe" text-anchor="middle">64GB • Blue</text>
+  <text x="400" y="500" font-family="Arial, sans-serif" font-size="32" fill="#60a5fa" text-anchor="middle" font-weight="bold">PKR 85,000</text>
+  <text x="400" y="540" font-family="Arial, sans-serif" font-size="18" fill="#fbbf24" text-anchor="middle">User Listing • Pending Approval</text>
+  <text x="400" y="570" font-family="Arial, sans-serif" font-size="16" fill="#ef4444" text-anchor="middle">Battery: 82%</text>
+</svg>

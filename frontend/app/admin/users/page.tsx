@@ -582,7 +582,7 @@ export default function AdminUsersPage() {
                             {/* Quick Actions */}
                             <div className="flex gap-2 pt-2">
                                 <Link
-                                    href={`/messages?userId=${viewDialog.id}`}
+                                    href={`/messages?userId=${viewDialog.id}&userName=${encodeURIComponent(viewDialog.name)}`}
                                     className="flex-1"
                                 >
                                     <Button variant="outline" className="w-full gap-2 text-primary border-primary/30 hover:bg-primary/10">

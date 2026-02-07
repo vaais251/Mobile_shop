@@ -66,6 +66,7 @@ export interface PhoneInventory {
     thumbnail?: string; // Main cover image path
     imei?: string;
     battery_health?: number;
+    battery_mah?: number;
     warranty_months: number;
     accessories_included?: string;
     created_at: string;
@@ -100,6 +101,7 @@ export interface PhoneCreate {
     images?: string; // JSON array of image paths
     thumbnail?: string; // Main cover image path
     battery_health?: number;
+    battery_mah?: number;
     warranty_months?: number;
     accessories_included?: string;
     pta_approved?: boolean;

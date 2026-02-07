@@ -1,0 +1,22 @@
+<svg width="800" height="800" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="xiaomiGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f8fafc;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e2e8f0;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="800" fill="#f0f0f0"/>
+  <rect x="200" y="50" width="400" height="700" rx="50" fill="url(#xiaomiGrad)"/>
+  <rect x="210" y="60" width="380" height="680" rx="40" fill="#fff"/>
+  <rect x="220" y="80" width="360" height="640" rx="30" fill="#f8fafc"/>
+  <circle cx="300" cy="140" r="55" fill="#e2e8f0"/>
+  <circle cx="300" cy="140" r="45" fill="#cbd5e1"/>
+  <circle cx="280" cy="125" r="16" fill="#94a3b8"/>
+  <circle cx="320" cy="125" r="14" fill="#94a3b8"/>
+  <circle cx="300" cy="160" r="14" fill="#94a3b8"/>
+  <text x="400" y="400" font-family="Arial, sans-serif" font-size="48" fill="#334155" text-anchor="middle" font-weight="bold">Xiaomi 13 Pro</text>
+  <text x="400" y="450" font-family="Arial, sans-serif" font-size="24" fill="#64748b" text-anchor="middle">256GB • Ceramic White</text>
+  <text x="400" y="500" font-family="Arial, sans-serif" font-size="32" fill="#0ea5e9" text-anchor="middle" font-weight="bold">PKR 85,000</text>
+  <text x="400" y="540" font-family="Arial, sans-serif" font-size="18" fill="#64748b" text-anchor="middle">12GB RAM • 50MP Leica Camera</text>
+  <text x="400" y="570" font-family="Arial, sans-serif" font-size="16" fill="#f59e0b" text-anchor="middle">Condition: 8/10</text>
+</svg>

@@ -29,6 +29,7 @@ class PhoneCreate(BaseModel):
     images: Optional[str] = None  # JSON array of image file paths
     thumbnail: Optional[str] = None  # Main cover image path
     battery_health: Optional[int] = Field(None, ge=0, le=100)
+    battery_mah: Optional[int] = Field(None, ge=500, le=20000)
     warranty_months: int = Field(default=0, ge=0, le=24)
     accessories_included: Optional[str] = Field(None, max_length=500)
     imei: Optional[str] = Field(None, max_length=20)
@@ -77,6 +78,7 @@ class PhoneUpdate(BaseModel):
     images: Optional[str] = None
     thumbnail: Optional[str] = None
     battery_health: Optional[int] = Field(None, ge=0, le=100)
+    battery_mah: Optional[int] = Field(None, ge=500, le=20000)
     warranty_months: Optional[int] = Field(None, ge=0, le=24)
     accessories_included: Optional[str] = Field(None, max_length=500)
     is_featured: Optional[bool] = None
@@ -133,6 +135,7 @@ class PhoneResponse(BaseModel):
     images: Optional[str] = None
     thumbnail: Optional[str] = None
     battery_health: Optional[int] = None
+    battery_mah: Optional[int] = None
     warranty_months: int
     accessories_included: Optional[str] = None
     created_at: datetime

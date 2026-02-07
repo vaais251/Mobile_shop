@@ -62,6 +62,7 @@ export default function SellPage() {
         price: '',
         original_price: '',
         battery_health: '',
+        battery_mah: '',
         warranty_months: '0',
         accessories_included: '',
         seller_phone: '',
@@ -190,6 +191,14 @@ export default function SellPage() {
                 errors.battery_health = 'Battery health must be between 0% and 100%';
             } else if (battery < 50) {
                 errors.battery_health = 'Battery health is below 50%. Are you sure?';
+            }
+        }
+
+        // Battery MAH validation (optional)
+        if (formData.battery_mah) {
+            const mah = parseInt(formData.battery_mah);
+            if (isNaN(mah) || mah < 500 || mah > 20000) {
+                errors.battery_mah = 'Battery capacity must be between 500 and 20000 mAh';
             }
         }
 
@@ -325,6 +334,7 @@ export default function SellPage() {
             if (formData.defects) data.append('defects', formData.defects);
             if (formData.original_price) data.append('original_price', formData.original_price);
             if (formData.battery_health) data.append('battery_health', formData.battery_health);
+            if (formData.battery_mah) data.append('battery_mah', formData.battery_mah);
             data.append('warranty_months', formData.warranty_months);
             if (formData.accessories_included) data.append('accessories_included', formData.accessories_included);
             data.append('pta_approved', String(formData.pta_approved));
@@ -772,6 +782,26 @@ export default function SellPage() {
                                         <p className="text-xs text-red-500 mt-1.5 flex items-center gap-1">
                                             <AlertCircle className="h-3 w-3" />
                                             {fieldErrors.battery_health}
+                                        </p>
+                                    )}
+                                </div>
+                                <div data-error={!!fieldErrors.battery_mah}>
+                                    <label className="block text-sm font-medium text-foreground mb-2">
+                                        Battery Capacity (mAh) <span className="text-muted-foreground text-xs">(Optional)</span>
+                                    </label>
+                                    <Input
+                                        type="number"
+                                        min="500"
+                                        max="20000"
+                                        value={formData.battery_mah}
+                                        onChange={(e) => handleChange('battery_mah', e.target.value)}
+                                        placeholder="e.g., 5000"
+                                        className={`bg-background border-input text-foreground transition-all ${fieldErrors.battery_mah ? 'border-red-500 ring-2 ring-red-500/20' : 'focus:border-violet-500 hover:border-violet-400'}`}
+                                    />
+                                    {fieldErrors.battery_mah && (
+                                        <p className="text-xs text-red-500 mt-1.5 flex items-center gap-1">
+                                            <AlertCircle className="h-3 w-3" />
+                                            {fieldErrors.battery_mah}
                                         </p>
                                     )}
                                 </div>

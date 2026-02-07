@@ -1,0 +1,21 @@
+<svg width="800" height="800" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="samsungGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a1a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#000000;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="800" fill="#f0f0f0"/>
+  <rect x="200" y="50" width="400" height="700" rx="50" fill="url(#samsungGrad)"/>
+  <rect x="210" y="60" width="380" height="680" rx="40" fill="#0a0a0a"/>
+  <rect x="220" y="80" width="360" height="640" rx="30" fill="#1a1a1a"/>
+  <circle cx="300" cy="140" r="55" fill="#222"/>
+  <circle cx="300" cy="140" r="45" fill="#333"/>
+  <circle cx="280" cy="120" r="15" fill="#555"/>
+  <circle cx="320" cy="120" r="12" fill="#555"/>
+  <circle cx="300" cy="160" r="12" fill="#555"/>
+  <text x="400" y="400" font-family="Arial, sans-serif" font-size="42" fill="#fff" text-anchor="middle" font-weight="bold">Galaxy S23 Ultra</text>
+  <text x="400" y="450" font-family="Arial, sans-serif" font-size="24" fill="#9ca3af" text-anchor="middle">512GB • Phantom Black</text>
+  <text x="400" y="500" font-family="Arial, sans-serif" font-size="32" fill="#60a5fa" text-anchor="middle" font-weight="bold">PKR 165,000</text>
+  <text x="400" y="540" font-family="Arial, sans-serif" font-size="18" fill="#10b981" text-anchor="middle">200MP Camera • 12GB RAM</text>
+</svg>

@@ -7,6 +7,8 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useCart } from '@/contexts/CartContext';
 import { ModeToggle } from '@/components/ModeToggle';
 import { Button } from '@/components/ui/button';
+import { NotificationBell } from './NotificationBell';
+import { useUnreadCount } from '@/hooks/useUnreadCount';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -35,6 +37,7 @@ export function Navbar() {
     const { user, isAuthenticated, isAdmin, logout } = useAuth();
     const { language, setLanguage, t } = useLanguage();
     const { cartCount } = useCart();
+    const unreadCount = useUnreadCount();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const router = useRouter();
 
@@ -103,6 +106,9 @@ export function Navbar() {
 
                     {/* Right Actions - Enhanced */}
                     <div className="flex items-center gap-3 shrink-0">
+                        {/* Messages Notification */}
+                        <NotificationBell />
+
                         {/* Cart Link - Premium Badge */}
                         <Link href="/cart">
                             <Button
@@ -162,9 +168,16 @@ export function Navbar() {
                                             </Link>
                                         </DropdownMenuItem>
                                         <DropdownMenuItem asChild>
-                                            <Link href="/messages" className="flex items-center gap-3 cursor-pointer px-3 py-2.5 rounded-lg">
-                                                <MessageCircle className="h-4 w-4" />
-                                                <span className="font-medium">Messages</span>
+                                            <Link href="/messages" className="flex items-center justify-between cursor-pointer px-3 py-2.5 rounded-lg">
+                                                <div className="flex items-center gap-3">
+                                                    <MessageCircle className="h-4 w-4" />
+                                                    <span className="font-medium">Messages</span>
+                                                </div>
+                                                {unreadCount > 0 && (
+                                                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+                                                        {unreadCount}
+                                                    </span>
+                                                )}
                                             </Link>
                                         </DropdownMenuItem>
                                         <DropdownMenuSeparator className="bg-border my-2" />
@@ -284,9 +297,16 @@ export function Navbar() {
                                                         </Link>
                                                     </Button>
                                                     <Link href="/messages" onClick={() => setMobileMenuOpen(false)} className="w-full">
-                                                        <Button variant="outline" size="sm" className="w-full">
-                                                            <MessageCircle className="h-4 w-4 mr-1.5" />
-                                                            Messages
+                                                        <Button variant="outline" size="sm" className="w-full justify-between">
+                                                            <div className="flex items-center">
+                                                                <MessageCircle className="h-4 w-4 mr-1.5" />
+                                                                Messages
+                                                            </div>
+                                                            {unreadCount > 0 && (
+                                                                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+                                                                    {unreadCount}
+                                                                </span>
+                                                            )}
                                                         </Button>
                                                     </Link>
                                                     <Button
