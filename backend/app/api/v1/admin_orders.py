@@ -160,22 +160,96 @@ async def complete_order(
     }
 
 
+
+
+@router.patch("/orders/{order_id}/status")
+async def update_order_status(
+    order_id: int,
+    new_status: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_admin)
+):
+    """
+    Update order status (admin only).
+    
+    Allowed statuses: pending, confirmed, shipped, delivered, cancelled
+    """
+    from app.models.order import OrderStatus
+    
+    # Validate status
+    valid_statuses = {
+        "pending": OrderStatus.PENDING,
+        "confirmed": OrderStatus.CONFIRMED,
+        "shipped": OrderStatus.SHIPPED,
+        "delivered": OrderStatus.DELIVERED,
+        "cancelled": OrderStatus.CANCELLED
+    }
+    
+    if new_status.lower() not in valid_statuses:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Invalid status. Allowed: {', '.join(valid_statuses.keys())}"
+        )
+    
+    # Get order
+    order = db.query(Order).filter(Order.id == order_id).first()
+    if not order:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Order not found")
+    
+    # Transition status
+    target_status = valid_statuses[new_status.lower()]
+    success, message = order.transition_status(target_status, is_admin=True)
+    
+    if not success:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=message)
+    
+    db.commit()
+    db.refresh(order)
+    
+    return {
+        "id": order.id,
+        "order_number": order.order_number,
+        "status": order.status.value,
+        "message": message
+    }
+
+
 @router.get("/orders")
 async def get_all_orders_admin(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_admin),
     skip: int = 0,
-    limit: int = 100
+    limit: int = 100,
+    status_filter: str = None  # Filter by status: pending, shipped, delivered, cancelled
 ):
+
     """
     Get all orders with detailed information for admin dashboard.
     Includes buyer, items, and seller information.
+    Optional status filter: pending, confirmed, shipped, delivered, cancelled, all
     """
+    from app.models.order import OrderStatus
+    
     try:
-        orders = db.query(Order).options(
+        # Build query with optional filter
+        query = db.query(Order).options(
             joinedload(Order.buyer),
             joinedload(Order.items).joinedload(OrderItem.phone).joinedload(PhoneInventory.seller)
-        ).order_by(desc(Order.created_at)).offset(skip).limit(limit).all()
+        )
+        
+        # Apply status filter if provided
+        if status_filter and status_filter.lower() != "all":
+            status_map = {
+                "pending": OrderStatus.PENDING,
+                "confirmed": OrderStatus.CONFIRMED,
+                "shipped": OrderStatus.SHIPPED,
+                "delivered": OrderStatus.DELIVERED,
+                "cancelled": OrderStatus.CANCELLED
+            }
+            if status_filter.lower() in status_map:
+                query = query.filter(Order.status == status_map[status_filter.lower()])
+        
+        orders = query.order_by(desc(Order.created_at)).offset(skip).limit(limit).all()
         
         result = []
         for order in orders:

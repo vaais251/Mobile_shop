@@ -221,6 +221,66 @@ class Order(Base):
     def is_complete(self) -> bool:
         """Check if order is complete."""
         return self.status == OrderStatus.DELIVERED
+    
+    def can_be_cancelled_by_buyer(self) -> bool:
+        """
+        Check if order can be cancelled by the buyer.
+        Buyers can only cancel within 1 day of order placement and if status is PENDING.
+        """
+        if self.status != OrderStatus.PENDING:
+            return False
+        
+        # Check if within 1 day (24 hours)
+        from datetime import timedelta
+        time_since_creation = datetime.utcnow() - self.created_at
+        return time_since_creation < timedelta(days=1)
+    
+    def can_be_managed_by_admin(self) -> bool:
+        """Admin can manage orders at any time and in any status."""
+        return True
+    
+    def transition_status(self, new_status: 'OrderStatus', is_admin: bool = False) -> tuple[bool, str]:
+        """
+        Transition order to a new status with validation.
+        
+        Args:
+            new_status: The target status
+            is_admin: Whether the user making the change is an admin
+            
+        Returns:
+            Tuple of (success: bool, message: str)
+        """
+        # Admins can change to any status
+        if is_admin:
+            old_status = self.status
+            self.status = new_status
+            
+            # Update timestamps
+            if new_status == OrderStatus.CONFIRMED:
+                self.confirmed_at = datetime.utcnow()
+            elif new_status == OrderStatus.SHIPPED:
+                self.shipped_at = datetime.utcnow()
+            elif new_status == OrderStatus.DELIVERED:
+                self.delivered_at = datetime.utcnow()
+                self.completed_at = datetime.utcnow()
+            elif new_status == OrderStatus.CANCELLED:
+                self.cancelled_at = datetime.utcnow()
+            
+            return True, f"Status changed from {old_status.value} to {new_status.value}"
+        
+        # Buyer can only cancel within 1 day and only from PENDING
+        if new_status == OrderStatus.CANCELLED:
+            if self.can_be_cancelled_by_buyer():
+                self.status = OrderStatus.CANCELLED
+                self.cancelled_at = datetime.utcnow()
+                return True, "Order cancelled successfully"
+            else:
+                if self.status != OrderStatus.PENDING:
+                    return False, "Order can no longer be cancelled (not in pending status)"
+                else:
+                    return False, "Order can only be cancelled within 1 day of placement"
+        
+        return False, "Unauthorized status transition"
 
 
 class OrderItem(Base):

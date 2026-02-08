@@ -108,6 +108,8 @@ export default function AdminOrdersPage() {
     const [sellerStats, setSellerStats] = useState<SellerStats | null>(null);
     const [loadingStats, setLoadingStats] = useState(false);
     const [completingOrder, setCompletingOrder] = useState(false);
+    const [statusFilter, setStatusFilter] = useState<string>('all');
+    const [changingStatus, setChangingStatus] = useState(false);
 
     useEffect(() => {
         // Don't redirect until we know the user is loaded
@@ -120,9 +122,10 @@ export default function AdminOrdersPage() {
         fetchOrders();
     }, [user, router]);
 
-    const fetchOrders = async () => {
+    const fetchOrders = async (filter = statusFilter) => {
         try {
-            const response = await api.get<{ orders: Order[] }>('/admin/orders', token ?? undefined);
+            const url = filter === 'all' ? '/admin/orders' : `/admin/orders?status_filter=${filter}`;
+            const response = await api.get<{ orders: Order[] }>(url, token ?? undefined);
             if (response.data) {
                 setOrders(response.data.orders);
             }
@@ -161,6 +164,25 @@ export default function AdminOrdersPage() {
             console.error('Error completing order:', error);
         } finally {
             setCompletingOrder(false);
+        }
+    };
+
+    const changeOrderStatus = async (orderId: number, newStatus: string) => {
+        setChangingStatus(true);
+        try {
+            await api.patch(`/admin/orders/${orderId}/status?new_status=${newStatus}`, {}, token ?? undefined);
+            // Refresh orders
+            await fetchOrders();
+            // Update selected order if it's open
+            if (selectedOrder && selectedOrder.id === orderId) {
+                const updated = orders.find(o => o.id === orderId);
+                if (updated) setSelectedOrder(updated);
+            }
+        } catch (error) {
+            console.error('Error changing status:', error);
+            alert('Failed to change order status');
+        } finally {
+            setChangingStatus(false);
         }
     };
 
@@ -203,6 +225,28 @@ export default function AdminOrdersPage() {
                     <p className="text-gray-600 dark:text-gray-400">
                         Manage customer orders, contact buyers and sellers, and track fulfillment
                     </p>
+
+                    {/* Filter Tabs */}
+                    <div className="flex gap-2 mt-6 overflow-x-auto pb-2">
+                        {['all', 'pending', 'confirmed', 'shipped', 'delivered', 'cancelled'].map((filter) => (
+                            <Button
+                                key={filter}
+                                variant={statusFilter === filter ? 'default' : 'outline'}
+                                size="sm"
+                                onClick={() => {
+                                    setStatusFilter(filter);
+                                    setLoading(true);
+                                    fetchOrders(filter);
+                                }}
+                                className={statusFilter === filter ? 'bg-violet-600 hover:bg-violet-700 text-white' : ''}
+                            >
+                                {filter.charAt(0).toUpperCase() + filter.slice(1)}
+                                <Badge variant="secondary" className="ml-2 text-xs">
+                                    {filter === 'all' ? orders.length : orders.filter(o => o.status === filter).length}
+                                </Badge>
+                            </Button>
+                        ))}
+                    </div>
                 </div>
 
                 {/* Orders List */}
@@ -394,6 +438,26 @@ export default function AdminOrdersPage() {
                                             <Package className="h-4 w-4 mr-2" />
                                             View Details
                                         </Button>
+
+                                        {/* Change Status Dropdown */}
+                                        <div className="flex items-center gap-2">
+                                            <label htmlFor={`status-${order.id}`} className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                                Status:
+                                            </label>
+                                            <select
+                                                id={`status-${order.id}`}
+                                                value={order.status}
+                                                onChange={(e) => changeOrderStatus(order.id, e.target.value)}
+                                                disabled={changingStatus}
+                                                className="h-11 px-4 rounded-xl border-2 border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 transition-all disabled:opacity-50 cursor-pointer"
+                                            >
+                                                <option value="pending">Pending</option>
+                                                <option value="confirmed">Confirmed</option>
+                                                <option value="shipped">Shipped</option>
+                                                <option value="delivered">Delivered</option>
+                                                <option value="cancelled">Cancelled</option>
+                                            </select>
+                                        </div>
 
                                         {/* Complete Order Button */}
                                         {!order.completed_at && (

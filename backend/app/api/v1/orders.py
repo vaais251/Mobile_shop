@@ -98,27 +98,31 @@ async def cancel_order(
     """
     Cancel an order.
     
-    - Only the buyer can cancel their own order
-    - Can only cancel orders that are still pending or confirmed
+    - Buyers can cancel their own orders within 1 day from PENDING status
+    - Admins can cancel any order at any time
     """
+    from app.models.order import OrderStatus
+    
     order_service = OrderService(db)
     order = order_service.get_order_by_id(order_id)
     
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
     
-    if order.buyer_id != current_user.id and current_user.role != "admin":
+    # Check authorization
+    is_buyer = order.buyer_id == current_user.id
+    is_admin = current_user.role.value == "admin"
+    
+    if not is_buyer and not is_admin:
         raise HTTPException(status_code=403, detail="Not authorized to cancel this order")
     
-    # Can only cancel pending or confirmed orders
-    if order.status not in ["pending", "confirmed"]:
-        raise HTTPException(
-            status_code=400, 
-            detail=f"Cannot cancel order with status '{order.status}'. Only pending or confirmed orders can be cancelled."
-        )
+    # Attempt to transition to cancelled status
+    success, message = order.transition_status(OrderStatus.CANCELLED, is_admin=is_admin)
     
-    # Update order status
-    order.status = "cancelled"
+    if not success:
+        raise HTTPException(status_code=400, detail=message)
+    
+    # Commit changes
     db.commit()
     db.refresh(order)
     

@@ -110,7 +110,7 @@ class Commission(Base):
     
     # Payment Status
     status = Column(
-        Enum(CommissionStatus),
+        Enum(CommissionStatus, native_enum=True, values_callable=lambda x: [e.value for e in x]),
         default=CommissionStatus.PENDING,
         nullable=False,
         index=True
@@ -209,13 +209,14 @@ class Commission(Base):
         Factory method to create commission from order item.
         Only creates commission for community products (seller_id is not None).
         """
-        if not order_item.phone or not order_item.phone.seller_id:
+        # Use the snapshot seller_id from order_item, not the phone relationship
+        if not order_item.seller_id:
             return None  # Shop-owned products don't generate commissions
         
         commission = Commission(
             order_id=order_item.order_id,
             order_item_id=order_item.id,
-            seller_id=order_item.phone.seller_id,
+            seller_id=order_item.seller_id,  # Use snapshot field
             product_price=order_item.price_at_purchase,
             commission_rate=commission_rate,
             status=CommissionStatus.PENDING
