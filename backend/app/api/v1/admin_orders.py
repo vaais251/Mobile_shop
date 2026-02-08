@@ -220,17 +220,30 @@ async def get_all_orders_admin(
     current_user: User = Depends(get_current_admin),
     skip: int = 0,
     limit: int = 100,
-    status_filter: str = None  # Filter by status: pending, shipped, delivered, cancelled
+    status_filter: str = None,  # Filter by status: pending, shipped, delivered, cancelled
+    search: str = None,  # Search by buyer name or order number
+    start_date: datetime = None,  # Filter orders from this date
+    end_date: datetime = None  # Filter orders until this date
 ):
 
     """
     Get all orders with detailed information for admin dashboard.
     Includes buyer, items, and seller information.
-    Optional status filter: pending, confirmed, shipped, delivered, cancelled, all
+    Optional filters:
+    - status_filter: pending, confirmed, shipped, delivered, cancelled, all
+    - search: Search by buyer name or order number
+    - start_date/end_date: Date range filter (defaults to last 1 month if not provided)
     """
     from app.models.order import OrderStatus
+    from datetime import timedelta
     
     try:
+        # Set default date range to last 1 month if not provided
+        if not end_date:
+            end_date = datetime.utcnow()
+        if not start_date:
+            start_date = end_date - timedelta(days=30)
+        
         # Build query with optional filter
         query = db.query(Order).options(
             joinedload(Order.buyer),
@@ -248,6 +261,24 @@ async def get_all_orders_admin(
             }
             if status_filter.lower() in status_map:
                 query = query.filter(Order.status == status_map[status_filter.lower()])
+        
+        # Apply search filter (buyer name or order number)
+        if search:
+            search_pattern = f"%{search}%"
+            query = query.join(Order.buyer).filter(
+                or_(
+                    Order.order_number.ilike(search_pattern),
+                    User.name.ilike(search_pattern)
+                )
+            )
+        
+        # Apply date range filter
+        query = query.filter(
+            and_(
+                Order.created_at >= start_date,
+                Order.created_at <= end_date
+            )
+        )
         
         orders = query.order_by(desc(Order.created_at)).offset(skip).limit(limit).all()
         

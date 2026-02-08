@@ -60,6 +60,7 @@ export interface PhoneInventory {
     is_sold: boolean;
     is_featured: boolean;
     is_active: boolean;
+    stock: number;
     pta_approved: boolean;
     seller_id?: number;
     seller_phone?: string;

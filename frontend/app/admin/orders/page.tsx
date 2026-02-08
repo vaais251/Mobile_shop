@@ -31,8 +31,12 @@ import {
     Loader2,
     MessageSquare,
     Store,
+    Search,
+    X,
 } from 'lucide-react';
 import { formatPrice } from '@/lib/utils';
+import { Input } from '@/components/ui/input';
+import { useMemo, useCallback } from 'react';
 
 interface SellerStats {
     seller_id: number;
@@ -110,6 +114,18 @@ export default function AdminOrdersPage() {
     const [completingOrder, setCompletingOrder] = useState(false);
     const [statusFilter, setStatusFilter] = useState<string>('all');
     const [changingStatus, setChangingStatus] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
+
+    // Set default date range to last 1 month
+    useEffect(() => {
+        const end = new Date();
+        const start = new Date();
+        start.setDate(start.getDate() - 30);
+        setEndDate(end.toISOString().split('T')[0]);
+        setStartDate(start.toISOString().split('T')[0]);
+    }, []);
 
     useEffect(() => {
         // Don't redirect until we know the user is loaded
@@ -124,7 +140,16 @@ export default function AdminOrdersPage() {
 
     const fetchOrders = async (filter = statusFilter) => {
         try {
-            const url = filter === 'all' ? '/admin/orders' : `/admin/orders?status_filter=${filter}`;
+            let url = '/admin/orders';
+            const params = new URLSearchParams();
+
+            if (filter !== 'all') params.append('status_filter', filter);
+            if (searchQuery) params.append('search', searchQuery);
+            if (startDate) params.append('start_date', startDate);
+            if (endDate) params.append('end_date', endDate);
+
+            if (params.toString()) url += `?${params.toString()}`;
+
             const response = await api.get<{ orders: Order[] }>(url, token ?? undefined);
             if (response.data) {
                 setOrders(response.data.orders);
@@ -135,6 +160,27 @@ export default function AdminOrdersPage() {
             setLoading(false);
         }
     };
+
+    // Debounced fetch when search query changes
+    useEffect(() => {
+        if (searchQuery === '') {
+            fetchOrders();
+            return;
+        }
+
+        const timeoutId = setTimeout(() => {
+            fetchOrders();
+        }, 500);
+
+        return () => clearTimeout(timeoutId);
+    }, [searchQuery]);
+
+    // Fetch when date range changes
+    useEffect(() => {
+        if (startDate && endDate) {
+            fetchOrders();
+        }
+    }, [startDate, endDate]);
 
     const fetchSellerStats = async (sellerId: number) => {
         setLoadingStats(true);
@@ -226,8 +272,59 @@ export default function AdminOrdersPage() {
                         Manage customer orders, contact buyers and sellers, and track fulfillment
                     </p>
 
+                    {/* Search and Date Range Filters */}
+                    <div className="mt-6 space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            {/* Search Input */}
+                            <div className="relative md:col-span-1">
+                                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                                <Input
+                                    type="text"
+                                    placeholder="Search by buyer name or order #"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    className="pl-10 pr-10 h-11 bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 focus:border-violet-500 focus:ring-violet-500/20"
+                                />
+                                {searchQuery && (
+                                    <button
+                                        onClick={() => setSearchQuery('')}
+                                        className="absolute right-3 top-1/2 transform -translate-y-1/2"
+                                    >
+                                        <X className="h-4 w-4 text-gray-400 hover:text-gray-600" />
+                                    </button>
+                                )}
+                            </div>
+
+                            {/* Date Range Inputs */}
+                            <div className="md:col-span-1">
+                                <div className="relative">
+                                    <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                                    <Input
+                                        type="date"
+                                        value={startDate}
+                                        onChange={(e) => setStartDate(e.target.value)}
+                                        className="pl-10 h-11 bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 focus:border-violet-500 focus:ring-violet-500/20"
+                                        placeholder="Start Date"
+                                    />
+                                </div>
+                            </div>
+                            <div className="md:col-span-1">
+                                <div className="relative">
+                                    <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                                    <Input
+                                        type="date"
+                                        value={endDate}
+                                        onChange={(e) => setEndDate(e.target.value)}
+                                        className="pl-10 h-11 bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 focus:border-violet-500 focus:ring-violet-500/20"
+                                        placeholder="End Date"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     {/* Filter Tabs */}
-                    <div className="flex gap-2 mt-6 overflow-x-auto pb-2">
+                    <div className="flex gap-2 mt-4 overflow-x-auto pb-2">
                         {['all', 'pending', 'confirmed', 'shipped', 'delivered', 'cancelled'].map((filter) => (
                             <Button
                                 key={filter}

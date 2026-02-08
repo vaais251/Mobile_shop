@@ -29,8 +29,9 @@ class OrderService:
             if not phone:
                 raise ValueError(f"Phone with ID {phone_id} not found")
             
-            if phone.is_sold:
-                raise ValueError(f"Phone '{phone.model}' is already sold")
+            # Check stock availability
+            if phone.stock <= 0:
+                raise ValueError(f"Phone '{phone.model}' is out of stock")
             
             if not phone.is_available:
                 raise ValueError(f"Phone '{phone.model}' is not available for purchase")
@@ -110,8 +111,12 @@ class OrderService:
                 if commission:
                     self.db.add(commission)
             
-            # Mark phone as sold
-            phone.is_sold = True
+            # Decrement stock
+            phone.stock -= 1
+            
+            # Mark phone as sold if stock reaches 0 (for backward compatibility)
+            if phone.stock <= 0:
+                phone.is_sold = True
         
         self.db.commit()
         self.db.refresh(order)

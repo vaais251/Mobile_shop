@@ -122,6 +122,18 @@ async def cancel_order(
     if not success:
         raise HTTPException(status_code=400, detail=message)
     
+    # **STOCK RESTORATION: Restore stock for cancelled orders**
+    from app.models.phone_inventory import PhoneInventory
+    for item in order.items:
+        if item.phone_id:  # Only restore if phone still exists
+            phone = db.query(PhoneInventory).filter(PhoneInventory.id == item.phone_id).first()
+            if phone:
+                # Increment stock back
+                phone.stock += 1
+                # Mark as not sold if it was previously sold
+                if phone.is_sold:
+                    phone.is_sold = False
+    
     # Commit changes
     db.commit()
     db.refresh(order)

@@ -26,6 +26,7 @@ class PhoneCreate(BaseModel):
     defects: Optional[str] = Field(None, max_length=1000)
     price: Decimal = Field(..., gt=0, le=9999999.99)
     original_price: Optional[Decimal] = Field(None, gt=0, le=9999999.99)
+    stock: int = Field(default=1, ge=1, le=10000, description="Number of units in stock")
     images: Optional[str] = None  # JSON array of image file paths
     thumbnail: Optional[str] = None  # Main cover image path
     battery_health: Optional[int] = Field(None, ge=0, le=100)
@@ -75,6 +76,7 @@ class PhoneUpdate(BaseModel):
     defects: Optional[str] = Field(None, max_length=1000)
     price: Optional[Decimal] = Field(None, gt=0, le=9999999.99)
     original_price: Optional[Decimal] = Field(None, gt=0, le=9999999.99)
+    stock: Optional[int] = Field(None, ge=0, le=10000, description="Number of units in stock")
     images: Optional[str] = None
     thumbnail: Optional[str] = None
     battery_health: Optional[int] = Field(None, ge=0, le=100)
@@ -130,6 +132,7 @@ class PhoneResponse(BaseModel):
     is_sold: bool
     is_featured: bool
     is_active: bool
+    stock: int
     pta_approved: bool
     seller_id: Optional[int] = None
     admin_approved: bool

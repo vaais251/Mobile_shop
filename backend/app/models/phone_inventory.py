@@ -114,6 +114,12 @@ class PhoneInventory(Base):
     is_sold = Column(Boolean, default=False, nullable=False, index=True)
     is_featured = Column(Boolean, default=False, nullable=False)
     is_active = Column(Boolean, default=True, nullable=False)
+    stock = Column(
+        Integer,
+        default=1,
+        nullable=False,
+        comment="Number of units available in stock"
+    )
     pta_approved = Column(
         Boolean,
         default=False,
@@ -215,7 +221,7 @@ class PhoneInventory(Base):
     def is_available(self) -> bool:
         """Check if phone is available for purchase."""
         return (
-            not self.is_sold 
+            self.stock > 0
             and self.is_active 
             and (self.is_shop_owned or self.admin_approved)
         )

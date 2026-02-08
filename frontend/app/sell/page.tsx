@@ -61,6 +61,7 @@ export default function SellPage() {
         defects: '',
         price: '',
         original_price: '',
+        stock: '1',  // Default stock is 1
         battery_health: '',
         battery_mah: '',
         warranty_months: '0',
@@ -181,6 +182,16 @@ export default function SellPage() {
                 errors.original_price = 'Original price must be greater than 0';
             } else if (!isNaN(currentPrice) && originalPrice < currentPrice) {
                 errors.original_price = 'Original price cannot be less than current price';
+            }
+        }
+
+        // Stock validation
+        if (!formData.stock) {
+            errors.stock = 'Stock quantity is required';
+        } else {
+            const stock = parseInt(formData.stock);
+            if (isNaN(stock) || stock < 1 || stock > 10000) {
+                errors.stock = 'Stock must be between 1 and 10000 units';
             }
         }
 
@@ -326,6 +337,7 @@ export default function SellPage() {
             data.append('condition_grade', formData.condition_grade);
             data.append('condition_category', formData.condition_category);
             data.append('price', formData.price);
+            data.append('stock', formData.stock); // Add stock to form data
             data.append('seller_phone', formData.seller_phone);
             data.append('seller_city', formData.seller_city);
 
@@ -801,6 +813,53 @@ export default function SellPage() {
                                         <p className="text-xs text-red-500 mt-1.5 flex items-center gap-1">
                                             <AlertCircle className="h-3 w-3" />
                                             {fieldErrors.original_price}
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Stock Row - Added after price */}
+                            <div className="grid sm:grid-cols-2 gap-4">
+                                <div data-error={!!fieldErrors.stock}>
+                                    <label className="block text-sm font-medium text-foreground mb-2">
+                                        Stock Quantity *
+                                    </label>
+                                    <Input
+                                        type="number"
+                                        min="1"
+                                        max="10000"
+                                        value={formData.stock}
+                                        onChange={(e) => handleChange('stock', e.target.value)}
+                                        placeholder="Number of units available"
+                                        className={`bg-background border-input text-foreground transition-all ${fieldErrors.stock ? 'border-red-500 ring-2 ring-red-500/20' : 'focus:border-violet-500 hover:border-violet-400'}`}
+                                    />
+                                    {fieldErrors.stock && (
+                                        <p className="text-xs text-red-500 mt-1.5 flex items-center gap-1">
+                                            <AlertCircle className="h-3 w-3" />
+                                            {fieldErrors.stock}
+                                        </p>
+                                    )}
+                                    <p className="text-xs text-muted-foreground mt-1.5">
+                                        💡 How many units do you have in stock? (Default: 1)
+                                    </p>
+                                </div>
+                                <div data-error={!!fieldErrors.warranty_months}>
+                                    <label className="block text-sm font-medium text-foreground mb-2">
+                                        Warranty (Months) <span className="text-muted-foreground text-xs">(Optional)</span>
+                                    </label>
+                                    <Input
+                                        type="number"
+                                        min="0"
+                                        max="24"
+                                        value={formData.warranty_months}
+                                        onChange={(e) => handleChange('warranty_months', e.target.value)}
+                                        placeholder="e.g., 3, 6, 12"
+                                        className={`bg-background border-input text-foreground transition-all ${fieldErrors.warranty_months ? 'border-red-500 ring-2 ring-red-500/20' : 'focus:border-violet-500 hover:border-violet-400'}`}
+                                    />
+                                    {fieldErrors.warranty_months && (
+                                        <p className="text-xs text-red-500 mt-1.5 flex items-center gap-1">
+                                            <AlertCircle className="h-3 w-3" />
+                                            {fieldErrors.warranty_months}
                                         </p>
                                     )}
                                 </div>

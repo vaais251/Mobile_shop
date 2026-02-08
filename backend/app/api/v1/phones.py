@@ -234,6 +234,7 @@ async def sell_phone(
     warranty_months: int = Form(0),
     accessories_included: Optional[str] = Form(None),
     pta_approved: bool = Form(False),
+    stock: int = Form(1, description="Number of units in stock"),
     images: List[UploadFile] = File(..., description="Multiple phone images"),
     thumbnail_index: int = Form(0, description="Index of the image to use as thumbnail (0-based)"),
     current_user: User = Depends(get_current_user),
@@ -288,6 +289,7 @@ async def sell_phone(
         warranty_months=warranty_months,
         accessories_included=accessories_included,
         pta_approved=pta_approved,
+        stock=stock,
         images=images_json,
         thumbnail=thumbnail_path
     )

@@ -149,6 +149,7 @@ export default function AdminDashboard() {
             color: phone.color,
             price: Number(phone.price),
             original_price: phone.original_price ? Number(phone.original_price) : undefined,
+            stock: phone.stock || 1,
             condition_grade: phone.condition_grade,
             condition_category: phone.condition_category,
             battery_health: phone.battery_health,
@@ -201,6 +202,7 @@ export default function AdminDashboard() {
                         <TableHead className="w-[100px]">Thumbnail</TableHead>
                         <TableHead>Model</TableHead>
                         <TableHead>Price</TableHead>
+                        <TableHead>Stock</TableHead>
                         <TableHead>Seller</TableHead>
                         <TableHead>Status</TableHead>
                         <TableHead className="text-right">Actions</TableHead>
@@ -227,6 +229,11 @@ export default function AdminDashboard() {
                                 </TableCell>
                                 <TableCell>{formatPrice(Number(phone.price))}</TableCell>
                                 <TableCell>
+                                    <div className={`font-semibold ${phone.stock <= 0 ? 'text-red-500' : phone.stock <= 3 ? 'text-amber-500' : 'text-emerald-600'}`}>
+                                        {phone.stock} {phone.stock === 1 ? 'unit' : 'units'}
+                                    </div>
+                                </TableCell>
+                                <TableCell>
                                     {phone.seller?.name || (
                                         <Badge variant="outline" className="text-primary border-primary/20">Official Shop</Badge>
                                     )}
@@ -235,6 +242,10 @@ export default function AdminDashboard() {
                                     {!phone.admin_approved ? (
                                         <Badge variant="outline" className="bg-amber-500/10 text-amber-500 border-amber-500/20">
                                             Pending
+                                        </Badge>
+                                    ) : phone.stock <= 0 ? (
+                                        <Badge variant="outline" className="bg-red-500/10 text-red-500 border-red-500/20">
+                                            Out of Stock
                                         </Badge>
                                     ) : phone.is_sold ? (
                                         <Badge variant="outline" className="bg-slate-500/10 text-slate-500 border-slate-500/20">
