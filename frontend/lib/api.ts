@@ -7,7 +7,8 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 const API_VERSION = process.env.NEXT_PUBLIC_API_VERSION || 'v1';
 
 export const BACKEND_URL = API_URL;
-export const API_BASE_URL = `${API_URL}/api/${API_VERSION}`;
+// Backend routes are at root level, not under /api/v1
+export const API_BASE_URL = API_URL;
 
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 

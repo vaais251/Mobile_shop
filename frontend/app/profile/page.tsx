@@ -40,6 +40,9 @@ export default function ProfilePage() {
         name: user?.name || '',
         email: user?.email || '',
         phone_number: user?.phone_number || '',
+        city: user?.city || '',
+        address: user?.address || '',
+        shipping_address: user?.shipping_address || '',
         password: '',
     });
     const [updating, setUpdating] = useState(false);
@@ -51,6 +54,9 @@ export default function ProfilePage() {
                 name: user.name,
                 email: user.email,
                 phone_number: user.phone_number || '',
+                city: user.city || '',
+                address: user.address || '',
+                shipping_address: user.shipping_address || '',
                 password: '',
             });
         }
@@ -98,6 +104,9 @@ export default function ProfilePage() {
             const response = await api.patch<User>('/auth/me', {
                 name: settingsData.name,
                 phone_number: settingsData.phone_number,
+                city: settingsData.city,
+                address: settingsData.address,
+                shipping_address: settingsData.shipping_address,
                 password: settingsData.password || undefined
             }, token ?? undefined);
 
@@ -149,18 +158,27 @@ export default function ProfilePage() {
                 </div>
 
                 <Tabs defaultValue="orders" className="space-y-6">
-                    <TabsList className="grid w-full grid-cols-3 h-12 bg-muted/50 p-1 rounded-xl">
-                        <TabsTrigger value="orders" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
-                            <Package className="h-4 w-4 mr-2" />
-                            My Orders
+                    <TabsList className="grid w-full grid-cols-3 gap-3 h-auto bg-transparent p-0">
+                        <TabsTrigger
+                            value="orders"
+                            className="h-16 rounded-2xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 transition-all duration-300 hover:border-violet-400 dark:hover:border-violet-500 hover:shadow-lg data-[state=active]:bg-gradient-to-br data-[state=active]:from-violet-600 data-[state=active]:to-indigo-600 data-[state=active]:text-white data-[state=active]:border-transparent data-[state=active]:shadow-xl data-[state=active]:shadow-violet-500/30 hover:scale-[1.02] data-[state=active]:scale-[1.02]"
+                        >
+                            <Package className="h-5 w-5 mr-2" />
+                            <span className="font-semibold">My Orders</span>
                         </TabsTrigger>
-                        <TabsTrigger value="listings" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
-                            <Smartphone className="h-4 w-4 mr-2" />
-                            My Listings
+                        <TabsTrigger
+                            value="listings"
+                            className="h-16 rounded-2xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 transition-all duration-300 hover:border-emerald-400 dark:hover:border-emerald-500 hover:shadow-lg data-[state=active]:bg-gradient-to-br data-[state=active]:from-emerald-600 data-[state=active]:to-teal-600 data-[state=active]:text-white data-[state=active]:border-transparent data-[state=active]:shadow-xl data-[state=active]:shadow-emerald-500/30 hover:scale-[1.02] data-[state=active]:scale-[1.02]"
+                        >
+                            <Smartphone className="h-5 w-5 mr-2" />
+                            <span className="font-semibold">My Listings</span>
                         </TabsTrigger>
-                        <TabsTrigger value="settings" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
-                            <Settings className="h-4 w-4 mr-2" />
-                            Settings
+                        <TabsTrigger
+                            value="settings"
+                            className="h-16 rounded-2xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 transition-all duration-300 hover:border-amber-400 dark:hover:border-amber-500 hover:shadow-lg data-[state=active]:bg-gradient-to-br data-[state=active]:from-amber-600 data-[state=active]:to-orange-600 data-[state=active]:text-white data-[state=active]:border-transparent data-[state=active]:shadow-xl data-[state=active]:shadow-amber-500/30 hover:scale-[1.02] data-[state=active]:scale-[1.02]"
+                        >
+                            <Settings className="h-5 w-5 mr-2" />
+                            <span className="font-semibold">Settings</span>
                         </TabsTrigger>
                     </TabsList>
 
@@ -291,26 +309,73 @@ export default function ProfilePage() {
                                 <CardDescription>Update your personal information and password.</CardDescription>
                             </CardHeader>
                             <CardContent>
-                                <form onSubmit={handleUpdateSettings} className="space-y-4">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div className="space-y-2">
-                                            <label className="text-sm font-medium">Full Name</label>
-                                            <Input
-                                                value={settingsData.name}
-                                                onChange={e => setSettingsData({ ...settingsData, name: e.target.value })}
-                                            />
+                                <form onSubmit={handleUpdateSettings} className="space-y-6">
+                                    {/* Personal Information */}
+                                    <div>
+                                        <h3 className="text-sm font-semibold mb-3">Personal Information</h3>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-medium">Full Name</label>
+                                                <Input
+                                                    value={settingsData.name}
+                                                    onChange={e => setSettingsData({ ...settingsData, name: e.target.value })}
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-medium">Email (read-only)</label>
+                                                <Input value={settingsData.email} disabled className="opacity-60" />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-medium">Phone Number</label>
+                                                <Input
+                                                    value={settingsData.phone_number}
+                                                    onChange={e => setSettingsData({ ...settingsData, phone_number: e.target.value })}
+                                                    placeholder="+92 300 1234567"
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-medium">City</label>
+                                                <Input
+                                                    value={settingsData.city}
+                                                    onChange={e => setSettingsData({ ...settingsData, city: e.target.value })}
+                                                    placeholder="e.g., Karachi, Lahore"
+                                                />
+                                            </div>
                                         </div>
-                                        <div className="space-y-2">
-                                            <label className="text-sm font-medium">Email (read-only)</label>
-                                            <Input value={settingsData.email} disabled className="opacity-60" />
+                                    </div>
+
+                                    {/* Shipping Information */}
+                                    <div className="border-t pt-6">
+                                        <h3 className="text-sm font-semibold mb-1">Shipping Information</h3>
+                                        <p className="text-xs text-muted-foreground mb-3">
+                                            Save your default shipping address for faster checkout
+                                        </p>
+                                        <div className="grid grid-cols-1 gap-4">
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-medium">Default Shipping Address</label>
+                                                <Input
+                                                    value={settingsData.shipping_address}
+                                                    onChange={e => setSettingsData({ ...settingsData, shipping_address: e.target.value })}
+                                                    placeholder="House #, Street, Area, City"
+                                                />
+                                                <p className="text-xs text-muted-foreground">
+                                                    This address will be used to pre-fill checkout forms
+                                                </p>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-medium">General Address (Optional)</label>
+                                                <Input
+                                                    value={settingsData.address}
+                                                    onChange={e => setSettingsData({ ...settingsData, address: e.target.value })}
+                                                    placeholder="Alternative address or notes"
+                                                />
+                                            </div>
                                         </div>
-                                        <div className="space-y-2">
-                                            <label className="text-sm font-medium">Phone Number</label>
-                                            <Input
-                                                value={settingsData.phone_number}
-                                                onChange={e => setSettingsData({ ...settingsData, phone_number: e.target.value })}
-                                            />
-                                        </div>
+                                    </div>
+
+                                    {/* Security */}
+                                    <div className="border-t pt-6">
+                                        <h3 className="text-sm font-semibold mb-3">Security</h3>
                                         <div className="space-y-2">
                                             <label className="text-sm font-medium">New Password</label>
                                             <Input
@@ -329,8 +394,22 @@ export default function ProfilePage() {
                                         </div>
                                     )}
 
-                                    <Button type="submit" disabled={updating} className="w-full md:w-auto px-8">
-                                        {updating ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Updating...</> : 'Save Changes'}
+                                    <Button
+                                        type="submit"
+                                        disabled={updating}
+                                        className="w-full md:w-auto h-12 px-8 rounded-xl font-semibold text-base bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white shadow-xl shadow-violet-500/30 hover:shadow-2xl hover:shadow-violet-500/40 transition-all duration-300 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                                    >
+                                        {updating ? (
+                                            <>
+                                                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                                                Updating...
+                                            </>
+                                        ) : (
+                                            <>
+                                                <CheckCircle className="mr-2 h-5 w-5" />
+                                                Save Changes
+                                            </>
+                                        )}
                                     </Button>
                                 </form>
                             </CardContent>

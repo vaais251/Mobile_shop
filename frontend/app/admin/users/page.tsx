@@ -49,6 +49,7 @@ import {
     Phone,
     MapPin,
     MessageSquare,
+    BadgeCheck,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -60,6 +61,7 @@ interface UserInfo {
     city?: string;
     role: 'buyer' | 'seller' | 'admin';
     is_verified: boolean;
+    is_verified_seller: boolean;
     created_at: string;
 }
 
@@ -159,6 +161,27 @@ export default function AdminUsersPage() {
             }
         } catch (error) {
             console.error('Error changing role:', error);
+        } finally {
+            setActionLoading(null);
+        }
+    };
+
+    const handleToggleVerifiedSeller = async (userId: number, isVerified: boolean) => {
+        if (!token) return;
+        setActionLoading(userId);
+        try {
+            const res = await api.patch<UserInfo>(
+                `/admin/users/${userId}/verified-seller-badge?verified_seller=${!isVerified}`,
+                {},
+                token
+            );
+            if (res.data) {
+                setUsers(users.map(u =>
+                    u.id === userId ? { ...u, is_verified_seller: !isVerified } : u
+                ));
+            }
+        } catch (error) {
+            console.error('Error toggling verified seller:', error);
         } finally {
             setActionLoading(null);
         }
@@ -377,6 +400,26 @@ export default function AdminUsersPage() {
                                                     >
                                                         <Eye className="h-4 w-4" />
                                                     </Button>
+                                                    {/* Toggle Verified Seller Badge */}
+                                                    {user.role === 'seller' && (
+                                                        <Button
+                                                            size="sm"
+                                                            variant="ghost"
+                                                            className={user.is_verified_seller
+                                                                ? "text-blue-500 hover:text-blue-600 hover:bg-blue-500/10"
+                                                                : "text-gray-400 hover:text-blue-500 hover:bg-blue-500/10"
+                                                            }
+                                                            onClick={() => handleToggleVerifiedSeller(user.id, user.is_verified_seller)}
+                                                            disabled={actionLoading === user.id}
+                                                            title={user.is_verified_seller ? "Remove Verified Seller Badge" : "Add Verified Seller Badge"}
+                                                        >
+                                                            {actionLoading === user.id ? (
+                                                                <Loader2 className="h-4 w-4 animate-spin" />
+                                                            ) : (
+                                                                <BadgeCheck className={`h-4 w-4 ${user.is_verified_seller ? 'fill-current' : ''}`} />
+                                                            )}
+                                                        </Button>
+                                                    )}
                                                     {/* Password Button */}
                                                     <Button
                                                         size="sm"

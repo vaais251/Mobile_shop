@@ -9,8 +9,10 @@ interface User {
     name: string;
     phone_number?: string;
     city?: string;
+    shipping_address?: string;
     role: 'admin' | 'seller' | 'buyer';
     is_verified: boolean;
+    is_verified_seller: boolean;
 }
 
 interface AuthContextType {

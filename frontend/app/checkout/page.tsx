@@ -35,15 +35,28 @@ export default function CheckoutPage() {
     const [error, setError] = useState('');
 
     const [formData, setFormData] = useState({
-        name: user?.name || '',
+        name: '',
         address: '',
         city: '',
-        phone: user?.phone_number || '',
+        phone: '',
         notes: '',
     });
 
     const [paymentMethod, setPaymentMethod] = useState('cod');
     const [transactionId, setTransactionId] = useState('');
+
+    // Pre-fill form with user data and saved shipping address
+    useEffect(() => {
+        if (user) {
+            setFormData({
+                name: user.name || '',
+                address: user.shipping_address || '',
+                city: user.city || '',
+                phone: user.phone_number || '',
+                notes: '',
+            });
+        }
+    }, [user]);
 
     useEffect(() => {
         if (!authLoading && !isAuthenticated) {
@@ -132,6 +145,12 @@ export default function CheckoutPage() {
                                     <Truck className="h-5 w-5 text-primary" />
                                     Shipping Information
                                 </CardTitle>
+                                {user?.shipping_address && (
+                                    <CardDescription className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
+                                        <CheckCircle className="h-3 w-3" />
+                                        Address pre-filled from your profile
+                                    </CardDescription>
+                                )}
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div className="grid sm:grid-cols-2 gap-4">

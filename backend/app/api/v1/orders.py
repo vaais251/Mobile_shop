@@ -17,14 +17,48 @@ async def create_order(
     db: Session = Depends(get_db)
 ):
     """Place a new order."""
+    import traceback
+    print(f"[ORDER] Received order request from user {current_user.id}")
+    print(f"[ORDER] Order data: {order_data}")
+    
     order_service = OrderService(db)
     try:
+        print("[ORDER] Creating order...")
         order = order_service.create_order(current_user.id, order_data)
+        print(f"[ORDER] Order created successfully: {order.id}")
+        
+        # **FEATURE 2: Auto-update user's shipping address**
+        # If the user doesn't have a saved shipping address, save this one
+        if not current_user.shipping_address and order_data.shipping_address:
+            current_user.shipping_address = order_data.shipping_address
+            current_user.city = order_data.shipping_city
+            current_user.phone_number = order_data.shipping_phone
+            db.commit()
+        
+        # **TRIGGER 2: Create notification for new order**
+        from app.models.notification import Notification, NotificationType
+        notification = Notification(
+            type=NotificationType.NEW_ORDER,
+            title="New Order Received",
+            message=f"New order #{order.order_number} from {current_user.name} - Total: {order.total_amount} PKR",
+            related_id=order.id
+        )
+        db.add(notification)
+        db.commit()
+        
         return order
     except ValueError as e:
+        print(f"[ORDER ERROR] ValueError: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(e)
+        )
+    except Exception as e:
+        print(f"[ORDER ERROR] Unexpected error: {str(e)}")
+        print(f"[ORDER ERROR] Traceback: {traceback.format_exc()}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Internal server error: {str(e)}"
         )
 
 @router.get("/me", response_model=List[OrderResponse])

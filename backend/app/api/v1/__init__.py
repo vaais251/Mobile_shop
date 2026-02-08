@@ -3,21 +3,33 @@ API v1 routers package.
 """
 
 from fastapi import APIRouter
-from app.api.v1.auth import router as auth_router
-from app.api.v1.phones import router as phones_router
-from app.api.v1.admin import router as admin_router
-from app.api.v1.orders import router as orders_router
-from app.api.v1.chat import router as chat_router
-from app.api.v1.messages import router as messages_router
+from app.api.v1 import (
+    auth,
+    phones,
+    orders,
+    admin,
+    messages,
+    chat,
+    notifications,
+    admin_orders,
+    team,
+    commissions,
+    team_messages,
+)
 
-api_router = APIRouter(prefix="/api/v1")
+api_router = APIRouter()
 
-api_router.include_router(auth_router)
-api_router.include_router(phones_router)
-api_router.include_router(admin_router)
-api_router.include_router(orders_router)
-api_router.include_router(chat_router)
-api_router.include_router(messages_router)
+# Include all routers
+api_router.include_router(auth.router)
+api_router.include_router(phones.router)
+api_router.include_router(orders.router)
+api_router.include_router(admin.router)
+api_router.include_router(messages.router)
+api_router.include_router(chat.router)
+api_router.include_router(notifications.router)
+api_router.include_router(admin_orders.router)
+api_router.include_router(team.router)
+api_router.include_router(commissions.router)
+api_router.include_router(team_messages.router)
 
 __all__ = ["api_router"]
-

@@ -20,14 +20,14 @@ async def lifespan(app: FastAPI):
     Runs on startup and shutdown.
     """
     # Startup: Initialize database tables
-    print("🚀 Starting Mobile Store API...")
+    print("[STARTUP] Starting Mobile Store API...")
     init_db()
-    print("✅ Database initialized successfully!")
+    print("[STARTUP] Database initialized successfully!")
     
     yield
     
     # Shutdown: Cleanup
-    print("👋 Shutting down Mobile Store API...")
+    print("[SHUTDOWN] Shutting down Mobile Store API...")
 
 
 # Create FastAPI application
@@ -61,6 +61,7 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
 
 

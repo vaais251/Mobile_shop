@@ -30,6 +30,8 @@ import {
     ShoppingCart,
     MessageCircle,
     Package,
+    DollarSign,
+    MessageSquare,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
@@ -180,6 +182,34 @@ export function Navbar() {
                                                 )}
                                             </Link>
                                         </DropdownMenuItem>
+                                        {isAdmin && (
+                                            <>
+                                                <DropdownMenuItem asChild>
+                                                    <Link href="/admin/orders" className="flex items-center gap-3 cursor-pointer px-3 py-2.5 rounded-lg">
+                                                        <Package className="h-4 w-4" />
+                                                        <span className="font-medium">Orders</span>
+                                                    </Link>
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem asChild>
+                                                    <Link href="/admin/team" className="flex items-center gap-3 cursor-pointer px-3 py-2.5 rounded-lg">
+                                                        <Users className="h-4 w-4" />
+                                                        <span className="font-medium">Team</span>
+                                                    </Link>
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem asChild>
+                                                    <Link href="/admin/commissions" className="flex items-center gap-3 cursor-pointer px-3 py-2.5 rounded-lg">
+                                                        <DollarSign className="h-4 w-4" />
+                                                        <span className="font-medium">Commissions</span>
+                                                    </Link>
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem asChild>
+                                                    <Link href="/team/messages" className="flex items-center gap-3 cursor-pointer px-3 py-2.5 rounded-lg">
+                                                        <MessageSquare className="h-4 w-4" />
+                                                        <span className="font-medium">Team Chat</span>
+                                                    </Link>
+                                                </DropdownMenuItem>
+                                            </>
+                                        )}
                                         <DropdownMenuSeparator className="bg-border my-2" />
                                         <DropdownMenuItem
                                             onClick={logout}

@@ -26,7 +26,7 @@ from app.models.phone_inventory import PhoneInventory, PhoneCondition
 def seed_database():
     """Seed the database with test data."""
     
-    print("🌱 Starting database seed...")
+    print("[SEED] Starting database seed...")
     
     # Initialize database tables
     init_db()
@@ -37,11 +37,11 @@ def seed_database():
         # Check if already seeded
         existing_admin = db.query(User).filter(User.email == "admin@mobilestore.com").first()
         if existing_admin:
-            print("⚠️  Database already seeded. Skipping...")
+            print("[WARNING] Database already seeded. Skipping...")
             return
         
         # ============== Create Users ==============
-        print("👤 Creating users...")
+        print("[SEED] Creating users...")
         
         # Admin user
         admin = User(
@@ -80,12 +80,12 @@ def seed_database():
         db.add(seller1)
         
         db.commit()
-        print(f"   ✅ Created: Admin (admin@mobilestore.com / admin123)")
-        print(f"   ✅ Created: Buyer (ali@example.com / password123)")
-        print(f"   ✅ Created: Seller (hassan@example.com / password123)")
+        print(f"   [OK] Created: Admin (admin@mobilestore.com / admin123)")
+        print(f"   [OK] Created: Buyer (ali@example.com / password123)")
+        print(f"   [OK] Created: Seller (hassan@example.com / password123)")
         
         # ============== Create Shop Phones ==============
-        print("📱 Creating shop phones...")
+        print("[SEED] Creating shop phones...")
         
         shop_phones = [
             {
@@ -176,10 +176,10 @@ def seed_database():
             db.add(phone)
         
         db.commit()
-        print(f"   ✅ Created {len(shop_phones)} shop phones")
+        print(f"   [OK] Created {len(shop_phones)} shop phones")
         
         # ============== Create Community Phones (Pending) ==============
-        print("🏪 Creating community phones (pending approval)...")
+        print("[SEED] Creating community phones (pending approval)...")
         
         # Get seller ID
         seller = db.query(User).filter(User.email == "hassan@example.com").first()
@@ -244,27 +244,27 @@ def seed_database():
             db.add(phone)
         
         db.commit()
-        print(f"   ✅ Created {len(community_phones)} community phones (pending approval)")
+        print(f"   [OK] Created {len(community_phones)} community phones (pending approval)")
         
         # ============== Summary ==============
         print("\n" + "="*50)
-        print("🎉 Database seeded successfully!")
+        print("[SUCCESS] Database seeded successfully!")
         print("="*50)
-        print("\n📋 Test Accounts:")
+        print("\n[INFO] Test Accounts:")
         print("   Admin:  admin@mobilestore.com / admin123")
         print("   Buyer:  ali@example.com / password123")
         print("   Seller: hassan@example.com / password123")
-        print("\n📱 Phones Created:")
+        print("\n[INFO] Phones Created:")
         print(f"   Shop phones: {len(shop_phones)}")
         print(f"   Community phones (pending): {len(community_phones)}")
-        print("\n🔗 API Endpoints:")
+        print("\n[INFO] API Endpoints:")
         print("   GET /phones/shop - View shop inventory")
         print("   GET /phones/community - View approved listings")
         print("   GET /admin/phones/pending - View pending (admin only)")
         
     except Exception as e:
         db.rollback()
-        print(f"❌ Error seeding database: {e}")
+        print(f"[ERROR] Error seeding database: {e}")
         raise
     finally:
         db.close()

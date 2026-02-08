@@ -59,6 +59,9 @@ class User(Base):
     profile_image_url = Column(String(500), nullable=True)
     address = Column(Text, nullable=True)
     
+    # Shipping information (for smart checkout pre-fill)
+    shipping_address = Column(Text, nullable=True, comment="Default shipping address")
+    
     # Role and verification
     role = Column(
         Enum(UserRole),
@@ -67,6 +70,12 @@ class User(Base):
         index=True
     )
     is_verified = Column(Boolean, default=False, nullable=False)
+    is_verified_seller = Column(
+        Boolean, 
+        default=False, 
+        nullable=False,
+        comment="Verified seller trust badge (shown in community listings)"
+    )
     is_active = Column(Boolean, default=True, nullable=False)
     
     # Timestamps
@@ -116,6 +125,13 @@ class User(Base):
         "Message",
         back_populates="sender",
         foreign_keys="Message.sender_id"
+    )
+    
+    # Product ratings given by this user
+    ratings = relationship(
+        "ProductRating",
+        back_populates="user",
+        foreign_keys="ProductRating.user_id"
     )
     
     def __repr__(self) -> str:

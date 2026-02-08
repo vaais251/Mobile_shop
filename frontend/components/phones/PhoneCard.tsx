@@ -127,8 +127,12 @@ export function PhoneCard({ phone, variant = 'shop' }: PhoneCardProps) {
 
                 {/* Overlay on hover */}
                 <Link href={`/phone/${phone.id}`}>
-                    <div className="absolute inset-0 bg-foreground/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <Button variant="secondary" size="sm">
+                    <div className="absolute inset-0 bg-black/40 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center">
+                        <Button
+                            variant="secondary"
+                            size="lg"
+                            className="bg-white dark:bg-zinc-900 text-foreground hover:bg-white/90 dark:hover:bg-zinc-800 shadow-2xl border-2 border-white/20 font-bold text-base px-8 py-6 transform group-hover:scale-110 transition-transform duration-300"
+                        >
                             {t.view_details}
                         </Button>
                     </div>
@@ -176,7 +180,12 @@ export function PhoneCard({ phone, variant = 'shop' }: PhoneCardProps) {
                 <div className="mt-auto pt-3 min-h-[28px]">
                     {variant === 'community' && phone.seller && (
                         <div className="flex items-center gap-2 text-xs">
-                            {phone.seller.is_verified ? (
+                            {phone.seller.is_verified_seller ? (
+                                <span className="flex items-center gap-1 text-blue-600 dark:text-blue-400 font-semibold">
+                                    <BadgeCheck className="h-4 w-4 fill-current" />
+                                    Verified Seller
+                                </span>
+                            ) : phone.seller.is_verified ? (
                                 <span className="flex items-center gap-1 text-cyan-600 dark:text-cyan-400">
                                     <ShieldCheck className="h-3 w-3" />
                                     {t.verified_seller}

@@ -461,44 +461,91 @@ export default function PhoneDetailPage() {
                         )}
 
                         {/* Action Buttons */}
-                        <div className="flex gap-4">
-                            <Button
-                                size="lg"
-                                disabled={inCart || isPending || phone.is_sold}
-                                onClick={() => phone && addToCart(phone)}
-                                className={`flex-1 ${inCart
-                                    ? 'bg-muted text-muted-foreground'
-                                    : 'bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/25'
-                                    }`}
-                            >
-                                {inCart ? (
-                                    <>
-                                        <CheckCircle className="mr-2 h-5 w-5" />
-                                        {t.in_cart}
-                                    </>
-                                ) : isPending ? (
-                                    <>
-                                        <Clock className="mr-2 h-5 w-5" />
-                                        Under Review
-                                    </>
-                                ) : phone.is_sold ? (
-                                    "Sold Out"
-                                ) : (
-                                    <>
-                                        <ShoppingCart className="mr-2 h-5 w-5" />
-                                        {t.add_to_cart}
-                                    </>
-                                )}
-                            </Button>
+                        <div className="space-y-4">
+                            {/* Primary Actions Row */}
+                            <div className="grid grid-cols-2 gap-3">
+                                {/* Add to Cart Button */}
+                                <Button
+                                    size="lg"
+                                    disabled={inCart || isPending || phone.is_sold}
+                                    onClick={() => phone && addToCart(phone)}
+                                    className={`h-14 rounded-xl font-semibold text-base transition-all duration-300 ${inCart
+                                            ? 'bg-emerald-500/20 text-emerald-600 border-2 border-emerald-500/30 hover:bg-emerald-500/30'
+                                            : isPending || phone.is_sold
+                                                ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                                                : 'bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white shadow-xl shadow-violet-500/30 hover:shadow-2xl hover:shadow-violet-500/40 hover:scale-[1.02]'
+                                        }`}
+                                >
+                                    {inCart ? (
+                                        <>
+                                            <CheckCircle className="mr-2 h-5 w-5" />
+                                            In Cart
+                                        </>
+                                    ) : isPending ? (
+                                        <>
+                                            <Clock className="mr-2 h-5 w-5" />
+                                            Under Review
+                                        </>
+                                    ) : phone.is_sold ? (
+                                        <>
+                                            <XCircle className="mr-2 h-5 w-5" />
+                                            Sold Out
+                                        </>
+                                    ) : (
+                                        <>
+                                            <ShoppingCart className="mr-2 h-5 w-5" />
+                                            {t.add_to_cart}
+                                        </>
+                                    )}
+                                </Button>
+
+                                {/* Buy Now Button */}
+                                <Button
+                                    size="lg"
+                                    disabled={isPending || phone.is_sold}
+                                    onClick={() => {
+                                        if (phone && !inCart) {
+                                            addToCart(phone);
+                                        }
+                                        router.push('/cart');
+                                    }}
+                                    className={`h-14 rounded-xl font-semibold text-base transition-all duration-300 ${isPending || phone.is_sold
+                                            ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                                            : 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-xl shadow-emerald-500/30 hover:shadow-2xl hover:shadow-emerald-500/40 hover:scale-[1.02]'
+                                        }`}
+                                >
+                                    {isPending ? (
+                                        <>
+                                            <Clock className="mr-2 h-5 w-5" />
+                                            Pending
+                                        </>
+                                    ) : phone.is_sold ? (
+                                        <>
+                                            <Lock className="mr-2 h-5 w-5" />
+                                            Unavailable
+                                        </>
+                                    ) : (
+                                        <>
+                                            <ShoppingCart className="mr-2 h-5 w-5 animate-pulse" />
+                                            Buy Now
+                                        </>
+                                    )}
+                                </Button>
+                            </div>
+
+                            {/* Chat with Seller Button (Full Width) */}
                             {!isShopOwned && (
-                                <Link href={isPending ? "#" : `/messages?userId=${phone.seller_id}&userName=${encodeURIComponent(phone.seller?.name || '')}&phoneId=${phone.id}`} className="flex-1">
+                                <Link
+                                    href={isPending ? "#" : `/messages?userId=${phone.seller_id}&userName=${encodeURIComponent(phone.seller?.name || '')}&phoneId=${phone.id}`}
+                                    className="block"
+                                >
                                     <Button
                                         size="lg"
                                         variant="outline"
                                         disabled={isPending}
-                                        className="w-full border-border text-foreground hover:bg-accent"
+                                        className="w-full h-12 rounded-xl border-2 border-gray-300 dark:border-gray-700 text-foreground hover:bg-gray-100 dark:hover:bg-gray-800 hover:border-violet-500 dark:hover:border-violet-500 transition-all duration-300 font-medium"
                                     >
-                                        <MessageCircle className="mr-2 h-4 w-4" />
+                                        <MessageCircle className="mr-2 h-5 w-5" />
                                         Chat with Seller
                                     </Button>
                                 </Link>

@@ -10,10 +10,13 @@ export interface User {
     email: string;
     name: string;
     phone_number?: string;
+    city?: string;
     profile_image_url?: string;
     address?: string;
+    shipping_address?: string;
     role: UserRole;
     is_verified: boolean;
+    is_verified_seller: boolean;
     is_active: boolean;
     created_at: string;
     updated_at: string;
@@ -78,6 +81,7 @@ export interface PhoneInventory {
         name: string;
         email: string;
         is_verified: boolean;
+        is_verified_seller: boolean;
     };
 
     // Computed properties
@@ -233,4 +237,22 @@ export interface PaginatedResponse<T> {
 export interface ApiError {
     detail: string;
     status_code: number;
+}
+
+// Notification types
+export type NotificationType =
+    | 'new_listing'
+    | 'new_order'
+    | 'verification_request'
+    | 'listing_approved'
+    | 'listing_rejected';
+
+export interface Notification {
+    id: number;
+    type: NotificationType;
+    title: string;
+    message: string;
+    is_read: boolean;
+    related_id?: number;
+    created_at: string;
 }

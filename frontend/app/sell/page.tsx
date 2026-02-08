@@ -449,6 +449,49 @@ export default function SellPage() {
                     </div>
                 </div>
 
+                {/* Commission Notice */}
+                <Card className="mb-6 border-2 border-amber-200 dark:border-amber-800 bg-gradient-to-r from-amber-50 via-yellow-50 to-amber-50 dark:from-amber-950/20 dark:via-yellow-950/20 dark:to-amber-950/20 shadow-lg">
+                    <CardHeader className="pb-4">
+                        <CardTitle className="flex items-center gap-2 text-amber-900 dark:text-amber-100">
+                            <AlertCircle className="h-5 w-5 text-amber-600" />
+                            Platform Commission Notice
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                        <p className="text-sm text-amber-900/90 dark:text-amber-100/90 leading-relaxed">
+                            When you list your phone for sale, a platform commission between <strong>1% to 5%</strong> will be applied to each successful sale.
+                            The exact rate depends on your seller rating and phone condition.
+                        </p>
+                        <div className="bg-white/60 dark:bg-gray-900/40 rounded-lg p-4 border border-amber-200 dark:border-amber-800">
+                            <h4 className="text-sm font-semibold text-amber-900 dark:text-amber-100 mb-2 flex items-center gap-2">
+                                <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
+                                Commission Benefits
+                            </h4>
+                            <ul className="space-y-2 text-xs text-amber-900/80 dark:text-amber-100/80">
+                                <li className="flex items-start gap-2">
+                                    <span className="text-amber-600 dark:text-amber-400 font-bold">✓</span>
+                                    <span>Secure payment processing and buyer protection</span>
+                                </li>
+                                <li className="flex items-start gap-2">
+                                    <span className="text-amber-600 dark:text-amber-400 font-bold">✓</span>
+                                    <span>Platform maintenance and customer support</span>
+                                </li>
+                                <li className="flex items-start gap-2">
+                                    <span className="text-amber-600 dark:text-amber-400 font-bold">✓</span>
+                                    <span>Marketing and visibility for your listings</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div className="flex items-start gap-2 text-xs text-amber-800 dark:text-amber-200 bg-amber-100/50 dark:bg-amber-900/30 p-3 rounded-lg">
+                            <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                            <p>
+                                <strong>Note:</strong> Commission rate varies between 1-5% based on factors like seller rating,
+                                phone condition, and listing quality. Higher rated sellers typically receive better rates.
+                            </p>
+                        </div>
+                    </CardContent>
+                </Card>
+
                 {/* Form */}
                 <Card className="bg-card/80 backdrop-blur-sm border-2 border-border/50 shadow-2xl shadow-violet-500/10 overflow-hidden">
                     <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-violet-500 via-indigo-600 to-purple-600"></div>
@@ -1173,9 +1216,9 @@ export default function SellPage() {
                             </DialogTitle>
                             <DialogDescription className="text-center text-muted-foreground text-base">
                                 {t.listing_pending}
-                                <p className="mt-2 text-sm italic font-medium text-emerald-600 dark:text-emerald-400">
+                                <span className="mt-2 text-sm italic font-medium text-emerald-600 dark:text-emerald-400 block">
                                     Our team will review it within 24 hours.
-                                </p>
+                                </span>
                             </DialogDescription>
                         </DialogHeader>
 
@@ -1198,6 +1241,7 @@ export default function SellPage() {
                                         price: '',
                                         original_price: '',
                                         battery_health: '',
+                                        battery_mah: '',
                                         warranty_months: '0',
                                         accessories_included: '',
                                         seller_phone: '',

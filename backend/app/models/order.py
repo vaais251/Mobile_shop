@@ -13,7 +13,7 @@ from datetime import datetime
 from decimal import Decimal
 from sqlalchemy import (
     Column, Integer, String, Boolean, DateTime, 
-    ForeignKey, Text, Numeric, Enum
+    ForeignKey, Text, Numeric, Enum, Float
 )
 from sqlalchemy.orm import relationship
 
@@ -159,6 +159,24 @@ class Order(Base):
         comment="Reason for cancellation if cancelled"
     )
     
+    # Order completion tracking (for admin)
+    completed_at = Column(
+        DateTime,
+        nullable=True,
+        comment="When admin marked order as complete"
+    )
+    completion_notes = Column(
+        Text,
+        nullable=True,
+        comment="Admin notes when completing order"
+    )
+    can_be_rated = Column(
+        Boolean,
+        default=False,
+        nullable=False,
+        comment="Whether customer can rate products in this order"
+    )
+    
     # Timestamps
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     updated_at = Column(
@@ -181,6 +199,12 @@ class Order(Base):
     
     items = relationship(
         "OrderItem",
+        back_populates="order",
+        cascade="all, delete-orphan"
+    )
+    
+    ratings = relationship(
+        "ProductRating",
         back_populates="order",
         cascade="all, delete-orphan"
     )
@@ -238,6 +262,26 @@ class OrderItem(Base):
     phone_storage_gb = Column(Integer, nullable=False)
     phone_color = Column(String(50), nullable=False)
     phone_condition = Column(String(50), nullable=False)
+    
+    # Extended snapshot fields for comprehensive order history
+    phone_ram_gb = Column(Integer, nullable=True, comment="Phone RAM in GB")
+    phone_camera_mp = Column(Integer, nullable=True, comment="Main camera megapixels")
+    phone_battery_health = Column(Integer, nullable=True, comment="Battery health percentage")
+    phone_battery_mah = Column(Integer, nullable=True, comment="Battery capacity in mAh")
+    phone_condition_grade = Column(Float, nullable=True, comment="Condition rating 1.0-10.0")
+    phone_defects = Column(Text, nullable=True, comment="Description of defects")
+    phone_accessories = Column(Text, nullable=True, comment="Included accessories")
+    phone_images = Column(Text, nullable=True, comment="JSON array of image paths")
+    phone_thumbnail = Column(String(255), nullable=True, comment="Main product image")
+    phone_pta_approved = Column(Boolean, default=False, comment="PTA approval status")
+    phone_warranty_months = Column(Integer, default=0, comment="Warranty in months")
+    
+    # Seller snapshot (for community products)
+    seller_id = Column(Integer, nullable=True, comment="Seller user ID (NULL = shop owned)")
+    seller_name = Column(String(100), nullable=True, comment="Seller name")
+    seller_email = Column(String(255), nullable=True, comment="Seller email")
+    seller_phone = Column(String(20), nullable=True, comment="Seller phone number")
+    seller_city = Column(String(100), nullable=True, comment="Seller city")
     
     # Timestamps
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
