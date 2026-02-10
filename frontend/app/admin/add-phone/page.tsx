@@ -60,6 +60,7 @@ export default function AdminAddPhonePage() {
         defects: '',
         price: '',
         original_price: '',
+        stock: '1',
         battery_health: '',
         warranty_months: '0',
         accessories_included: '',
@@ -243,6 +244,7 @@ export default function AdminAddPhonePage() {
             data.append('condition_grade', formData.condition_grade);
             data.append('condition_category', formData.condition_category);
             data.append('price', formData.price);
+            data.append('stock', formData.stock);
 
             if (formData.ram_gb) data.append('ram_gb', formData.ram_gb);
             if (formData.camera_mp) data.append('camera_mp', formData.camera_mp);
@@ -828,6 +830,7 @@ export default function AdminAddPhonePage() {
                                         defects: '',
                                         price: '',
                                         original_price: '',
+                                        stock: '1',
                                         battery_health: '',
                                         warranty_months: '0',
                                         accessories_included: '',

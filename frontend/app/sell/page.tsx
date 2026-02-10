@@ -1299,6 +1299,7 @@ export default function SellPage() {
                                         defects: '',
                                         price: '',
                                         original_price: '',
+                                        stock: '1',
                                         battery_health: '',
                                         battery_mah: '',
                                         warranty_months: '0',
