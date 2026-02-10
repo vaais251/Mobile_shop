@@ -1,7 +1,7 @@
 # ============================================
 # Mobile Store Backend - Production Dockerfile
 # ============================================
-FROM python:3.13-slim
+FROM python:3.12-slim
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -10,9 +10,9 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 # Set work directory
 WORKDIR /app
 
-# Install system dependencies (needed for psycopg2-binary)
+# Install system dependencies (needed for psycopg2 and building packages)
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends gcc libpq-dev && \
+    apt-get install -y --no-install-recommends gcc libpq-dev libc6-dev python3-dev && \
     rm -rf /var/lib/apt/lists/*
 
 # Copy requirements first (for Docker layer caching)
