@@ -3,6 +3,7 @@ Application configuration settings using Pydantic Settings.
 Loads environment variables from .env file.
 """
 
+from pydantic import field_validator
 from pydantic_settings import BaseSettings
 from typing import List
 from functools import lru_cache
@@ -13,6 +14,13 @@ class Settings(BaseSettings):
     
     # Database
     DATABASE_URL: str
+    
+    @field_validator("DATABASE_URL", mode="before")
+    @classmethod
+    def fix_database_url(cls, v: str) -> str:
+        if v and v.startswith("postgres://"):
+            return v.replace("postgres://", "postgresql://", 1)
+        return v
     
     # JWT Authentication
     SECRET_KEY: str
