@@ -31,5 +31,5 @@ RUN mkdir -p /app/static/images
 # Expose the port uvicorn will listen on
 EXPOSE 8000
 
-# Run database migrations then start the server
-CMD alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000
+# Start the server (Migrations are handled in app/main.py lifespan)
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

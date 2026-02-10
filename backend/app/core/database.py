@@ -53,6 +53,6 @@ def init_db() -> None:
     Should be called on application startup.
     """
     # Import all models to ensure they are registered with Base
-    from app.models import user, phone_inventory, order, chat  # noqa: F401
+    import app.models  # noqa: F401
     
     Base.metadata.create_all(bind=engine)

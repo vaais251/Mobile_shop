@@ -13,6 +13,25 @@ from app.core.config import settings
 from app.core.database import init_db
 
 
+def stamp_db_at_head():
+    """
+    Stamps the database at the current head migration.
+    This prevents 'table already exists' or 'missing table' errors 
+    on fresh installs where tables are created by SQLAlchemy first.
+    """
+    try:
+        from alembic.config import Config
+        from alembic import command
+        import os
+
+        # Find alembic.ini in the root directory (one level up from app/)
+        alembic_cfg = Config("alembic.ini")
+        command.stamp(alembic_cfg, "head")
+        print("[STARTUP] Database stamped at HEAD migration.")
+    except Exception as e:
+        print(f"[STARTUP] Could not stamp database: {e}")
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """
@@ -25,6 +44,9 @@ async def lifespan(app: FastAPI):
         # This will create all tables defined in models if they don't exist
         init_db()
         print("[STARTUP] Database tables checked/created successfully!")
+        
+        # Mark migrations as current so alembic doesn't complain later
+        stamp_db_at_head()
     except Exception as e:
         print(f"[STARTUP] Error initializing database: {e}")
     
