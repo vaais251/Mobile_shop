@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -46,7 +46,7 @@ interface Conversation {
     unread_count: number;
 }
 
-export default function MessagesPage() {
+function MessagesContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const { user, token, isAuthenticated } = useAuth();
@@ -387,5 +387,17 @@ export default function MessagesPage() {
                 </DialogContent>
             </Dialog>
         </div>
+    );
+}
+
+export default function MessagesPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen bg-background flex items-center justify-center">
+                <Loader2 className="h-8 w-8 text-primary animate-spin" />
+            </div>
+        }>
+            <MessagesContent />
+        </Suspense>
     );
 }
