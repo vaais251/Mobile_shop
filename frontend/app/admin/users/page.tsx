@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { api } from '@/lib/api';
 import { formatDate } from '@/lib/utils';
+import { User } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
@@ -39,7 +40,7 @@ import {
     Loader2,
     ShieldCheck,
     Shield,
-    User,
+    User as UserIcon,
     Search,
     ArrowLeft,
     Mail,
@@ -53,32 +54,21 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 
-interface UserInfo {
-    id: number;
-    name: string;
-    email: string;
-    phone_number?: string;
-    city?: string;
-    role: 'buyer' | 'seller' | 'admin';
-    is_verified: boolean;
-    is_verified_seller: boolean;
-    created_at: string;
-}
 
 export default function AdminUsersPage() {
     const { isAdmin, token, isLoading: authLoading } = useAuth();
     const router = useRouter();
 
-    const [users, setUsers] = useState<UserInfo[]>([]);
+    const [users, setUsers] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
     const [actionLoading, setActionLoading] = useState<number | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [roleFilter, setRoleFilter] = useState<string>('all');
 
     // Dialog states
-    const [deleteDialog, setDeleteDialog] = useState<UserInfo | null>(null);
-    const [passwordDialog, setPasswordDialog] = useState<UserInfo | null>(null);
-    const [viewDialog, setViewDialog] = useState<UserInfo | null>(null);
+    const [deleteDialog, setDeleteDialog] = useState<User | null>(null);
+    const [passwordDialog, setPasswordDialog] = useState<User | null>(null);
+    const [viewDialog, setViewDialog] = useState<User | null>(null);
     const [newPassword, setNewPassword] = useState('');
     const [passwordError, setPasswordError] = useState('');
 
@@ -96,7 +86,7 @@ export default function AdminUsersPage() {
         if (!token) return;
         setLoading(true);
         try {
-            const response = await api.get<UserInfo[]>('/admin/users', token);
+            const response = await api.get<User[]>('/admin/users', token);
             if (response.data) {
                 setUsers(response.data);
             }
@@ -155,9 +145,9 @@ export default function AdminUsersPage() {
         if (!token) return;
         setActionLoading(userId);
         try {
-            const res = await api.patch<UserInfo>(`/admin/users/${userId}/role?new_role=${newRole}`, {}, token);
+            const res = await api.patch<User>(`/admin/users/${userId}/role?new_role=${newRole}`, {}, token);
             if (res.data) {
-                setUsers(users.map(u => u.id === userId ? { ...u, role: newRole as UserInfo['role'] } : u));
+                setUsers(users.map(u => u.id === userId ? { ...u, role: newRole as User['role'] } : u));
             }
         } catch (error) {
             console.error('Error changing role:', error);
@@ -170,7 +160,7 @@ export default function AdminUsersPage() {
         if (!token) return;
         setActionLoading(userId);
         try {
-            const res = await api.patch<UserInfo>(
+            const res = await api.patch<User>(
                 `/admin/users/${userId}/verified-seller-badge?verified_seller=${!isVerified}`,
                 {},
                 token
@@ -204,7 +194,7 @@ export default function AdminUsersPage() {
             default:
                 return (
                     <Badge className="bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border-emerald-500/30">
-                        <User className="h-3 w-3 mr-1" /> Buyer
+                        <UserIcon className="h-3 w-3 mr-1" /> Buyer
                     </Badge>
                 );
         }
@@ -279,7 +269,7 @@ export default function AdminUsersPage() {
                 <Card className="bg-card border-border">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Buyers</CardTitle>
-                        <User className="h-4 w-4 text-emerald-500" />
+                        <UserIcon className="h-4 w-4 text-emerald-500" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{users.filter(u => u.role === 'buyer').length}</div>
@@ -535,18 +525,18 @@ export default function AdminUsersPage() {
                 </DialogContent>
             </Dialog>
 
-            {/* View User Dialog */}
+            {/* View UserIcon Dialog */}
             <Dialog open={!!viewDialog} onOpenChange={() => setViewDialog(null)}>
                 <DialogContent className="sm:max-w-lg bg-white dark:bg-slate-950 border-2">
                     <DialogHeader>
                         <DialogTitle className="flex items-center gap-2 text-gray-900 dark:text-gray-100">
-                            <User className="h-5 w-5 text-primary" />
+                            <UserIcon className="h-5 w-5 text-primary" />
                             User Details
                         </DialogTitle>
                     </DialogHeader>
                     {viewDialog && (
                         <div className="space-y-4 py-4">
-                            {/* User Avatar and Name */}
+                            {/* UserIcon Avatar and Name */}
                             <div className="flex items-center gap-4">
                                 <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center">
                                     <span className="text-2xl font-bold text-primary">

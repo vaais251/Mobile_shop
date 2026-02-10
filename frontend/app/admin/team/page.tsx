@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { api } from '@/lib/api';
+import { User } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -62,11 +63,6 @@ interface TeamMember {
     };
 }
 
-interface User {
-    id: number;
-    name: string;
-    email: string;
-}
 
 const TEAM_ROLES = [
     { value: 'super_admin', label: 'Super Admin' },
