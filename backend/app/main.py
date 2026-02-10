@@ -21,8 +21,12 @@ async def lifespan(app: FastAPI):
     """
     # Startup: Initialize database tables
     print("[STARTUP] Starting Mobile Store API...")
-    init_db()
-    print("[STARTUP] Database initialized successfully!")
+    try:
+        # This will create all tables defined in models if they don't exist
+        init_db()
+        print("[STARTUP] Database tables checked/created successfully!")
+    except Exception as e:
+        print(f"[STARTUP] Error initializing database: {e}")
     
     yield
     
